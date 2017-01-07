@@ -86,10 +86,11 @@ public class MainActivity extends BaseActivity implements OnClickListener {
     public void addComponents() {
 
         fragments = new ArrayList<>();
-        fragments.add(OnlineFragment.getInstance());
-        fragments.add(CloudFragment.getInstance());
         fragments.add(SongsFragment.getInstance());
         fragments.add(AlbumsFragment.getInstance());
+        fragments.add(OnlineFragment.getInstance());
+        fragments.add(CloudFragment.getInstance());
+
         adapter = new HomeViewPagerAdapter(getSupportFragmentManager(), fragments);
         mViewPager.setAdapter(adapter);
         mTabLayout.setupWithViewPager(mViewPager, true);

@@ -165,8 +165,7 @@
             android:layout_height="wrap_content"
             android:text="@string/ic_repeat"
             android:textColor="@color/colorAccent"
-            android:textSize="30dp"
-            app:srcCompat="@drawable/ic_repeat_white_24dp" />
+            android:textSize="30dp" />
     </LinearLayout>
 
 

@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,18 +48,7 @@ public class PlayingListFragment extends BaseFragment {
     @Override
     public void init() {
         songs = new ArrayList<>();
-        Song.Builder builder = new Song.Builder("3 ThangBan", "", 1);
-        builder.setArtist("karik");
-        Song song1 = builder.build();
-        songs.add(song1);
-        Song.Builder builder1 = new Song.Builder("Enjoy your life", "", 2);
-        builder1.setArtist("karik");
-        Song song2 = builder1.build();
-        songs.add(song2);
-        for (int i = 0; i < 100; i++) {
-            songs.add((new Random().nextBoolean()) ? song1 : song2);
-        }
-        songAdapter = new SongAdapter(getContext(), songs);
+        songAdapter = new SongAdapter(getContext());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(songAdapter);
     }

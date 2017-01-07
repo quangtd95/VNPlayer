@@ -1,5 +1,7 @@
 package td.quang.vnplayer.models.objects;
 
+import android.graphics.Bitmap;
+
 import lombok.Data;
 
 /**
@@ -12,8 +14,7 @@ public class Song {
     private String title;
     private String album;
     private String filePath;
-    private String thumbPath;
-    private String genre;
+    private Bitmap albumCover;
     private int duration;
 
     public Song() {
@@ -26,9 +27,9 @@ public class Song {
         title = builder.title;
         album = builder.album;
         filePath = builder.filePath;
-        genre = builder.genre;
         duration = builder.duration;
-        thumbPath = builder.thumbPath;
+        albumCover = builder.albumCover;
+
     }
 
     public static class Builder {
@@ -38,14 +39,10 @@ public class Song {
         private String title;
         private String album;
         private String filePath;
-        private String thumbPath;
-        private String genre;
         private int duration;
+        private Bitmap albumCover;
 
-        public Builder(String title, String filePath, int duration) {
-            setDuration(duration);
-            setTitle(title);
-            setFilePath(filePath);
+        public Builder() {
         }
 
         public Song build() {
@@ -77,19 +74,15 @@ public class Song {
             return this;
         }
 
-        public Builder setGenre(String genre) {
-            this.genre = genre;
-            return this;
-        }
-
         public Builder setDuration(int duration) {
             this.duration = duration;
             return this;
         }
 
-        public Builder setThumbPath(String path) {
-            this.thumbPath = path;
+        public Builder setAlbumCover(Bitmap albumCover) {
+            this.albumCover = albumCover;
             return this;
         }
+
     }
 }

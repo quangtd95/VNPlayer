@@ -10,26 +10,34 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import td.quang.vnplayer.R;
+import td.quang.vnplayer.interfaces.loadsong.LoadSongPresenter;
+import td.quang.vnplayer.interfaces.loadsong.LoadSongView;
 import td.quang.vnplayer.models.objects.Song;
+import td.quang.vnplayer.presenters.LoadSongPresenterImpl;
 import td.quang.vnplayer.views.adapters.SongAdapter;
+import td.quang.vnplayer.views.dialogs.MyDialog;
 
 /**
  * Created by Quang_TD on 12/28/2016.
  */
 
-public class SongsFragment extends HomeBaseFragment {
+public class SongsFragment extends HomeBaseFragment implements LoadSongView {
     private static SongsFragment instance;
+
     @BindView(R.id.rvList)
     RecyclerView mRecyclerView;
+
     private SongAdapter songAdapter;
     private List<Song> songs;
+    private LoadSongPresenter presenter;
 
     private View view;
+    private SweetAlertDialog dialogLoading;
 
     public static SongsFragment getInstance() {
         if (instance == null) {
@@ -49,27 +57,38 @@ public class SongsFragment extends HomeBaseFragment {
         view = inflater.inflate(R.layout.fragment_list, null);
         ButterKnife.bind(this, view);
         init();
+        presenter = LoadSongPresenterImpl.getInstance();
+        presenter.init(this, songAdapter);
+        refreshListSong();
         return view;
     }
 
     @Override
     public void init() {
         songs = new ArrayList<>();
-        Song.Builder builder = new Song.Builder("3 ThangBan", "", 1);
-        builder.setArtist("karik");
-        Song song1 = builder.build();
-        songs.add(song1);
-        Song.Builder builder1 = new Song.Builder("Enjoy your life", "", 2);
-        builder1.setArtist("karik");
-        Song song2 = builder1.build();
-        songs.add(song2);
-        for (int i = 0; i < 100; i++) {
-            songs.add((new Random().nextBoolean()) ? song1 : song2);
-        }
-        songAdapter = new SongAdapter(getContext(), songs);
+        songAdapter = new SongAdapter(getContext());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(songAdapter);
 
+    }
 
+    @Override
+    public void refreshListSong() {
+        presenter.loadSong();
+    }
+
+    @Override
+    public void showLoading() {
+        dialogLoading = MyDialog.showLoading(getContext());
+    }
+
+    @Override
+    public void hideLoading() {
+        MyDialog.hideLoading(dialogLoading);
+    }
+
+    @Override
+    public void showDialogFail() {
+        MyDialog.showError(getContext());
     }
 }

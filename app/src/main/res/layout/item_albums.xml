@@ -11,7 +11,7 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/ivThumb"
+            android:id="@+id/txtThumb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -23,9 +23,9 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@id/ivThumb"
-            android:layout_alignRight="@id/ivThumb"
-            android:layout_below="@id/ivThumb"
+            android:layout_alignLeft="@id/txtThumb"
+            android:layout_alignRight="@id/txtThumb"
+            android:layout_below="@id/txtThumb"
             android:gravity="center_vertical">
 
             <TextView
@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_below="@+id/ivThumb"
+                android:layout_below="@+id/txtThumb"
                 android:layout_marginTop="13dp"
                 android:padding="5dp"
                 android:text="Adam Lambert"

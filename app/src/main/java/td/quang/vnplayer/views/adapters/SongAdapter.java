@@ -3,12 +3,10 @@ package td.quang.vnplayer.views.adapters;
 import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -17,6 +15,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import td.quang.vnplayer.R;
 import td.quang.vnplayer.models.objects.Song;
+import td.quang.vnplayer.utils.RandomColor;
 
 /**
  * Created by djwag on 1/4/2017.
@@ -26,8 +25,11 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
     private List<Song> songs;
     private Context mContext;
 
-    public SongAdapter(Context mContext, List<Song> songs) {
+    public SongAdapter(Context mContext) {
         this.mContext = mContext;
+    }
+
+    public void setData(List<Song> songs) {
         this.songs = songs;
     }
 
@@ -40,9 +42,10 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
     @Override
     public void onBindViewHolder(SongHolder holder, int position) {
         Song song = songs.get(position);
-        if (holder.tvTitle == null) Log.e("TAGG", "title null");
         holder.tvTitle.setText(song.getTitle());
         holder.tvArtist.setText(song.getArtist());
+        holder.ivThumb.setBackgroundColor(RandomColor.getColor());
+        holder.ivThumb.setText(song.getTitle().charAt(0) + "");
     }
 
     @Override
@@ -51,8 +54,8 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
     }
 
     static class SongHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.ivThumb)
-        ImageView ivThumb;
+        @BindView(R.id.txtThumb)
+        TextView ivThumb;
         @BindView(R.id.tvTitle)
         TextView tvTitle;
         @BindView(R.id.tvArtist)
