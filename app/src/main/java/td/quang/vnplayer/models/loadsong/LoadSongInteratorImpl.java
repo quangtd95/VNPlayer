@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -42,6 +43,7 @@ public class LoadSongInteratorImpl implements LoadSongInteractor {
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
             songs.add(convert(cursor));
         }
+        Log.e("TAGG", "load song interator");
         cursor.close();
         if (songs.size() != 0) {
             listener.onLoadSuccess(songs);

@@ -12,8 +12,6 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import td.quang.vnplayer.R;
 import td.quang.vnplayer.interfaces.playoffline.PlayingView;
 import td.quang.vnplayer.models.objects.Song;
@@ -69,7 +67,9 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
             showMenu(holder.btnOption, position);
             return false;
         });
-        holder.cardView.setOnClickListener(v -> playingView.swapPlaying(songs.get(position)));
+        holder.cardView.setOnClickListener(v -> {
+            playingView.swapPlaying(songs.get(position));
+        });
     }
 
     private void showMenu(View view, int position) {
@@ -93,21 +93,21 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
     public int getItemCount() {
         return (songs == null) ? 0 : songs.size();
     }
+
     static class SongHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.txtThumb)
         TextView ivThumb;
-        @BindView(R.id.tvTitle)
         TextView tvTitle;
-        @BindView(R.id.tvArtist)
         TextView tvArtist;
-        @BindView(R.id.btnOption)
         ImageButton btnOption;
-        @BindView(R.id.cardLayout)
         CardView cardView;
 
         public SongHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            ivThumb = (TextView) itemView.findViewById(R.id.txtThumb);
+            tvTitle = (TextView) itemView.findViewById(R.id.tvTitle);
+            tvArtist = (TextView) itemView.findViewById(R.id.tvArtist);
+            btnOption = (ImageButton) itemView.findViewById(R.id.btnOption);
+            cardView = (CardView) itemView.findViewById(R.id.cardLayout);
         }
     }
 }

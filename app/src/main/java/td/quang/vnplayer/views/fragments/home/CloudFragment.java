@@ -1,10 +1,12 @@
 package td.quang.vnplayer.views.fragments.home;
 
+import td.quang.vnplayer.views.BaseFragment;
+
 /**
  * Created by Quang_TD on 12/28/2016.
  */
 
-public class CloudFragment extends HomeBaseFragment {
+public class CloudFragment extends BaseFragment {
     private static CloudFragment instance;
 
     public static CloudFragment getInstance() {
@@ -19,8 +21,8 @@ public class CloudFragment extends HomeBaseFragment {
         return instance;
     }
 
-    @Override
-    public void init() {
+
+    @Override protected void afterView() {
 
     }
 }

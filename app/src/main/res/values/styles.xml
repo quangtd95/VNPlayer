@@ -19,7 +19,6 @@
         <item name="colorControlHighlight">@color/ripple_color_light</item>
     </style>
 
-
     <style name="SelectableItemBackgroundLight">
         <item name="android:theme">@style/SelectableItemThemeLight</item>
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>

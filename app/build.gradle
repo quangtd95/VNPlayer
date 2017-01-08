@@ -1,5 +1,13 @@
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'android-apt'
+def AAVersion = '3.2'
+apt {
+    arguments {
+        resourcePackageName "td.quang.vnplayer"
+        androidManifestFile variant.outputs[0]?.processResources?.manifestFile
+    }
+}
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.1"
@@ -41,9 +49,7 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     //Lombok
     provided 'org.projectlombok:lombok:1.12.2'
-    //butter knife
-    compile 'com.jakewharton:butterknife:8.4.0'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+
     //slide up layout
     compile 'com.sothree.slidinguppanel:library:3.3.1'
 //circle image
@@ -55,5 +61,9 @@ dependencies {
     //rainbow
     compile 'hanks.xyz:htextview-library:0.1.5'
 
+    //annotation
+    compile 'com.android.support:support-annotations:24.0.0'
+    apt "org.androidannotations:androidannotations:3.2"
+    compile 'org.androidannotations:androidannotations-api:3.2'
 }
 

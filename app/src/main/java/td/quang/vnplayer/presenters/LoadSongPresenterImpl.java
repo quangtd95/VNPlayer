@@ -1,5 +1,7 @@
 package td.quang.vnplayer.presenters;
 
+import android.util.Log;
+
 import java.util.List;
 
 import td.quang.vnplayer.interfaces.loadsong.LoadSongInteractor;
@@ -41,6 +43,7 @@ public class LoadSongPresenterImpl implements LoadSongPresenter, OnLoadFinishedL
 
     @Override
     public void loadSong() {
+        Log.e("TAGG", "loadsong presenter");
         view.showLoading();
         loadSongInteractor.loadSong(this);
     }

@@ -11,8 +11,6 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import td.quang.vnplayer.R;
 import td.quang.vnplayer.models.objects.Album;
 
@@ -48,19 +46,18 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
         return (albums == null) ? 0 : albums.size();
     }
 
-    static class AlbumHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.tvAlbum)
-        TextView tvAlbum;
-        @BindView(R.id.tvBarArtist)
-        TextView tvArtist;
-        @BindView(R.id.ivBarThumb)
-        ImageView ivThumb;
-        @BindView(R.id.btnOption)
-        ImageButton btnOption;
 
+    static class AlbumHolder extends RecyclerView.ViewHolder {
+        TextView tvAlbum;
+        TextView tvArtist;
+        ImageView ivThumb;
+        ImageButton btnOption;
         public AlbumHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            tvAlbum = (TextView) itemView.findViewById(R.id.tvAlbum);
+            tvArtist = (TextView) itemView.findViewById(R.id.tvArtist);
+            ivThumb = (ImageView) itemView.findViewById(R.id.ivThumb);
+            btnOption = (ImageButton) itemView.findViewById(R.id.btnOption);
         }
     }
 }

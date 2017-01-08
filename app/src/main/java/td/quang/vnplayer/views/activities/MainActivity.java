@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
@@ -21,14 +20,17 @@ import android.widget.TextView;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
+
 import java.util.ArrayList;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 import td.quang.vnplayer.R;
+import td.quang.vnplayer.interfaces.playoffline.PlayOfflinePresenter;
 import td.quang.vnplayer.interfaces.playoffline.PlayingView;
 import td.quang.vnplayer.models.objects.Song;
+import td.quang.vnplayer.presenters.PlayOfflinePresenterImpl;
 import td.quang.vnplayer.utils.AudioUtils;
 import td.quang.vnplayer.views.BaseActivity;
 import td.quang.vnplayer.views.adapters.HomeViewPagerAdapter;
@@ -39,20 +41,20 @@ import td.quang.vnplayer.views.fragments.home.OnlineFragment;
 import td.quang.vnplayer.views.fragments.home.SongsFragment;
 import td.quang.vnplayer.views.fragments.playing.PlayingListFragment;
 
-
+@EActivity(R.layout.activity_main)
 public class MainActivity extends BaseActivity implements OnClickListener, PlayingView {
-    @BindView(R.id.slidingPanel)
+    @ViewById(R.id.slidingPanel)
     SlidingUpPanelLayout slidingPanel;
-    @BindView(R.id.tabLayout) TabLayout mTabLayout;
-    @BindView(R.id.viewPager) ViewPager mViewPager;
-    @BindView(R.id.barPlaying) View barPlaying;
-    @BindView(R.id.heading) View heading;
-    @BindView(R.id.ivAlbumCover) CircleImageView ivAlbumCover;
-    @BindView(R.id.btnSuffer) MyButton btnSuffer;
-    @BindView(R.id.btnRepeat) MyButton btnRepeat;
-    @BindView(R.id.btnPlay) MyButton btnPlay;
-    @BindView(R.id.btnHome) MyButton btnHome;
-    @BindView(R.id.btnList) MyButton btnList;
+    @ViewById(R.id.tabLayout) TabLayout mTabLayout;
+    @ViewById(R.id.viewPager) ViewPager mViewPager;
+    @ViewById(R.id.barPlaying) View barPlaying;
+    @ViewById(R.id.heading) View heading;
+    @ViewById(R.id.ivAlbumCover) CircleImageView ivAlbumCover;
+    @ViewById(R.id.btnSuffer) MyButton btnSuffer;
+    @ViewById(R.id.btnRepeat) MyButton btnRepeat;
+    @ViewById(R.id.btnPlay) MyButton btnPlay;
+    @ViewById(R.id.btnHome) MyButton btnHome;
+    @ViewById(R.id.btnList) MyButton btnList;
 
     TextView tvBarTitle, tvHeadTitle;
     TextView tvBarArtist, tvHeadArtist;
@@ -64,37 +66,20 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
     private boolean isPlay = false;
     private boolean isSuffer = false;
     private boolean isRepeat = false;
-    private PlayingListFragment playingListFragment;
     private ArrayList fragments;
+    private Song currentSong;
+    private PlayOfflinePresenter offlinePresenter;
+    private PlayingListFragment playingListFragment;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
-        addComponents();
-        addEvents();
-
-    }
-
-    private void addEvents() {
-        slidingPanel.addPanelSlideListener(new SlidingPanelListener(this, barPlaying));
-        btnSuffer.setOnClickListener(this);
-        btnRepeat.setOnClickListener(this);
-        btnPlay.setOnClickListener(this);
-        btnHome.setOnClickListener(this);
-        btnList.setOnClickListener(this);
-        btnBarPlay.setOnClickListener(this);
-    }
-
-    @Override
-    public void addComponents() {
+    protected void afterView() {
         tvBarTitle = (TextView) barPlaying.findViewById(R.id.tvBarTitle);
         tvBarArtist = (TextView) barPlaying.findViewById(R.id.tvBarArtist);
         btnBarPlay = (ImageButton) barPlaying.findViewById(R.id.btnBarPlay);
         ivBarThumb = (ImageView) barPlaying.findViewById(R.id.ivBarThumb);
         tvHeadTitle = (TextView) heading.findViewById(R.id.tvHeadTitle);
         tvHeadArtist = (TextView) heading.findViewById(R.id.tvHeadArtist);
+
 
         fragments = new ArrayList<>();
         SongsFragment songsFragment = SongsFragment.getInstance();
@@ -109,6 +94,9 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
         mTabLayout.setupWithViewPager(mViewPager, true);
         mTabLayout.dispatchSetSelected(true);
 
+        /*
+        setup sliding bar.
+         */
         final TypedArray styledAttributes = this.getTheme().obtainStyledAttributes(
                 new int[]{android.R.attr.actionBarSize});
         int height = (int) styledAttributes.getDimension(0, 0);
@@ -117,13 +105,32 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
         slidingPanel.setPanelHeight(height);
         animRotate = AnimationUtils.loadAnimation(this, R.anim.anim_rotate);
         playingListFragment = PlayingListFragment.getInstance();
+        offlinePresenter = PlayOfflinePresenterImpl.getInstance();
+        addEvents();
+    }
+
+    private void addEvents() {
+        slidingPanel.addPanelSlideListener(new SlidingPanelListener(this, barPlaying));
+        btnSuffer.setOnClickListener(this);
+        btnRepeat.setOnClickListener(this);
+        btnPlay.setOnClickListener(this);
+        btnHome.setOnClickListener(this);
+        btnList.setOnClickListener(this);
+        btnBarPlay.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == btnPlay.getId()) {
-            playEvent();
+        if (v.getId() == btnPlay.getId() || v.getId() == btnBarPlay.getId()) {
+            if (!isPlay) {
+                play(currentSong);
+                offlinePresenter.play(currentSong);
+            } else {
+                stop(currentSong);
+                offlinePresenter.stop(currentSong);
+            }
         }
+
         if (v.getId() == btnSuffer.getId()) {
             sufferEvent();
         }
@@ -136,9 +143,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
         if (v.getId() == btnList.getId()) {
             swapFragments();
         }
-        if (v.getId() == btnBarPlay.getId()) {
-            playEvent();
-        }
+
     }
 
     private void swapFragments() {
@@ -166,18 +171,22 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
         isSuffer = !isSuffer;
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP) private void playEvent() {
-        if (isPlay) {
-            ivAlbumCover.clearAnimation();
-            btnPlay.setText(getResources().getString(R.string.ic_play));
-            btnBarPlay.setImageDrawable(getDrawable(R.drawable.ic_play_circle_outline_white_24dp));
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public void play(Song song) {
+        ivAlbumCover.startAnimation(animRotate);
+        btnPlay.setText(getResources().getString(R.string.ic_pause));
+        btnBarPlay.setImageDrawable(getDrawable(R.drawable.ic_pause_circle_outline_white_24dp));
+        isPlay = true;
+    }
 
-        } else {
-            ivAlbumCover.startAnimation(animRotate);
-            btnPlay.setText(getResources().getString(R.string.ic_pause));
-            btnBarPlay.setImageDrawable(getDrawable(R.drawable.ic_pause_circle_outline_white_24dp));
-        }
-        isPlay = !isPlay;
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public void stop(Song song) {
+        ivAlbumCover.clearAnimation();
+        btnPlay.setText(getResources().getString(R.string.ic_play));
+        btnBarPlay.setImageDrawable(getDrawable(R.drawable.ic_play_circle_outline_white_24dp));
+        isPlay = false;
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -196,6 +205,11 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
             ivAlbumCover.setImageDrawable(getDrawable(R.drawable.cover_thumbnail));
             ivBarThumb.setImageDrawable(getDrawable(R.drawable.cover_thumbnail));
         }
+
+    }
+
+    @Override public void setCurrentSong(Song song) {
+        this.currentSong = song;
     }
 
     @Override public void onBackPressed() {
@@ -206,6 +220,10 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
         }
     }
 
+
+    /**
+     * listener slidingPanel.
+     */
     static class SlidingPanelListener implements SlidingUpPanelLayout.PanelSlideListener {
         private View dragView;
         private Context mContext;

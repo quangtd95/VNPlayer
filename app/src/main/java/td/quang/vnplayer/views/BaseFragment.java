@@ -7,5 +7,15 @@ import android.support.v4.app.Fragment;
  */
 
 public abstract class BaseFragment extends Fragment {
-    public abstract void init();
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    protected abstract void afterView();
 }

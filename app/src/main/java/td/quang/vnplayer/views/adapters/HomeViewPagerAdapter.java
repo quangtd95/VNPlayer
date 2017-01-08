@@ -6,16 +6,16 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import java.util.List;
 
-import td.quang.vnplayer.views.fragments.home.HomeBaseFragment;
+import td.quang.vnplayer.views.BaseFragment;
 
 /**
  * Created by djwag on 1/4/2017.
  */
 
 public class HomeViewPagerAdapter extends FragmentPagerAdapter {
-    List<HomeBaseFragment> fragments;
+    List<BaseFragment> fragments;
 
-    public HomeViewPagerAdapter(FragmentManager fm, List<HomeBaseFragment> fragments) {
+    public HomeViewPagerAdapter(FragmentManager fm, List<BaseFragment> fragments) {
         super(fm);
         this.fragments = fragments;
     }
