@@ -19,62 +19,62 @@ import td.quang.vnplayer.views.adapters.SongAdapter;
 
 public class LoadSongPresenterImpl implements LoadSongPresenter, OnLoadFinishedListener, OnDeleteFinishedListener {
 
-    private static LoadSongPresenter instance;
-    private LoadSongView view;
-    private SongAdapter songAdapter;
-    private LoadSongInteractor loadSongInteractor;
+    private static LoadSongPresenter sInstance;
+    private LoadSongView mView;
+    private SongAdapter mAdapter;
+    private LoadSongInteractor mInteractor;
 
     private LoadSongPresenterImpl() {
-        loadSongInteractor = LoadSongInteratorImpl.getInstance();
+        mInteractor = LoadSongInteratorImpl.getInstance();
     }
 
     public static synchronized LoadSongPresenter getInstance() {
-        if (instance == null) {
-            instance = new LoadSongPresenterImpl();
+        if (sInstance == null) {
+            sInstance = new LoadSongPresenterImpl();
         }
-        return instance;
+        return sInstance;
     }
 
     @Override
     public void init(LoadSongView view, SongAdapter songAdapter) {
-        this.view = view;
-        this.songAdapter = songAdapter;
+        this.mView = view;
+        this.mAdapter = songAdapter;
     }
 
     @Override
     public void loadSong() {
         Log.e("TAGG", "loadsong presenter");
-        view.showLoading();
-        loadSongInteractor.loadSong(this);
+        mView.showLoading();
+        mInteractor.loadSong(this);
     }
 
     @Override
     public void deleteSong(String filePath, int position) {
-        loadSongInteractor.deleteSong(this, filePath, position);
+        mInteractor.deleteSong(this, filePath, position);
     }
 
     @Override
     public void onLoadFail() {
-        view.hideLoading();
-        view.showDialogLoadFail();
+        mView.hideLoading();
+        mView.showDialogLoadFail();
     }
 
     @Override
     public void onLoadSuccess(List<Song> songs) {
-        view.hideLoading();
-        songAdapter.setData(songs);
-        songAdapter.notifyDataSetChanged();
+        mView.hideLoading();
+        mAdapter.setData(songs);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onDeleteSuccess(int position) {
-        view.showDeleteSuccess();
-        songAdapter.removeItem(position);
+        mView.showDeleteSuccess();
+        mAdapter.removeItem(position);
 
     }
 
     @Override
     public void onDeleteFail() {
-        view.showDeleteError();
+        mView.showDeleteError();
     }
 }

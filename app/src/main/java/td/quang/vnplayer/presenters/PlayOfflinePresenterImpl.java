@@ -9,14 +9,16 @@ import td.quang.vnplayer.models.objects.Song;
 
 public class PlayOfflinePresenterImpl implements PlayOfflinePresenter {
 
-    private static PlayOfflinePresenter instance;
+    private static PlayOfflinePresenter sInstance;
 
     private PlayOfflinePresenterImpl() {
     }
 
     public static PlayOfflinePresenter getInstance() {
-        if (instance == null) instance = new PlayOfflinePresenterImpl();
-        return instance;
+        if (sInstance == null) {
+            sInstance = new PlayOfflinePresenterImpl();
+        }
+        return sInstance;
     }
 
     @Override public void play(Song song) {

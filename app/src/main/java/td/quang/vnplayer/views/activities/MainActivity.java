@@ -24,6 +24,7 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import td.quang.vnplayer.R;
@@ -33,6 +34,7 @@ import td.quang.vnplayer.models.objects.Song;
 import td.quang.vnplayer.presenters.PlayOfflinePresenterImpl;
 import td.quang.vnplayer.utils.AudioUtils;
 import td.quang.vnplayer.views.BaseActivity;
+import td.quang.vnplayer.views.BaseFragment;
 import td.quang.vnplayer.views.adapters.HomeViewPagerAdapter;
 import td.quang.vnplayer.views.customviews.MyButton;
 import td.quang.vnplayer.views.fragments.home.AlbumsFragment;
@@ -56,17 +58,19 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
     @ViewById(R.id.btnHome) MyButton btnHome;
     @ViewById(R.id.btnList) MyButton btnList;
 
-    TextView tvBarTitle, tvHeadTitle;
-    TextView tvBarArtist, tvHeadArtist;
+    TextView tvBarTitle;
+    TextView tvHeadTitle;
+    TextView tvBarArtist;
+    TextView tvHeadArtist;
     ImageButton btnBarPlay;
     ImageView ivBarThumb;
 
-    private HomeViewPagerAdapter adapter;
-    private Animation animRotate;
-    private boolean isPlay = false;
-    private boolean isSuffer = false;
-    private boolean isRepeat = false;
-    private ArrayList fragments;
+    private HomeViewPagerAdapter mAdapter;
+    private Animation mAnim;
+    private boolean mIsPlay = false;
+    private boolean mIsSuffer = false;
+    private boolean mIsRepeat = false;
+    private List<BaseFragment> fragments;
     private Song currentSong;
     private PlayOfflinePresenter offlinePresenter;
     private PlayingListFragment playingListFragment;
@@ -89,8 +93,8 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
         fragments.add(OnlineFragment.getInstance());
         fragments.add(CloudFragment.getInstance());
 
-        adapter = new HomeViewPagerAdapter(getSupportFragmentManager(), fragments);
-        mViewPager.setAdapter(adapter);
+        mAdapter = new HomeViewPagerAdapter(getSupportFragmentManager(), fragments);
+        mViewPager.setAdapter(mAdapter);
         mTabLayout.setupWithViewPager(mViewPager, true);
         mTabLayout.dispatchSetSelected(true);
 
@@ -103,7 +107,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
         styledAttributes.recycle();
 
         slidingPanel.setPanelHeight(height);
-        animRotate = AnimationUtils.loadAnimation(this, R.anim.anim_rotate);
+        mAnim = AnimationUtils.loadAnimation(this, R.anim.anim_rotate);
         playingListFragment = PlayingListFragment.getInstance();
         offlinePresenter = PlayOfflinePresenterImpl.getInstance();
         addEvents();
@@ -122,7 +126,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
     @Override
     public void onClick(View v) {
         if (v.getId() == btnPlay.getId() || v.getId() == btnBarPlay.getId()) {
-            if (!isPlay) {
+            if (!mIsPlay) {
                 play(currentSong);
                 offlinePresenter.play(currentSong);
             } else {
@@ -154,30 +158,30 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
     }
 
     private void repeatEvent() {
-        if (isRepeat) {
+        if (mIsRepeat) {
             btnRepeat.setTextColor(getResources().getColor(R.color.colorAccentDark));
         } else {
             btnRepeat.setTextColor(getResources().getColor(R.color.colorAccent));
         }
-        isRepeat = !isRepeat;
+        mIsRepeat = !mIsRepeat;
     }
 
     private void sufferEvent() {
-        if (isSuffer) {
+        if (mIsSuffer) {
             btnSuffer.setTextColor(getResources().getColor(R.color.colorAccentDark));
         } else {
             btnSuffer.setTextColor(getResources().getColor(R.color.colorAccent));
         }
-        isSuffer = !isSuffer;
+        mIsSuffer = !mIsSuffer;
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void play(Song song) {
-        ivAlbumCover.startAnimation(animRotate);
+        ivAlbumCover.startAnimation(mAnim);
         btnPlay.setText(getResources().getString(R.string.ic_pause));
         btnBarPlay.setImageDrawable(getDrawable(R.drawable.ic_pause_circle_outline_white_24dp));
-        isPlay = true;
+        mIsPlay = true;
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -186,7 +190,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
         ivAlbumCover.clearAnimation();
         btnPlay.setText(getResources().getString(R.string.ic_play));
         btnBarPlay.setImageDrawable(getDrawable(R.drawable.ic_play_circle_outline_white_24dp));
-        isPlay = false;
+        mIsPlay = false;
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -240,14 +244,18 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
         @Override
         public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
             if (newState == SlidingUpPanelLayout.PanelState.EXPANDED) {
-                if (dragView.getVisibility() == View.GONE) return;
+                if (dragView.getVisibility() == View.GONE) {
+                    return;
+                }
                 Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.anim_fade_down);
                 dragView.startAnimation(animation);
                 Handler handler = new Handler();
                 handler.postDelayed(() -> dragView.setVisibility(View.GONE), animation.getDuration());
             }
             if (newState == SlidingUpPanelLayout.PanelState.COLLAPSED) {
-                if (dragView.getVisibility() == View.VISIBLE) return;
+                if (dragView.getVisibility() == View.VISIBLE) {
+                    return;
+                }
                 dragView.setVisibility(View.VISIBLE);
                 Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.anim_fade_up);
                 dragView.startAnimation(animation);

@@ -25,16 +25,16 @@ import td.quang.vnplayer.views.fragments.home.SongsFragment;
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
     private List<Song> songs;
     private Context mContext;
-    private SongsFragment fragment;
-    private PlayingView playingView;
+    private SongsFragment mFragment;
+    private PlayingView mPlayingView;
 
     public SongAdapter(SongsFragment songsFragment) {
-        fragment = songsFragment;
-        mContext = fragment.getContext();
+        mFragment = songsFragment;
+        mContext = mFragment.getContext();
     }
 
     public void setPlayingView(PlayingView playingView) {
-        this.playingView = playingView;
+        this.mPlayingView = playingView;
     }
 
     public void setData(List<Song> songs) {
@@ -59,7 +59,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
         holder.tvTitle.setText(song.getTitle());
         holder.tvArtist.setText(song.getArtist());
         holder.ivThumb.setBackgroundColor(RandomColor.getColor());
-        holder.ivThumb.setText(song.getTitle().charAt(0) + "");
+        holder.ivThumb.setText(String.valueOf(song.getTitle().charAt(0)));
         holder.btnOption.setOnClickListener(v -> {
             showMenu(v, position);
         });
@@ -68,7 +68,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
             return false;
         });
         holder.cardView.setOnClickListener(v -> {
-            playingView.swapPlaying(songs.get(position));
+            mPlayingView.swapPlaying(songs.get(position));
         });
     }
 
@@ -80,10 +80,10 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
 
         popupMenu.setOnMenuItemClickListener(item -> {
             if (item.getItemId() == R.id.delete) {
-                fragment.showDialogConfirmDelete(song.getFilePath(), position);
+                mFragment.showDialogConfirmDelete(song.getFilePath(), position);
             }
             if (item.getItemId() == R.id.play) {
-                playingView.swapPlaying(songs.get(position));
+                mPlayingView.swapPlaying(songs.get(position));
             }
             return false;
         });

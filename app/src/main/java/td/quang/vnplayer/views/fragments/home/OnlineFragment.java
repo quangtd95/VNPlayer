@@ -8,18 +8,18 @@ import td.quang.vnplayer.views.BaseFragment;
  */
 
 public class OnlineFragment extends BaseFragment {
-    private static OnlineFragment instance;
+    private static OnlineFragment sInstance;
 
     public static OnlineFragment getInstance() {
-        if (instance == null) {
+        if (sInstance == null) {
             synchronized (OnlineFragment.class) {
-                if (instance == null) {
-                    instance = new OnlineFragment();
-                    instance.setName("Online");
+                if (sInstance == null) {
+                    sInstance = new OnlineFragment();
+                    sInstance.setName("Online");
                 }
             }
         }
-        return instance;
+        return sInstance;
     }
 
 

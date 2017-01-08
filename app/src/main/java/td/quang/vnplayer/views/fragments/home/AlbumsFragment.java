@@ -22,7 +22,7 @@ import td.quang.vnplayer.views.adapters.AlbumAdapter;
  */
 //@EFragment(R.layout.fragment_list)
 public class AlbumsFragment extends BaseFragment {
-    private static AlbumsFragment instance;
+    private static AlbumsFragment sInstance;
     //    @ViewById(R.id.rvList)
     RecyclerView mRecyclerView;
     private AlbumAdapter albumAdapter;
@@ -30,15 +30,15 @@ public class AlbumsFragment extends BaseFragment {
     private View view;
 
     public static AlbumsFragment getInstance() {
-        if (instance == null) {
+        if (sInstance == null) {
             synchronized (AlbumsFragment.class) {
-                if (instance == null) {
-                    instance = new AlbumsFragment();
-                    instance.setName("Album");
+                if (sInstance == null) {
+                    sInstance = new AlbumsFragment();
+                    sInstance.setName("Album");
                 }
             }
         }
-        return instance;
+        return sInstance;
     }
 
     @Nullable @Override public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

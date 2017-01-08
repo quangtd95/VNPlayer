@@ -24,7 +24,7 @@ import td.quang.vnplayer.views.dialogs.MyDialog;
  */
 //@EFragment(R.layout.fragment_list)
 public class SongsFragment extends BaseFragment implements LoadSongView {
-    private static SongsFragment instance;
+    private static SongsFragment sInstance;
 
     //    @ViewById(R.id.rvList)
     RecyclerView mRecyclerView;
@@ -37,15 +37,15 @@ public class SongsFragment extends BaseFragment implements LoadSongView {
     private MainActivity activity;
 
     public static SongsFragment getInstance() {
-        if (instance == null) {
+        if (sInstance == null) {
             synchronized (SongsFragment.class) {
-                if (instance == null) {
-                    instance = new SongsFragment();
-                    instance.setName("Song");
+                if (sInstance == null) {
+                    sInstance = new SongsFragment();
+                    sInstance.setName("Song");
                 }
             }
         }
-        return instance;
+        return sInstance;
     }
 
     public void setActivity(MainActivity activity) {

@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
-import android.util.Log;
 
 /**
  * Created by djwag on 1/7/2017.
@@ -22,12 +21,14 @@ public class AudioUtils {
             mmr.setDataSource(mContext, uri);
             rawArt = mmr.getEmbeddedPicture();
 
-// if rawArt is null then no cover art is embedded in the file or is not
-// recognized as such.
-            if (null != rawArt)
+            // if rawArt is null then no cover art is embedded in the file or is not
+            // recognized as such.
+            if (null != rawArt) {
                 art = BitmapFactory.decodeByteArray(rawArt, 0, rawArt.length, bfo);
+            }
 
-// Code that uses the cover art retrieved below.
+
+            // Code that uses the cover art retrieved below.
             return art;
         } catch (Exception e) {
             return null;
@@ -41,7 +42,6 @@ public class AudioUtils {
             mmr.setDataSource(mContext, uri);
             String durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
             int millSecond = Integer.parseInt(durationStr);
-            Log.e("TAGG", millSecond + "");
             return millSecond;
         } catch (Exception e) {
             return 0;

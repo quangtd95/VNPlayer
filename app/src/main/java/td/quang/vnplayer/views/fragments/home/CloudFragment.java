@@ -7,18 +7,18 @@ import td.quang.vnplayer.views.BaseFragment;
  */
 
 public class CloudFragment extends BaseFragment {
-    private static CloudFragment instance;
+    private static CloudFragment sInstance;
 
     public static CloudFragment getInstance() {
-        if (instance == null) {
+        if (sInstance == null) {
             synchronized (CloudFragment.class) {
-                if (instance == null) {
-                    instance = new CloudFragment();
-                    instance.setName("Cloud");
+                if (sInstance == null) {
+                    sInstance = new CloudFragment();
+                    sInstance.setName("Cloud");
                 }
             }
         }
-        return instance;
+        return sInstance;
     }
 
 
