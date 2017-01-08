@@ -8,7 +8,7 @@
     android:clickable="true">
 
     <ImageView
-        android:id="@+id/txtThumb"
+        android:id="@+id/ivBarThumb"
         android:layout_width="?attr/actionBarSize"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
@@ -18,8 +18,8 @@
         app:srcCompat="@drawable/icon_thumbnail" />
 
     <ImageButton
-        android:id="@+id/btnOption"
-        style="@style/SelectableItemBackground"
+        android:id="@+id/btnBarPlay"
+        style="@style/SelectableItemBackgroundLight"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
@@ -35,23 +35,27 @@
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="12dp"
         android:layout_marginStart="12dp"
-        android:layout_toEndOf="@+id/txtThumb"
-        android:layout_toRightOf="@+id/txtThumb"
+        android:layout_toEndOf="@+id/ivBarThumb"
+        android:layout_toLeftOf="@id/btnBarPlay"
+        android:layout_toRightOf="@+id/ivBarThumb"
+        android:layout_toStartOf="@id/btnBarPlay"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tvTitle"
+            android:id="@+id/tvBarTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:maxLines="1"
             android:text="3 Thang Ban"
             android:textColor="@android:color/white"
             android:textStyle="normal|bold" />
 
         <TextView
-            android:id="@+id/tvArtist"
+            android:id="@+id/tvBarArtist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tvTitle"
+            android:layout_below="@+id/tvBarTitle"
+            android:maxLines="1"
             android:text="Karik"
             android:textColor="@android:color/white" />
     </LinearLayout>

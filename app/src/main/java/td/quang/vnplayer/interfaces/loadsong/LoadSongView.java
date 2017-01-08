@@ -11,5 +11,11 @@ public interface LoadSongView {
 
     void hideLoading();
 
-    void showDialogFail();
+    void showDialogLoadFail();
+
+    void showDialogConfirmDelete(String filePath, int position);
+
+    void showDeleteSuccess();
+
+    void showDeleteError();
 }

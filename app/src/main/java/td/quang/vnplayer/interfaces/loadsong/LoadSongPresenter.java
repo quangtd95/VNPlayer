@@ -10,4 +10,6 @@ public interface LoadSongPresenter {
     void init(LoadSongView view, SongAdapter songAdapter);
 
     void loadSong();
+
+    void deleteSong(String filePath, int position);
 }

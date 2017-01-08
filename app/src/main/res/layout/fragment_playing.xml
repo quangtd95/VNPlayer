@@ -8,8 +8,8 @@
     >
 
     <include
-        android:id="@+id/toolbar"
-        layout="@layout/layout_toolbar"
+        android:id="@+id/heading"
+        layout="@layout/heading_playing"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:layout_alignParentLeft="true"
@@ -42,7 +42,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/seekBarTime"
-        android:layout_below="@+id/toolbar">
+        android:layout_below="@+id/heading">
 
         <include layout="@layout/fragment_image_cover" />
     </FrameLayout>

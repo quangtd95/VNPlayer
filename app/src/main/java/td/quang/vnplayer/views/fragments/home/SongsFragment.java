@@ -8,17 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import td.quang.vnplayer.R;
 import td.quang.vnplayer.interfaces.loadsong.LoadSongPresenter;
 import td.quang.vnplayer.interfaces.loadsong.LoadSongView;
-import td.quang.vnplayer.models.objects.Song;
 import td.quang.vnplayer.presenters.LoadSongPresenterImpl;
+import td.quang.vnplayer.views.activities.MainActivity;
 import td.quang.vnplayer.views.adapters.SongAdapter;
 import td.quang.vnplayer.views.dialogs.MyDialog;
 
@@ -33,11 +30,11 @@ public class SongsFragment extends HomeBaseFragment implements LoadSongView {
     RecyclerView mRecyclerView;
 
     private SongAdapter songAdapter;
-    private List<Song> songs;
     private LoadSongPresenter presenter;
 
     private View view;
     private SweetAlertDialog dialogLoading;
+    private MainActivity activity;
 
     public static SongsFragment getInstance() {
         if (instance == null) {
@@ -49,6 +46,10 @@ public class SongsFragment extends HomeBaseFragment implements LoadSongView {
             }
         }
         return instance;
+    }
+
+    public void setActivity(MainActivity activity) {
+        this.activity = activity;
     }
 
     @Nullable
@@ -65,8 +66,8 @@ public class SongsFragment extends HomeBaseFragment implements LoadSongView {
 
     @Override
     public void init() {
-        songs = new ArrayList<>();
-        songAdapter = new SongAdapter(getContext());
+        songAdapter = new SongAdapter(this);
+        songAdapter.setPlayingView(activity);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(songAdapter);
 
@@ -88,7 +89,26 @@ public class SongsFragment extends HomeBaseFragment implements LoadSongView {
     }
 
     @Override
-    public void showDialogFail() {
+    public void showDialogLoadFail() {
+        MyDialog.showError(getContext());
+    }
+
+    @Override
+    public void showDialogConfirmDelete(String filePath, int position) {
+        SweetAlertDialog dialog = MyDialog.showConfirm(getContext());
+        dialog.setConfirmClickListener(sweetAlertDialog -> {
+            presenter.deleteSong(filePath, position);
+            dialog.dismiss();
+        }).show();
+    }
+
+    @Override
+    public void showDeleteSuccess() {
+        MyDialog.showSuccess(getContext());
+    }
+
+    @Override
+    public void showDeleteError() {
         MyDialog.showError(getContext());
     }
 }

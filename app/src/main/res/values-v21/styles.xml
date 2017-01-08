@@ -8,11 +8,11 @@
     </style>
 
     <style name="SelectableItemTheme">
-        <item name="colorControlHighlight">@color/ripple_color</item>
+        <item name="colorControlHighlight">@color/ripple_color_light</item>
     </style>
 
 
-    <style name="SelectableItemBackground">
+    <style name="SelectableItemBackgroundLight">
         <item name="android:theme">@style/SelectableItemTheme</item>
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
     </style>

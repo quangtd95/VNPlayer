@@ -51,9 +51,9 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
     static class AlbumHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.tvAlbum)
         TextView tvAlbum;
-        @BindView(R.id.tvArtist)
+        @BindView(R.id.tvBarArtist)
         TextView tvArtist;
-        @BindView(R.id.txtThumb)
+        @BindView(R.id.ivBarThumb)
         ImageView ivThumb;
         @BindView(R.id.btnOption)
         ImageButton btnOption;

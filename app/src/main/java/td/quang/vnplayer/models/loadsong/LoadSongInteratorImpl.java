@@ -1,18 +1,16 @@
 package td.quang.vnplayer.models.loadsong;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import java.util.ArrayList;
 
 import td.quang.vnplayer.App;
 import td.quang.vnplayer.interfaces.loadsong.LoadSongInteractor;
+import td.quang.vnplayer.interfaces.loadsong.listeners.OnDeleteFinishedListener;
 import td.quang.vnplayer.interfaces.loadsong.listeners.OnLoadFinishedListener;
 import td.quang.vnplayer.models.objects.Song;
 
@@ -37,13 +35,6 @@ public class LoadSongInteratorImpl implements LoadSongInteractor {
 
     @Override
     public void loadSong(OnLoadFinishedListener listener) {
-        /*new Thread(() -> {
-            LoadSongInteratorImpl.this.run(listener);
-        }).start();*/
-        LoadSongInteratorImpl.this.run(listener);
-    }
-
-    public void run(OnLoadFinishedListener listener) {
         ArrayList<Song> songs = new ArrayList<>();
         Cursor cursor = mContext.getContentResolver().query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -52,61 +43,36 @@ public class LoadSongInteratorImpl implements LoadSongInteractor {
             songs.add(convert(cursor));
         }
         cursor.close();
-
         if (songs.size() != 0) {
             listener.onLoadSuccess(songs);
         } else {
             listener.onLoadFail();
         }
-
     }
+
+    @Override
+    public void deleteSong(OnDeleteFinishedListener listener, String filePath, int position) {
+        int b = App.getContext().getContentResolver().
+                delete(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                        MediaStore.Audio.Media.DATA + " ='" + filePath + "'", null);
+        App.getContext().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse(filePath)));
+        if (b != 0) {
+            listener.onDeleteSuccess(position);
+        } else listener.onDeleteFail();
+    }
+
 
     private Song convert(Cursor cursor) {
         String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
         String id = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
         String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+        String filePath = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
 
         Song.Builder builder = new Song.Builder()
                 .setTitle(title)
                 .setArtist(artist)
-                .setId(id);
+                .setId(id)
+                .setFilePath(filePath);
         return builder.build();
-    }
-
-    private Bitmap getAlbumCover(String filePath) {
-        try {
-            Uri uri = Uri.parse(filePath);
-            Log.e("TAGG", filePath);
-            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-            byte[] rawArt;
-            Bitmap art = null;
-            BitmapFactory.Options bfo = new BitmapFactory.Options();
-            mmr.setDataSource(mContext, uri);
-            rawArt = mmr.getEmbeddedPicture();
-
-// if rawArt is null then no cover art is embedded in the file or is not
-// recognized as such.
-            if (null != rawArt)
-                art = BitmapFactory.decodeByteArray(rawArt, 0, rawArt.length, bfo);
-
-// Code that uses the cover art retrieved below.
-            return art;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    private int getDuration(String filePath) {
-        try {
-            Uri uri = Uri.parse(filePath);
-            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-            mmr.setDataSource(mContext, uri);
-            String durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-            int millSecond = Integer.parseInt(durationStr);
-            Log.e("TAGG", millSecond + "");
-            return millSecond;
-        } catch (Exception e) {
-            return 0;
-        }
     }
 }

@@ -10,7 +10,10 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 
+import com.hanks.htextview.HTextView;
+
 import butterknife.BindInt;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import td.quang.vnplayer.R;
 import td.quang.vnplayer.views.BaseActivity;
@@ -20,15 +23,17 @@ import td.quang.vnplayer.views.BaseActivity;
  */
 
 public class SplashActivity extends BaseActivity {
-    @BindInt(R.integer.splash_time)
-    int timeSplash;
-    private LinearLayout linearLayout;
-    private Animation animation;
 
+    @BindView(R.id.llLayout) LinearLayout linearLayout;
+    @BindView(R.id.tvSlogan) HTextView tvSlogan;
+    @BindInt(R.integer.splash_time) int timeSplash;
+
+    private Animation animation;
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
         addComponents();
         addAnimations();
@@ -46,9 +51,10 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     public void addComponents() {
-        setContentView(R.layout.activity_splash);
-        linearLayout = (LinearLayout) this.findViewById(R.id.llLayout);
         animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.anim_alpha);
+        tvSlogan.animateText("Quang TD95");
+        tvSlogan.invalidate();
+
 
     }
 }

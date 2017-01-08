@@ -5,7 +5,7 @@
     <string name="action_search">Search</string>
     <string name="slogan">cảm xúc chỉ có thể tốt hơn</string>
     <string name="ic_search">&#xf002;</string>
-    <integer name="splash_time">1000</integer>
+    <integer name="splash_time">2000</integer>
     <string name="ic_play">&#xf01d;</string>
     <string name="ic_pause">&#xf28c;</string>
     <string name="ic_prev">&#xf049;</string>

@@ -10,11 +10,17 @@ import java.util.Random;
 
 public class RandomColor {
     private static int[] colors = new int[]{
-            Color.RED,
-            Color.YELLOW,
-            Color.GREEN,
-            Color.BLUE,
-            Color.GRAY
+            Color.parseColor("#263238"),
+            Color.parseColor("#37474F"),
+            Color.parseColor("#607D8B"),
+            Color.parseColor("#ECEFF1"),
+            Color.parseColor("#CFD8DC"),
+            Color.parseColor("#B0BEC5"),
+            Color.parseColor("#90A4AE"),
+            Color.parseColor("#78909C"),
+            Color.parseColor("#607D8B"),
+            Color.parseColor("#546E7A"),
+            Color.parseColor("#455A64")
     };
 
     public static int getColor() {
