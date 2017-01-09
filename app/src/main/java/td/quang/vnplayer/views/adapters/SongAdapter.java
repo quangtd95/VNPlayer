@@ -13,9 +13,9 @@ import android.widget.TextView;
 import java.util.List;
 
 import td.quang.vnplayer.R;
-import td.quang.vnplayer.interfaces.playoffline.PlayingView;
 import td.quang.vnplayer.models.objects.Song;
 import td.quang.vnplayer.utils.RandomColor;
+import td.quang.vnplayer.views.activities.PlayingView;
 import td.quang.vnplayer.views.fragments.home.SongsFragment;
 
 /**
@@ -27,11 +27,11 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
     private Context mContext;
     private SongsFragment mFragment;
     private PlayingView mPlayingView;
-
     public SongAdapter(SongsFragment songsFragment) {
         mFragment = songsFragment;
         mContext = mFragment.getContext();
     }
+
 
     public void setPlayingView(PlayingView playingView) {
         this.mPlayingView = playingView;
@@ -49,27 +49,23 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
 
     @Override
     public SongHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.item_songs, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.layout_song, parent, false);
         return new SongHolder(view);
     }
 
     @Override
     public void onBindViewHolder(SongHolder holder, int position) {
         Song song = songs.get(position);
-        holder.tvTitle.setText(song.getTitle());
-        holder.tvArtist.setText(song.getArtist());
-        holder.ivThumb.setBackgroundColor(RandomColor.getColor());
-        holder.ivThumb.setText(String.valueOf(song.getTitle().charAt(0)));
-        holder.btnOption.setOnClickListener(v -> {
-            showMenu(v, position);
-        });
-        holder.cardView.setOnLongClickListener(v -> {
-            showMenu(holder.btnOption, position);
+        holder.tvSongTitle.setText(song.getTitle());
+        holder.tvSongArtist.setText(song.getArtist());
+        holder.ivSongThumb.setBackgroundColor(RandomColor.getColor());
+        holder.ivSongThumb.setText(String.valueOf(song.getTitle().charAt(0)));
+        holder.btnSongOption.setOnClickListener(v -> showMenu(v, position));
+        holder.cardViewSong.setOnLongClickListener(v -> {
+            showMenu(holder.btnSongOption, position);
             return false;
         });
-        holder.cardView.setOnClickListener(v -> {
-            mPlayingView.swapPlaying(songs.get(position));
-        });
+        holder.cardViewSong.setOnClickListener(v -> mPlayingView.swapPlaying(songs.get(position)));
     }
 
     private void showMenu(View view, int position) {
@@ -95,19 +91,19 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
     }
 
     static class SongHolder extends RecyclerView.ViewHolder {
-        TextView ivThumb;
-        TextView tvTitle;
-        TextView tvArtist;
-        ImageButton btnOption;
-        CardView cardView;
+        TextView ivSongThumb;
+        TextView tvSongTitle;
+        TextView tvSongArtist;
+        ImageButton btnSongOption;
+        CardView cardViewSong;
 
-        public SongHolder(View itemView) {
+        private SongHolder(View itemView) {
             super(itemView);
-            ivThumb = (TextView) itemView.findViewById(R.id.txtThumb);
-            tvTitle = (TextView) itemView.findViewById(R.id.tvTitle);
-            tvArtist = (TextView) itemView.findViewById(R.id.tvArtist);
-            btnOption = (ImageButton) itemView.findViewById(R.id.btnOption);
-            cardView = (CardView) itemView.findViewById(R.id.cardLayout);
+            ivSongThumb = (TextView) itemView.findViewById(R.id.tvSongThumb);
+            tvSongTitle = (TextView) itemView.findViewById(R.id.tvSongTitle);
+            tvSongArtist = (TextView) itemView.findViewById(R.id.tvSongArtist);
+            btnSongOption = (ImageButton) itemView.findViewById(R.id.btnSongOption);
+            cardViewSong = (CardView) itemView.findViewById(R.id.cardLayoutSong);
         }
     }
 }

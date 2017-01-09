@@ -8,7 +8,7 @@
     </style>
 
     <style name="SelectableItemTheme">
-        <item name="colorControlHighlight">@color/ripple_color_light</item>
+        <item name="colorControlHighlight">@color/colorRippleLight</item>
     </style>
 
 

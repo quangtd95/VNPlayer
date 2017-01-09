@@ -8,6 +8,6 @@
     <color name="primaryPressed">#FF00FF</color>
     <color name="primaryFocused">#FF1234</color>
     <color name="primary">#012345</color>
-    <color name="ripple_color_light">#ffffff</color>
-    <color name="ripple_color_dark">#000000</color>
+    <color name="colorRippleLight">@android:color/white</color>
+    <color name="colorRippleDark">@android:color/black</color>
 </resources>

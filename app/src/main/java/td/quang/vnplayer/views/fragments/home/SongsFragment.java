@@ -11,11 +11,10 @@ import android.view.ViewGroup;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import td.quang.vnplayer.R;
-import td.quang.vnplayer.interfaces.loadsong.LoadSongPresenter;
-import td.quang.vnplayer.interfaces.loadsong.LoadSongView;
-import td.quang.vnplayer.presenters.LoadSongPresenterImpl;
+import td.quang.vnplayer.presenters.loadsong.LoadSongPresenter;
+import td.quang.vnplayer.presenters.loadsong.LoadSongPresenterImpl;
 import td.quang.vnplayer.views.BaseFragment;
-import td.quang.vnplayer.views.activities.MainActivity;
+import td.quang.vnplayer.views.activities.PlayingView;
 import td.quang.vnplayer.views.adapters.SongAdapter;
 import td.quang.vnplayer.views.dialogs.MyDialog;
 
@@ -24,46 +23,37 @@ import td.quang.vnplayer.views.dialogs.MyDialog;
  */
 //@EFragment(R.layout.fragment_list)
 public class SongsFragment extends BaseFragment implements LoadSongView {
-    private static SongsFragment sInstance;
 
     //    @ViewById(R.id.rvList)
-    RecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
 
     private SongAdapter songAdapter;
     private LoadSongPresenter presenter;
-
+    private PlayingView playingView;
     private View view;
     private SweetAlertDialog dialogLoading;
-    private MainActivity activity;
 
-    public static SongsFragment getInstance() {
-        if (sInstance == null) {
-            synchronized (SongsFragment.class) {
-                if (sInstance == null) {
-                    sInstance = new SongsFragment();
-                    sInstance.setName("Song");
-                }
-            }
-        }
-        return sInstance;
+    public SongsFragment() {
+        setName("Song");
     }
 
-    public void setActivity(MainActivity activity) {
-        this.activity = activity;
+    public void setPlayingView(PlayingView playingView) {
+        this.playingView = playingView;
     }
+
 
     @Nullable @Override public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_list, null);
+        view = inflater.inflate(R.layout.fragment_list, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rvList);
         afterView();
         return view;
     }
 
     @Override
-    public void afterView() {
+    protected void afterView() {
         Log.e("TAGG", "afterView Song Fragment");
         songAdapter = new SongAdapter(this);
-        songAdapter.setPlayingView(activity);
+        songAdapter.setPlayingView(playingView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(songAdapter);
         presenter = LoadSongPresenterImpl.getInstance();
@@ -105,8 +95,11 @@ public class SongsFragment extends BaseFragment implements LoadSongView {
     public void showDeleteSuccess() {
         MyDialog.showSuccess(getContext());
     }
+
     @Override
     public void showDeleteError() {
         MyDialog.showError(getContext());
     }
+
+
 }

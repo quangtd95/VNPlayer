@@ -1,11 +1,9 @@
 package td.quang.vnplayer.views.activities;
 
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.os.Build;
-import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -28,10 +26,9 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import td.quang.vnplayer.R;
-import td.quang.vnplayer.interfaces.playoffline.PlayOfflinePresenter;
-import td.quang.vnplayer.interfaces.playoffline.PlayingView;
 import td.quang.vnplayer.models.objects.Song;
-import td.quang.vnplayer.presenters.PlayOfflinePresenterImpl;
+import td.quang.vnplayer.presenters.playoffline.PlayOfflinePresenter;
+import td.quang.vnplayer.presenters.playoffline.PlayOfflinePresenterImpl;
 import td.quang.vnplayer.utils.AudioUtils;
 import td.quang.vnplayer.views.BaseActivity;
 import td.quang.vnplayer.views.BaseFragment;
@@ -45,13 +42,12 @@ import td.quang.vnplayer.views.fragments.playing.PlayingListFragment;
 
 @EActivity(R.layout.activity_main)
 public class MainActivity extends BaseActivity implements OnClickListener, PlayingView {
-    @ViewById(R.id.slidingPanel)
-    SlidingUpPanelLayout slidingPanel;
+    @ViewById(R.id.slidingPanel) SlidingUpPanelLayout slidingPanel;
     @ViewById(R.id.tabLayout) TabLayout mTabLayout;
     @ViewById(R.id.viewPager) ViewPager mViewPager;
     @ViewById(R.id.barPlaying) View barPlaying;
     @ViewById(R.id.heading) View heading;
-    @ViewById(R.id.ivAlbumCover) CircleImageView ivAlbumCover;
+    @ViewById(R.id.ivImageAlbumCover) CircleImageView ivImageAlbumCover;
     @ViewById(R.id.btnSuffer) MyButton btnSuffer;
     @ViewById(R.id.btnRepeat) MyButton btnRepeat;
     @ViewById(R.id.btnPlay) MyButton btnPlay;
@@ -70,7 +66,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
     private boolean mIsPlay = false;
     private boolean mIsSuffer = false;
     private boolean mIsRepeat = false;
-    private List<BaseFragment> fragments;
+    private List<BaseFragment> mFragments;
     private Song currentSong;
     private PlayOfflinePresenter offlinePresenter;
     private PlayingListFragment playingListFragment;
@@ -84,23 +80,19 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
         tvHeadTitle = (TextView) heading.findViewById(R.id.tvHeadTitle);
         tvHeadArtist = (TextView) heading.findViewById(R.id.tvHeadArtist);
 
+        mFragments = new ArrayList<>();
+        SongsFragment songsFragment = new SongsFragment();
+        songsFragment.setPlayingView(this);
+        mFragments.add(songsFragment);
+        mFragments.add(new AlbumsFragment());
+        mFragments.add(new OnlineFragment());
+        mFragments.add(new CloudFragment());
 
-        fragments = new ArrayList<>();
-        SongsFragment songsFragment = SongsFragment.getInstance();
-        songsFragment.setActivity(this);
-        fragments.add(songsFragment);
-        fragments.add(AlbumsFragment.getInstance());
-        fragments.add(OnlineFragment.getInstance());
-        fragments.add(CloudFragment.getInstance());
-
-        mAdapter = new HomeViewPagerAdapter(getSupportFragmentManager(), fragments);
+        mAdapter = new HomeViewPagerAdapter(getSupportFragmentManager(), mFragments);
         mViewPager.setAdapter(mAdapter);
         mTabLayout.setupWithViewPager(mViewPager, true);
         mTabLayout.dispatchSetSelected(true);
 
-        /*
-        setup sliding bar.
-         */
         final TypedArray styledAttributes = this.getTheme().obtainStyledAttributes(
                 new int[]{android.R.attr.actionBarSize});
         int height = (int) styledAttributes.getDimension(0, 0);
@@ -108,8 +100,8 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
 
         slidingPanel.setPanelHeight(height);
         mAnim = AnimationUtils.loadAnimation(this, R.anim.anim_rotate);
-        playingListFragment = PlayingListFragment.getInstance();
-        offlinePresenter = PlayOfflinePresenterImpl.getInstance();
+        playingListFragment = new PlayingListFragment();
+        offlinePresenter = new PlayOfflinePresenterImpl();
         addEvents();
     }
 
@@ -178,7 +170,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void play(Song song) {
-        ivAlbumCover.startAnimation(mAnim);
+        ivImageAlbumCover.startAnimation(mAnim);
         btnPlay.setText(getResources().getString(R.string.ic_pause));
         btnBarPlay.setImageDrawable(getDrawable(R.drawable.ic_pause_circle_outline_white_24dp));
         mIsPlay = true;
@@ -187,7 +179,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void stop(Song song) {
-        ivAlbumCover.clearAnimation();
+        ivImageAlbumCover.clearAnimation();
         btnPlay.setText(getResources().getString(R.string.ic_play));
         btnBarPlay.setImageDrawable(getDrawable(R.drawable.ic_play_circle_outline_white_24dp));
         mIsPlay = false;
@@ -203,10 +195,10 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
         slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
         Bitmap cover = AudioUtils.getAlbumCover(this, song.getFilePath());
         if (cover != null) {
-            ivAlbumCover.setImageBitmap(cover);
+            ivImageAlbumCover.setImageBitmap(cover);
             ivBarThumb.setImageBitmap(cover);
         } else {
-            ivAlbumCover.setImageDrawable(getDrawable(R.drawable.cover_thumbnail));
+            ivImageAlbumCover.setImageDrawable(getDrawable(R.drawable.cover_thumbnail));
             ivBarThumb.setImageDrawable(getDrawable(R.drawable.cover_thumbnail));
         }
 
@@ -221,46 +213,6 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
             slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         } else {
             super.onBackPressed();
-        }
-    }
-
-
-    /**
-     * listener slidingPanel.
-     */
-    static class SlidingPanelListener implements SlidingUpPanelLayout.PanelSlideListener {
-        private View dragView;
-        private Context mContext;
-
-        public SlidingPanelListener(Context mContext, View dragView) {
-            this.mContext = mContext;
-            this.dragView = dragView;
-        }
-
-        @Override
-        public void onPanelSlide(View panel, float slideOffset) {
-        }
-
-        @Override
-        public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
-            if (newState == SlidingUpPanelLayout.PanelState.EXPANDED) {
-                if (dragView.getVisibility() == View.GONE) {
-                    return;
-                }
-                Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.anim_fade_down);
-                dragView.startAnimation(animation);
-                Handler handler = new Handler();
-                handler.postDelayed(() -> dragView.setVisibility(View.GONE), animation.getDuration());
-            }
-            if (newState == SlidingUpPanelLayout.PanelState.COLLAPSED) {
-                if (dragView.getVisibility() == View.VISIBLE) {
-                    return;
-                }
-                dragView.setVisibility(View.VISIBLE);
-                Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.anim_fade_up);
-                dragView.startAnimation(animation);
-
-            }
         }
     }
 

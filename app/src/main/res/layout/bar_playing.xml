@@ -54,7 +54,6 @@
             android:id="@+id/tvBarArtist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tvBarTitle"
             android:maxLines="1"
             android:text="Karik"
             android:textColor="@android:color/white" />

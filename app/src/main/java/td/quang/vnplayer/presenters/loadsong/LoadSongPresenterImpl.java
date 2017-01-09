@@ -1,17 +1,14 @@
-package td.quang.vnplayer.presenters;
+package td.quang.vnplayer.presenters.loadsong;
 
 import android.util.Log;
 
 import java.util.List;
 
-import td.quang.vnplayer.interfaces.loadsong.LoadSongInteractor;
-import td.quang.vnplayer.interfaces.loadsong.LoadSongPresenter;
-import td.quang.vnplayer.interfaces.loadsong.LoadSongView;
-import td.quang.vnplayer.interfaces.loadsong.listeners.OnDeleteFinishedListener;
-import td.quang.vnplayer.interfaces.loadsong.listeners.OnLoadFinishedListener;
+import td.quang.vnplayer.models.loadsong.LoadSongInteractor;
 import td.quang.vnplayer.models.loadsong.LoadSongInteratorImpl;
 import td.quang.vnplayer.models.objects.Song;
 import td.quang.vnplayer.views.adapters.SongAdapter;
+import td.quang.vnplayer.views.fragments.home.LoadSongView;
 
 /**
  * Created by djwag on 1/7/2017.
@@ -25,7 +22,7 @@ public class LoadSongPresenterImpl implements LoadSongPresenter, OnLoadFinishedL
     private LoadSongInteractor mInteractor;
 
     private LoadSongPresenterImpl() {
-        mInteractor = LoadSongInteratorImpl.getInstance();
+        mInteractor = new LoadSongInteratorImpl();
     }
 
     public static synchronized LoadSongPresenter getInstance() {

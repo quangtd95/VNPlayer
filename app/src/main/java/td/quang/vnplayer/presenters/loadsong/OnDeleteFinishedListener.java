@@ -1,4 +1,4 @@
-package td.quang.vnplayer.interfaces.loadsong.listeners;
+package td.quang.vnplayer.presenters.loadsong;
 
 /**
  * Created by djwag on 1/7/2017.
@@ -6,6 +6,5 @@ package td.quang.vnplayer.interfaces.loadsong.listeners;
 
 public interface OnDeleteFinishedListener {
     void onDeleteSuccess(int position);
-
     void onDeleteFail();
 }

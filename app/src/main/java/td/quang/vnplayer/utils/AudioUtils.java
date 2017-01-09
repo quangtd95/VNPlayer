@@ -41,8 +41,7 @@ public class AudioUtils {
             MediaMetadataRetriever mmr = new MediaMetadataRetriever();
             mmr.setDataSource(mContext, uri);
             String durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-            int millSecond = Integer.parseInt(durationStr);
-            return millSecond;
+            return Integer.parseInt(durationStr);
         } catch (Exception e) {
             return 0;
         }

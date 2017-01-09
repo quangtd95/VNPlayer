@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/cardLayout"
+    android:id="@+id/cardLayoutSong"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="2dp"
@@ -13,7 +13,7 @@
         android:layout_height="wrap_content">
 
         <ImageButton
-            android:id="@+id/btnOption"
+            android:id="@+id/btnSongOption"
             style="@style/SelectableItemBackgroundLight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -30,14 +30,14 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="12dp"
             android:layout_marginStart="12dp"
-            android:layout_toEndOf="@+id/txtThumb"
-            android:layout_toLeftOf="@id/btnOption"
-            android:layout_toRightOf="@+id/txtThumb"
-            android:layout_toStartOf="@id/btnOption"
+            android:layout_toEndOf="@+id/tvSongThumb"
+            android:layout_toLeftOf="@id/btnSongOption"
+            android:layout_toRightOf="@+id/tvSongThumb"
+            android:layout_toStartOf="@id/btnSongOption"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tvTitle"
+                android:id="@+id/tvSongTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
@@ -45,17 +45,16 @@
                 android:textStyle="normal|bold" />
 
             <TextView
-                android:id="@+id/tvArtist"
+                android:id="@+id/tvSongArtist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvTitle"
                 android:maxLines="1"
                 android:text="Karik"
                 android:textStyle="normal" />
         </LinearLayout>
 
         <TextView
-            android:id="@+id/txtThumb"
+            android:id="@+id/tvSongThumb"
             android:layout_width="65dp"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"

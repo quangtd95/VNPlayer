@@ -7,9 +7,9 @@ import lombok.Data;
  */
 @Data
 public class Album {
-    private String thumPath;
-    private String album;
-    private String artist;
+    private final String thumPath;
+    private final String album;
+    private final String artist;
 
     public Album(String album, String artist, String thumPath) {
         this.thumPath = thumPath;

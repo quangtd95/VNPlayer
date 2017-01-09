@@ -1,4 +1,4 @@
-package td.quang.vnplayer.interfaces.playoffline;
+package td.quang.vnplayer.presenters.playoffline;
 
 import td.quang.vnplayer.models.objects.Song;
 

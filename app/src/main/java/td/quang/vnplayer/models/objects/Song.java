@@ -21,7 +21,7 @@ public class Song {
 
     }
 
-    public Song(Builder builder) {
+    private Song(Builder builder) {
         id = builder.id;
         artist = builder.artist;
         title = builder.title;

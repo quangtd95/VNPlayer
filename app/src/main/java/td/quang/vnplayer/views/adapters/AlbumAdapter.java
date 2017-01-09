@@ -29,15 +29,15 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
 
     @Override
     public AlbumHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.item_albums, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.layout_album, parent, false);
         return new AlbumHolder(view);
     }
 
     @Override
     public void onBindViewHolder(AlbumHolder holder, int position) {
         Album album = albums.get(position);
-        holder.tvAlbum.setText(album.getAlbum());
-        holder.tvArtist.setText(album.getArtist());
+        holder.tvAlbumTitle.setText(album.getAlbum());
+        holder.tvAlbumArtist.setText(album.getArtist());
 
     }
 
@@ -48,16 +48,17 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder>
 
 
     static class AlbumHolder extends RecyclerView.ViewHolder {
-        TextView tvAlbum;
-        TextView tvArtist;
-        ImageView ivThumb;
-        ImageButton btnOption;
-        public AlbumHolder(View itemView) {
+        TextView tvAlbumTitle;
+        TextView tvAlbumArtist;
+        ImageView ivAlbumThumb;
+        ImageButton btnAlbumOption;
+
+        private AlbumHolder(View itemView) {
             super(itemView);
-            tvAlbum = (TextView) itemView.findViewById(R.id.tvAlbum);
-            tvArtist = (TextView) itemView.findViewById(R.id.tvArtist);
-            ivThumb = (ImageView) itemView.findViewById(R.id.ivThumb);
-            btnOption = (ImageButton) itemView.findViewById(R.id.btnOption);
+            tvAlbumTitle = (TextView) itemView.findViewById(R.id.tvAlbumTitle);
+            tvAlbumArtist = (TextView) itemView.findViewById(R.id.tvAlbumArtist);
+            ivAlbumThumb = (ImageView) itemView.findViewById(R.id.ivAlbumThumb);
+            btnAlbumOption = (ImageButton) itemView.findViewById(R.id.btnAlbumOption);
         }
     }
 }

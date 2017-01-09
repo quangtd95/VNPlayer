@@ -57,13 +57,12 @@ public class MyDialog {
      * @return must declare listener when touch ok
      */
     public static SweetAlertDialog showConfirm(Context mContext) {
-        SweetAlertDialog dialog = new SweetAlertDialog(mContext, SweetAlertDialog.WARNING_TYPE)
+        return new SweetAlertDialog(mContext, SweetAlertDialog.WARNING_TYPE)
                 .setTitleText("Are you sure?")
                 .setContentText("Won't be able to recover this file!")
                 .setCancelText("No,cancel plx!")
                 .setConfirmText("Yes,delete it!")
                 .showCancelButton(true)
                 .setCancelClickListener(sDialog -> sDialog.cancel());
-        return dialog;
     }
 }

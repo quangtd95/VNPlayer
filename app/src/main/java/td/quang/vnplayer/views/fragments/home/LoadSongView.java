@@ -1,4 +1,4 @@
-package td.quang.vnplayer.interfaces.loadsong;
+package td.quang.vnplayer.views.fragments.home;
 
 /**
  * Created by djwag on 1/7/2017.

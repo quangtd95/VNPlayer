@@ -13,7 +13,7 @@ import td.quang.vnplayer.views.BaseFragment;
  */
 
 public class HomeViewPagerAdapter extends FragmentPagerAdapter {
-    List<BaseFragment> fragments;
+    private List<BaseFragment> fragments;
 
     public HomeViewPagerAdapter(FragmentManager fm, List<BaseFragment> fragments) {
         super(fm);

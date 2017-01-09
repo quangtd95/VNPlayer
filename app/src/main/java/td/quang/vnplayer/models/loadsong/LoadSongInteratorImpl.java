@@ -10,28 +10,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import td.quang.vnplayer.App;
-import td.quang.vnplayer.interfaces.loadsong.LoadSongInteractor;
-import td.quang.vnplayer.interfaces.loadsong.listeners.OnDeleteFinishedListener;
-import td.quang.vnplayer.interfaces.loadsong.listeners.OnLoadFinishedListener;
 import td.quang.vnplayer.models.objects.Song;
+import td.quang.vnplayer.presenters.loadsong.OnDeleteFinishedListener;
+import td.quang.vnplayer.presenters.loadsong.OnLoadFinishedListener;
 
 /**
  * Created by djwag on 1/7/2017.
  */
 
 public class LoadSongInteratorImpl implements LoadSongInteractor {
-    private static LoadSongInteratorImpl instance;
     private Context mContext;
 
-    private LoadSongInteratorImpl() {
+    public LoadSongInteratorImpl() {
         mContext = App.getContext();
-    }
-
-    public static synchronized LoadSongInteratorImpl getInstance() {
-        if (instance == null) {
-            instance = new LoadSongInteratorImpl();
-        }
-        return instance;
     }
 
     @Override
@@ -40,6 +31,7 @@ public class LoadSongInteratorImpl implements LoadSongInteractor {
         Cursor cursor = mContext.getContentResolver().query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 null, null, null, String.format("%s %s", MediaStore.Audio.Media.TITLE, "ASC"));
+        assert cursor != null;
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
             songs.add(convert(cursor));
         }
@@ -52,7 +44,7 @@ public class LoadSongInteratorImpl implements LoadSongInteractor {
     }
 
     /**
-     * @param listener
+     * @param listener: listener
      * @param filePath: path of song needing delete
      * @param position: position of song in recycleview , use this to notifydeleteItem
      */

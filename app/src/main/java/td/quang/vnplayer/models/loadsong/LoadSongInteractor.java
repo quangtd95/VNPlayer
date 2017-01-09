@@ -1,7 +1,7 @@
-package td.quang.vnplayer.interfaces.loadsong;
+package td.quang.vnplayer.models.loadsong;
 
-import td.quang.vnplayer.interfaces.loadsong.listeners.OnDeleteFinishedListener;
-import td.quang.vnplayer.interfaces.loadsong.listeners.OnLoadFinishedListener;
+import td.quang.vnplayer.presenters.loadsong.OnDeleteFinishedListener;
+import td.quang.vnplayer.presenters.loadsong.OnLoadFinishedListener;
 
 /**
  * Created by djwag on 1/7/2017.

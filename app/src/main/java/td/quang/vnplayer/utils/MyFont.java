@@ -12,7 +12,6 @@ public class MyFont {
     public static final String FONT_AWESOME = "fontawesome-webfont.ttf";
 
     public static Typeface getFont(Context context, View view, String fontName) {
-        Typeface typeface = Typeface.createFromAsset(context.getAssets(), "fonts/" + fontName);
-        return typeface;
+        return Typeface.createFromAsset(context.getAssets(), "fonts/" + fontName);
     }
 }

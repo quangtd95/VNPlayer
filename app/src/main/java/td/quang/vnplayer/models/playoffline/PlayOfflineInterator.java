@@ -1,4 +1,4 @@
-package td.quang.vnplayer.interfaces.playoffline;
+package td.quang.vnplayer.models.playoffline;
 
 /**
  * Created by djwag on 1/8/2017.

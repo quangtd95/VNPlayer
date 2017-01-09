@@ -18,19 +18,12 @@ import td.quang.vnplayer.views.adapters.SongAdapter;
  */
 @EFragment(R.layout.fragment_list)
 public class PlayingListFragment extends BaseFragment {
-    private static PlayingListFragment instance;
     @ViewById(R.id.rvList)
     RecyclerView mRecyclerView;
     private View view;
     private List<Song> songs;
     private SongAdapter songAdapter;
 
-    public static PlayingListFragment getInstance() {
-        if (instance == null) {
-            instance = new PlayingListFragment();
-        }
-        return instance;
-    }
 
     @Override
     protected void afterView() {
