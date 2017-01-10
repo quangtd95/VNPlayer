@@ -65,7 +65,10 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
             showMenu(holder.btnSongOption, position);
             return false;
         });
-        holder.cardViewSong.setOnClickListener(v -> mPlayingView.swapPlaying(songs.get(position)));
+        holder.cardViewSong.setOnClickListener(v -> {
+            mPlayingView.swapPlaying(songs.get(position));
+            mPlayingView.setCurrentSong(songs.get(position));
+        });
     }
 
     private void showMenu(View view, int position) {

@@ -1,5 +1,7 @@
 package td.quang.vnplayer.presenters.playoffline;
 
+import android.content.Context;
+
 import td.quang.vnplayer.models.objects.Song;
 
 /**
@@ -7,9 +9,14 @@ import td.quang.vnplayer.models.objects.Song;
  */
 
 public interface PlayOfflinePresenter {
-    void play(Song song);
 
-    void stop(Song song);
+    void play(Context context, Song song);
+
+    void stop(Context context);
+
+    void pause(Context context);
+
+    void resume(Context context);
 
     void addQueue(Song song);
 

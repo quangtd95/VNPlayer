@@ -9,6 +9,9 @@ import td.quang.vnplayer.models.objects.Song;
 public interface PlayingView {
     void swapPlaying(Song song);
     void play(Song song);
-    void stop(Song song);
+
+    void resume();
+
+    void pause();
     void setCurrentSong(Song song);
 }

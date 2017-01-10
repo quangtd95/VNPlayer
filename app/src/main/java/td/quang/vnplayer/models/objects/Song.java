@@ -1,6 +1,9 @@
 package td.quang.vnplayer.models.objects;
 
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import lombok.Data;
 
@@ -8,7 +11,18 @@ import lombok.Data;
  * Created by djwag on 1/4/2017.
  */
 @Data
-public class Song {
+public class Song implements Parcelable {
+    public static final Creator<Song> CREATOR = new Creator<Song>() {
+        @Override
+        public Song createFromParcel(Parcel in) {
+            return new Song(in);
+        }
+
+        @Override
+        public Song[] newArray(int size) {
+            return new Song[size];
+        }
+    };
     private String id;
     private String artist;
     private String title;
@@ -30,6 +44,34 @@ public class Song {
         duration = builder.duration;
         albumCover = builder.albumCover;
 
+    }
+
+    protected Song(Parcel in) {
+        id = in.readString();
+        artist = in.readString();
+        title = in.readString();
+        album = in.readString();
+        filePath = in.readString();
+        albumCover = in.readParcelable(Bitmap.class.getClassLoader());
+        duration = in.readInt();
+    }
+
+    public Uri getSource() {
+        return Uri.parse(filePath);
+    }
+
+    @Override public int describeContents() {
+        return 0;
+    }
+
+    @Override public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(artist);
+        dest.writeString(title);
+        dest.writeString(album);
+        dest.writeString(filePath);
+        dest.writeParcelable(albumCover, flags);
+        dest.writeInt(duration);
     }
 
     public static class Builder {

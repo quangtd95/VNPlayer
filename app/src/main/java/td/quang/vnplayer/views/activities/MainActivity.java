@@ -1,6 +1,7 @@
 package td.quang.vnplayer.views.activities;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.os.Build;
@@ -29,6 +30,7 @@ import td.quang.vnplayer.R;
 import td.quang.vnplayer.models.objects.Song;
 import td.quang.vnplayer.presenters.playoffline.PlayOfflinePresenter;
 import td.quang.vnplayer.presenters.playoffline.PlayOfflinePresenterImpl;
+import td.quang.vnplayer.services.MusicServiceImpl;
 import td.quang.vnplayer.utils.AudioUtils;
 import td.quang.vnplayer.views.BaseActivity;
 import td.quang.vnplayer.views.BaseFragment;
@@ -42,17 +44,28 @@ import td.quang.vnplayer.views.fragments.playing.PlayingListFragment;
 
 @EActivity(R.layout.activity_main)
 public class MainActivity extends BaseActivity implements OnClickListener, PlayingView {
-    @ViewById(R.id.slidingPanel) SlidingUpPanelLayout slidingPanel;
-    @ViewById(R.id.tabLayout) TabLayout mTabLayout;
-    @ViewById(R.id.viewPager) ViewPager mViewPager;
-    @ViewById(R.id.barPlaying) View barPlaying;
-    @ViewById(R.id.heading) View heading;
-    @ViewById(R.id.ivImageAlbumCover) CircleImageView ivImageAlbumCover;
-    @ViewById(R.id.btnSuffer) MyButton btnSuffer;
-    @ViewById(R.id.btnRepeat) MyButton btnRepeat;
-    @ViewById(R.id.btnPlay) MyButton btnPlay;
-    @ViewById(R.id.btnHome) MyButton btnHome;
-    @ViewById(R.id.btnList) MyButton btnList;
+    @ViewById(R.id.slidingPanel)
+    SlidingUpPanelLayout slidingPanel;
+    @ViewById(R.id.tabLayout)
+    TabLayout mTabLayout;
+    @ViewById(R.id.viewPager)
+    ViewPager mViewPager;
+    @ViewById(R.id.barPlaying)
+    View barPlaying;
+    @ViewById(R.id.heading)
+    View heading;
+    @ViewById(R.id.ivImageAlbumCover)
+    CircleImageView ivImageAlbumCover;
+    @ViewById(R.id.btnSuffer)
+    MyButton btnSuffer;
+    @ViewById(R.id.btnRepeat)
+    MyButton btnRepeat;
+    @ViewById(R.id.btnPlay)
+    MyButton btnPlay;
+    @ViewById(R.id.btnHome)
+    MyButton btnHome;
+    @ViewById(R.id.btnList)
+    MyButton btnList;
 
     TextView tvBarTitle;
     TextView tvHeadTitle;
@@ -66,9 +79,10 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
     private boolean mIsPlay = false;
     private boolean mIsSuffer = false;
     private boolean mIsRepeat = false;
+    private boolean mIsPause = false;
     private List<BaseFragment> mFragments;
     private Song currentSong;
-    private PlayOfflinePresenter offlinePresenter;
+    private PlayOfflinePresenter playOfflinePresenter;
     private PlayingListFragment playingListFragment;
 
     @Override
@@ -100,8 +114,11 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
 
         slidingPanel.setPanelHeight(height);
         mAnim = AnimationUtils.loadAnimation(this, R.anim.anim_rotate);
+
         playingListFragment = new PlayingListFragment();
-        offlinePresenter = new PlayOfflinePresenterImpl();
+        playOfflinePresenter = new PlayOfflinePresenterImpl();
+
+        startService(new Intent(MainActivity.this, MusicServiceImpl.class));
         addEvents();
     }
 
@@ -120,10 +137,15 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
         if (v.getId() == btnPlay.getId() || v.getId() == btnBarPlay.getId()) {
             if (!mIsPlay) {
                 play(currentSong);
-                offlinePresenter.play(currentSong);
+                if (mIsPause) {
+                    playOfflinePresenter.resume(this);
+                } else {
+                    playOfflinePresenter.play(this, currentSong);
+                }
             } else {
-                stop(currentSong);
-                offlinePresenter.stop(currentSong);
+                pause();
+                playOfflinePresenter.pause(this);
+
             }
         }
 
@@ -174,16 +196,23 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
         btnPlay.setText(getResources().getString(R.string.ic_pause));
         btnBarPlay.setImageDrawable(getDrawable(R.drawable.ic_pause_circle_outline_white_24dp));
         mIsPlay = true;
+
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
-    public void stop(Song song) {
+    public void pause() {
         ivImageAlbumCover.clearAnimation();
         btnPlay.setText(getResources().getString(R.string.ic_play));
         btnBarPlay.setImageDrawable(getDrawable(R.drawable.ic_play_circle_outline_white_24dp));
         mIsPlay = false;
+        mIsPause = true;
     }
+
+    @Override public void resume() {
+
+    }
+
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
