@@ -1,6 +1,6 @@
 package td.quang.vnplayer.presenters.loadsong;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import td.quang.vnplayer.models.objects.Song;
 
@@ -11,5 +11,5 @@ import td.quang.vnplayer.models.objects.Song;
 public interface OnLoadFinishedListener {
     void onLoadFail();
 
-    void onLoadSuccess(List<Song> songs);
+    void onLoadSuccess(ArrayList<Song> songs);
 }

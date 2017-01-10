@@ -24,14 +24,6 @@ public class PlayOfflinePresenterImpl implements PlayOfflinePresenter {
         Log.e("TAGG", "play presenter");
     }
 
-    @Override public void stop(Context context) {
-        Intent intent = new Intent();
-        intent.setAction(ControlMusicBroadcast.ACTION_STOP);
-        context.sendBroadcast(intent);
-        Log.e("TAGG", "stop presenter");
-
-    }
-
     @Override public void pause(Context context) {
         Intent intent = new Intent();
         intent.setAction(ControlMusicBroadcast.ACTION_PAUSE);
@@ -46,11 +38,12 @@ public class PlayOfflinePresenterImpl implements PlayOfflinePresenter {
         Log.e("TAGG", "resume presenter");
     }
 
-    @Override public void addQueue(Song song) {
+    @Override public void next() {
 
     }
 
-    @Override public void removeQueue(Song song) {
+    @Override public void prev() {
 
     }
+
 }

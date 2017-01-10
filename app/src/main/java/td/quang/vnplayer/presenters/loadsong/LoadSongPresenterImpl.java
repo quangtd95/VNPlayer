@@ -2,7 +2,7 @@ package td.quang.vnplayer.presenters.loadsong;
 
 import android.util.Log;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import td.quang.vnplayer.models.loadsong.LoadSongInteractor;
 import td.quang.vnplayer.models.loadsong.LoadSongInteratorImpl;
@@ -57,10 +57,10 @@ public class LoadSongPresenterImpl implements LoadSongPresenter, OnLoadFinishedL
     }
 
     @Override
-    public void onLoadSuccess(List<Song> songs) {
+    public void onLoadSuccess(ArrayList<Song> songs) {
         mView.hideLoading();
         mAdapter.setData(songs);
-        mAdapter.notifyDataSetChanged();
+        mAdapter.notifyData();
     }
 
     @Override

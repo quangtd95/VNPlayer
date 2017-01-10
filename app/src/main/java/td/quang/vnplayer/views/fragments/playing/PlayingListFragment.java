@@ -11,7 +11,7 @@ import java.util.List;
 import td.quang.vnplayer.R;
 import td.quang.vnplayer.models.objects.Song;
 import td.quang.vnplayer.views.BaseFragment;
-import td.quang.vnplayer.views.adapters.SongAdapter;
+import td.quang.vnplayer.views.adapters.SongAdapterImpl;
 
 /**
  * Created by Quang_TD on 12/31/2016.
@@ -22,7 +22,7 @@ public class PlayingListFragment extends BaseFragment {
     RecyclerView mRecyclerView;
     private View view;
     private List<Song> songs;
-    private SongAdapter songAdapter;
+    private SongAdapterImpl songAdapter;
 
 
     @Override

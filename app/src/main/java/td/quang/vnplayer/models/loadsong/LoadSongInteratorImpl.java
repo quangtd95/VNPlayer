@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.provider.MediaStore;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import td.quang.vnplayer.App;
 import td.quang.vnplayer.models.objects.Song;
@@ -27,7 +26,7 @@ public class LoadSongInteratorImpl implements LoadSongInteractor {
 
     @Override
     public void loadSong(OnLoadFinishedListener listener) {
-        List<Song> songs = new ArrayList<>();
+        ArrayList<Song> songs = new ArrayList<>();
         Cursor cursor = mContext.getContentResolver().query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 null, null, null, String.format("%s %s", MediaStore.Audio.Media.TITLE, "ASC"));

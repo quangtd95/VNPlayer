@@ -1,16 +1,13 @@
 package td.quang.vnplayer.views.activities;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
@@ -19,6 +16,7 @@ import android.widget.TextView;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
@@ -35,7 +33,9 @@ import td.quang.vnplayer.utils.AudioUtils;
 import td.quang.vnplayer.views.BaseActivity;
 import td.quang.vnplayer.views.BaseFragment;
 import td.quang.vnplayer.views.adapters.HomeViewPagerAdapter;
+import td.quang.vnplayer.views.adapters.SongAdapter;
 import td.quang.vnplayer.views.customviews.MyButton;
+import td.quang.vnplayer.views.dialogs.MyToast;
 import td.quang.vnplayer.views.fragments.home.AlbumsFragment;
 import td.quang.vnplayer.views.fragments.home.CloudFragment;
 import td.quang.vnplayer.views.fragments.home.OnlineFragment;
@@ -43,7 +43,7 @@ import td.quang.vnplayer.views.fragments.home.SongsFragment;
 import td.quang.vnplayer.views.fragments.playing.PlayingListFragment;
 
 @EActivity(R.layout.activity_main)
-public class MainActivity extends BaseActivity implements OnClickListener, PlayingView {
+public class MainActivity extends BaseActivity implements PlayingView {
     @ViewById(R.id.slidingPanel)
     SlidingUpPanelLayout slidingPanel;
     @ViewById(R.id.tabLayout)
@@ -66,6 +66,10 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
     MyButton btnHome;
     @ViewById(R.id.btnList)
     MyButton btnList;
+    @ViewById(R.id.btnNext)
+    MyButton btnNext;
+    @ViewById(R.id.btnPrev)
+    MyButton btnPrev;
 
     TextView tvBarTitle;
     TextView tvHeadTitle;
@@ -75,15 +79,19 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
     ImageView ivBarThumb;
 
     private HomeViewPagerAdapter mAdapter;
+    private SongAdapter songAdapter;
     private Animation mAnim;
-    private boolean mIsPlay = false;
     private boolean mIsSuffer = false;
     private boolean mIsRepeat = false;
     private boolean mIsPause = false;
     private List<BaseFragment> mFragments;
-    private Song currentSong;
     private PlayOfflinePresenter playOfflinePresenter;
     private PlayingListFragment playingListFragment;
+
+    private Song mNextSong;
+    private Song mCurrentSong;
+    private Song mPrevSong;
+
 
     @Override
     protected void afterView() {
@@ -113,55 +121,146 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
         styledAttributes.recycle();
 
         slidingPanel.setPanelHeight(height);
+        slidingPanel.addPanelSlideListener(new SlidingPanelListener(this, barPlaying));
+
         mAnim = AnimationUtils.loadAnimation(this, R.anim.anim_rotate);
 
         playingListFragment = new PlayingListFragment();
         playOfflinePresenter = new PlayOfflinePresenterImpl();
 
         startService(new Intent(MainActivity.this, MusicServiceImpl.class));
-        addEvents();
+
     }
 
-    private void addEvents() {
-        slidingPanel.addPanelSlideListener(new SlidingPanelListener(this, barPlaying));
-        btnSuffer.setOnClickListener(this);
-        btnRepeat.setOnClickListener(this);
-        btnPlay.setOnClickListener(this);
-        btnHome.setOnClickListener(this);
-        btnList.setOnClickListener(this);
-        btnBarPlay.setOnClickListener(this);
+
+    @Click
+    public void btnPlayClicked() {
+        if (mIsPause) {
+            resume();
+        } else {
+            pause();
+        }
+    }
+
+    @Click
+    public void btnBarPlayClicked() {
+        if (mIsPause) {
+            resume();
+        } else {
+            pause();
+        }
+    }
+
+    @Click
+    public void btnNextClicked() {
+        next();
+    }
+
+    @Click
+    public void btnPrevClicked() {
+        prev();
+    }
+
+    @Click
+    public void btnHomeClicked() {
+        slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+    }
+
+    @Click
+    public void btnSufferClicked() {
+        sufferEvent();
+    }
+
+    @Click
+    public void btnRepeatClicked() {
+        repeatEvent();
     }
 
     @Override
-    public void onClick(View v) {
-        if (v.getId() == btnPlay.getId() || v.getId() == btnBarPlay.getId()) {
-            if (!mIsPlay) {
-                play(currentSong);
-                if (mIsPause) {
-                    playOfflinePresenter.resume(this);
-                } else {
-                    playOfflinePresenter.play(this, currentSong);
-                }
-            } else {
-                pause();
-                playOfflinePresenter.pause(this);
+    public void play(Song song) {
+        mCurrentSong = song;
+        mNextSong = songAdapter.getNextSong();
+        mPrevSong = songAdapter.getPrevSong();
 
-            }
+        ivImageAlbumCover.startAnimation(mAnim);
+        btnPlay.setText(getResources().getString(R.string.ic_pause));
+        btnBarPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_24dp));
+        playOfflinePresenter.play(this, song);
+
+    }
+
+    @Override public void setCurrentSong(Song song) {
+        mCurrentSong = song;
+    }
+
+    @Override public void setNextSong(Song song) {
+        mNextSong = song;
+    }
+
+    @Override public void setPrevSong(Song song) {
+        mPrevSong = song;
+    }
+
+
+    @Override
+    public void pause() {
+        ivImageAlbumCover.clearAnimation();
+        btnPlay.setText(getResources().getString(R.string.ic_play));
+        btnBarPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_circle_outline_white_24dp));
+        mIsPause = true;
+        playOfflinePresenter.pause(this);
+    }
+
+    @Override
+    public void resume() {
+        ivImageAlbumCover.startAnimation(mAnim);
+        btnPlay.setText(getResources().getString(R.string.ic_pause));
+        btnBarPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_24dp));
+        mIsPause = false;
+        playOfflinePresenter.resume(this);
+    }
+
+    @Override public void next() {
+        play(songAdapter.getNextSong());
+        swapPlaying(songAdapter.getNextSong());
+        songAdapter.nextSong();
+
+
+    }
+
+    @Override public void prev() {
+        play(songAdapter.getPrevSong());
+        swapPlaying(songAdapter.getPrevSong());
+        songAdapter.prevSong();
+    }
+
+
+    @Override
+    public void swapPlaying(Song song) {
+        tvBarTitle.setText(song.getTitle());
+        tvBarArtist.setText(song.getArtist());
+        tvHeadTitle.setText(song.getTitle());
+        tvHeadArtist.setText(song.getArtist());
+        slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+        Bitmap cover = AudioUtils.getAlbumCover(this, song.getFilePath());
+
+        if (cover != null) {
+            ivImageAlbumCover.setImageBitmap(cover);
+            ivBarThumb.setImageBitmap(cover);
+        } else {
+            ivImageAlbumCover.setImageDrawable(getResources().getDrawable(R.drawable.cover_thumbnail));
+            ivBarThumb.setImageDrawable(getResources().getDrawable(R.drawable.cover_thumbnail));
         }
 
-        if (v.getId() == btnSuffer.getId()) {
-            sufferEvent();
-        }
-        if (v.getId() == btnRepeat.getId()) {
-            repeatEvent();
-        }
-        if (v.getId() == btnHome.getId()) {
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (slidingPanel.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
             slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+        } else {
+            super.onBackPressed();
         }
-        if (v.getId() == btnList.getId()) {
-            swapFragments();
-        }
-
     }
 
     private void swapFragments() {
@@ -183,68 +282,17 @@ public class MainActivity extends BaseActivity implements OnClickListener, Playi
     private void sufferEvent() {
         if (mIsSuffer) {
             btnSuffer.setTextColor(getResources().getColor(R.color.colorAccentDark));
+            MyToast.show(btnSuffer, "tắt trộn bài");
         } else {
             btnSuffer.setTextColor(getResources().getColor(R.color.colorAccent));
+            MyToast.show(btnSuffer, "bật trộn bài");
         }
         mIsSuffer = !mIsSuffer;
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    @Override
-    public void play(Song song) {
-        ivImageAlbumCover.startAnimation(mAnim);
-        btnPlay.setText(getResources().getString(R.string.ic_pause));
-        btnBarPlay.setImageDrawable(getDrawable(R.drawable.ic_pause_circle_outline_white_24dp));
-        mIsPlay = true;
-
+    public void setSongAdapter(SongAdapter songAdapter) {
+        this.songAdapter = songAdapter;
     }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    @Override
-    public void pause() {
-        ivImageAlbumCover.clearAnimation();
-        btnPlay.setText(getResources().getString(R.string.ic_play));
-        btnBarPlay.setImageDrawable(getDrawable(R.drawable.ic_play_circle_outline_white_24dp));
-        mIsPlay = false;
-        mIsPause = true;
-    }
-
-    @Override public void resume() {
-
-    }
-
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    @Override
-    public void swapPlaying(Song song) {
-        tvBarTitle.setText(song.getTitle());
-        tvBarArtist.setText(song.getArtist());
-        tvHeadTitle.setText(song.getTitle());
-        tvHeadArtist.setText(song.getArtist());
-        slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
-        Bitmap cover = AudioUtils.getAlbumCover(this, song.getFilePath());
-        if (cover != null) {
-            ivImageAlbumCover.setImageBitmap(cover);
-            ivBarThumb.setImageBitmap(cover);
-        } else {
-            ivImageAlbumCover.setImageDrawable(getDrawable(R.drawable.cover_thumbnail));
-            ivBarThumb.setImageDrawable(getDrawable(R.drawable.cover_thumbnail));
-        }
-
-    }
-
-    @Override public void setCurrentSong(Song song) {
-        this.currentSong = song;
-    }
-
-    @Override public void onBackPressed() {
-        if (slidingPanel.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
-            slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
 }
 
 

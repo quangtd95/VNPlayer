@@ -22,8 +22,8 @@ import td.quang.vnplayer.models.objects.Song;
 public class MusicServiceImpl extends Service implements MusicService, MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener {
     private ControlMusicBroadcast controlMusicBroadcast;
     private MediaPlayer mMediaPlayer;
-    private Song mCurrentSong;
     private boolean mIsPlaying;
+
 
     @Override
     public void onCreate() {
@@ -45,6 +45,8 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
 
     @Override
     public void play(Song song) {
+
+
         Log.e("TAGG", "Play service");
         if (mMediaPlayer == null) {
             mMediaPlayer = new MediaPlayer();
@@ -55,10 +57,9 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
         }
 
         try {
-            mCurrentSong = song;
-            if (mCurrentSong == null) Log.e("TAGG", "song null");
-            Log.e("TAGG", String.valueOf(mCurrentSong.getFilePath()));
-            mMediaPlayer.setDataSource(getApplicationContext(), mCurrentSong.getSource());
+            if (song == null) Log.e("TAGG", "song null");
+            Log.e("TAGG", String.valueOf(song.getFilePath()));
+            mMediaPlayer.setDataSource(getApplicationContext(), song.getSource());
             mMediaPlayer.prepareAsync();
         } catch (IOException e) {
             e.printStackTrace();

@@ -12,10 +12,12 @@ import td.quang.vnplayer.services.MusicService;
  * Created by djwag on 1/9/2017.
  */
 public class ControlMusicBroadcast extends BroadcastReceiver {
-    public static final String ACTION_PLAY = "PLAY";
-    public static final String ACTION_STOP = "STOP";
-    public static final String ACTION_RESUME = "RESUME";
-    public static final String ACTION_PAUSE = "PAUSE";
+    public static final String ACTION_PLAY = "TD.QUANG.VNPLAYER.PLAY";
+    public static final String ACTION_STOP = "TD.QUANG.VNPLAYER.STOP";
+    public static final String ACTION_RESUME = "TD.QUANG.VNPLAYER.RESUME";
+    public static final String ACTION_PAUSE = "TD.QUANG.VNPLAYER.PAUSE";
+    public static final String ACTION_NEXT = "TD.QUANG.VNPLAYER.NEXT";
+    public static final String ACTION_PREV = "TD.QUANG.VNPLAYER.PREV";
     private MusicService musicService;
 
     public void setMusicService(MusicService musicService) {
@@ -38,6 +40,12 @@ public class ControlMusicBroadcast extends BroadcastReceiver {
         if (action.equalsIgnoreCase(ACTION_PAUSE)) {
             onPauseAction(intent);
         }
+        if (action.equalsIgnoreCase(ACTION_NEXT)) {
+
+        }
+        if (action.equalsIgnoreCase(ACTION_PREV)) {
+
+        }
     }
 
     private void onPauseAction(Intent intent) {
@@ -51,6 +59,7 @@ public class ControlMusicBroadcast extends BroadcastReceiver {
 
     private void onPlayAction(Intent intent) {
         Song song = intent.getExtras().getParcelable("data");
+        Log.e("TAGG", "BroadCast + " + song.getTitle());
         musicService.play(song);
 
     }

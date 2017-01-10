@@ -15,19 +15,18 @@ import td.quang.vnplayer.presenters.loadsong.LoadSongPresenter;
 import td.quang.vnplayer.presenters.loadsong.LoadSongPresenterImpl;
 import td.quang.vnplayer.views.BaseFragment;
 import td.quang.vnplayer.views.activities.PlayingView;
-import td.quang.vnplayer.views.adapters.SongAdapter;
+import td.quang.vnplayer.views.adapters.SongAdapterImpl;
 import td.quang.vnplayer.views.dialogs.MyDialog;
 
 /**
  * Created by Quang_TD on 12/28/2016.
  */
-//@EFragment(R.layout.fragment_list)
+
 public class SongsFragment extends BaseFragment implements LoadSongView {
 
-    //    @ViewById(R.id.rvList)
     private RecyclerView mRecyclerView;
 
-    private SongAdapter songAdapter;
+    private SongAdapterImpl songAdapter;
     private LoadSongPresenter presenter;
     private PlayingView playingView;
     private View view;
@@ -52,8 +51,9 @@ public class SongsFragment extends BaseFragment implements LoadSongView {
     @Override
     protected void afterView() {
         Log.e("TAGG", "afterView Song Fragment");
-        songAdapter = new SongAdapter(this);
+        songAdapter = new SongAdapterImpl(this);
         songAdapter.setPlayingView(playingView);
+        playingView.setSongAdapter(songAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(songAdapter);
         presenter = LoadSongPresenterImpl.getInstance();

@@ -12,13 +12,12 @@ public interface PlayOfflinePresenter {
 
     void play(Context context, Song song);
 
-    void stop(Context context);
-
     void pause(Context context);
 
     void resume(Context context);
 
-    void addQueue(Song song);
+    void next();
 
-    void removeQueue(Song song);
+    void prev();
+
 }
