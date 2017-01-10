@@ -115,13 +115,17 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
 
         popupMenu.setOnMenuItemClickListener(item -> {
             if (item.getItemId() == R.id.delete) {
-                mFragment.showDialogConfirmDelete(song.getFilePath(), position);
+                deleteSong(song, position);
             }
             if (item.getItemId() == R.id.play) {
                 playSongOnClick(position);
             }
             return false;
         });
+    }
+
+    @Override public void deleteSong(Song song, int position) {
+        mFragment.showDialogConfirmDelete(song.getFilePath(), position);
     }
 
     @Override

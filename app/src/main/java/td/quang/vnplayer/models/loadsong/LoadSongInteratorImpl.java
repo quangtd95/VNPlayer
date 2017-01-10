@@ -51,7 +51,7 @@ public class LoadSongInteratorImpl implements LoadSongInteractor {
     public void deleteSong(OnDeleteFinishedListener listener, String filePath, int position) {
         int b = App.getContext().getContentResolver().
                 delete(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                        String.format("%s%s %s%s", MediaStore.Audio.Media.DATA, " ='", filePath, "'"), null);
+                        MediaStore.Audio.Media.DATA + " ='" + filePath + "'", null);
         App.getContext().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse(filePath)));
         if (b != 0) {
             listener.onDeleteSuccess(position);

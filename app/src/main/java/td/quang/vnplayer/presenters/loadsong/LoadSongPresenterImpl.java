@@ -47,6 +47,7 @@ public class LoadSongPresenterImpl implements LoadSongPresenter, OnLoadFinishedL
 
     @Override
     public void deleteSong(String filePath, int position) {
+        Log.e("TAGG", "delete song presenter");
         mInteractor.deleteSong(this, filePath, position);
     }
 

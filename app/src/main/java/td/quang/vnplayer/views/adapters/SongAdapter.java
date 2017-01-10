@@ -28,5 +28,5 @@ public interface SongAdapter {
 
     void prevSong();
 
-
+    void deleteSong(Song song, int position);
 }
