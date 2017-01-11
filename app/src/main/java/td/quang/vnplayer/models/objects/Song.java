@@ -112,7 +112,7 @@ public class Song implements Parcelable {
         }
 
         public Builder setFilePath(String filePath) {
-            this.filePath = filePath;
+            this.filePath = Uri.encode(filePath);
             return this;
         }
 

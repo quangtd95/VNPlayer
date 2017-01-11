@@ -17,4 +17,6 @@ public interface MusicService {
 
     void seek(int position);
 
+    void setRepeat(boolean b);
+
 }

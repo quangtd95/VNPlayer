@@ -21,11 +21,13 @@ public interface PlayOfflinePresenter {
 
     void prev();
 
+    void setRepeat(Context context, boolean b);
+
     void seekTo(Context context, int position);
 
     void onReceiveTimeValue(int duration, int visible);
 
-    void registerBroadcast();
+    void registerBroadcast(Context context);
 
     void setSongAdapter(SongAdapter songAdapter);
 

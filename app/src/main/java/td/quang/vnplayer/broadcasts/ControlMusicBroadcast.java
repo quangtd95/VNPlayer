@@ -16,9 +16,8 @@ public class ControlMusicBroadcast extends BroadcastReceiver {
     public static final String ACTION_STOP = "TD.QUANG.VNPLAYER.STOP";
     public static final String ACTION_RESUME = "TD.QUANG.VNPLAYER.RESUME";
     public static final String ACTION_PAUSE = "TD.QUANG.VNPLAYER.PAUSE";
-    public static final String ACTION_NEXT = "TD.QUANG.VNPLAYER.NEXT";
-    public static final String ACTION_PREV = "TD.QUANG.VNPLAYER.PREV";
     public static final String ACTION_SEEK = "TD.QUANG.VNPLAYER.SEEK";
+    public static final String ACTION_REPEAT = "TD.QUANG.VNPLAYER.REPEAT";
 
     private MusicService musicService;
 
@@ -42,15 +41,17 @@ public class ControlMusicBroadcast extends BroadcastReceiver {
         if (action.equalsIgnoreCase(ACTION_PAUSE)) {
             onPauseAction(intent);
         }
-        if (action.equalsIgnoreCase(ACTION_NEXT)) {
-
-        }
-        if (action.equalsIgnoreCase(ACTION_PREV)) {
-
-        }
         if (action.equalsIgnoreCase(ACTION_SEEK)) {
             onSeekAction(intent);
         }
+        if (action.equalsIgnoreCase(ACTION_REPEAT)) {
+            onRepeatAction(intent);
+        }
+    }
+
+    private void onRepeatAction(Intent intent) {
+        boolean b = intent.getBooleanExtra("repeat", false);
+        musicService.setRepeat(b);
     }
 
     private void onSeekAction(Intent intent) {

@@ -27,6 +27,7 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
     private boolean mIsPlaying;
     private Thread threadUpdateSeekbar;
     private int currentPosition;
+    private boolean mIsRepeat;
     private boolean b;
 
 
@@ -41,6 +42,7 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
         filter.addAction(ControlMusicBroadcast.ACTION_PAUSE);
         filter.addAction(ControlMusicBroadcast.ACTION_RESUME);
         filter.addAction(ControlMusicBroadcast.ACTION_SEEK);
+        filter.addAction(ControlMusicBroadcast.ACTION_REPEAT);
         registerReceiver(controlMusicBroadcast, filter);
     }
 
@@ -103,11 +105,22 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
 
     }
 
-    @Override public void onCompletion(MediaPlayer mp) {
-        Log.e("TAGG", "onCompletion");
-        Intent intent = new Intent();
-        intent.setAction(UpdateUIBroadcast.ACTION_COMPLETE);
-        sendBroadcast(intent);
+    @Override
+    public void setRepeat(boolean b) {
+        mIsRepeat = b;
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        if (mIsRepeat) {
+            mp.seekTo(0);
+            mp.start();
+        } else {
+            Intent intent = new Intent();
+            intent.setAction(UpdateUIBroadcast.ACTION_COMPLETE);
+            sendBroadcast(intent);
+        }
+
     }
 
     @Override

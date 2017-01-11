@@ -7,6 +7,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -113,9 +114,9 @@ public class MainActivity extends BaseActivity implements IMainView {
         mAnim = AnimationUtils.loadAnimation(this, R.anim.anim_rotate);
 
         playingListFragment = new PlayingListFragment();
-        mPresenter = new PlayOfflinePresenterImpl(this, this);
+        mPresenter = new PlayOfflinePresenterImpl(this);
         seekBarTime.setOnSeekBarChangeListener(new SeekBarChangeListener(this, mPresenter));
-        mPresenter.registerBroadcast();
+        mPresenter.registerBroadcast(this);
         startService(new Intent(MainActivity.this, MusicServiceImpl.class));
 
     }
@@ -173,13 +174,7 @@ public class MainActivity extends BaseActivity implements IMainView {
 
     @Override
     public void play(Song song) {
-        ivImageAlbumCover.startAnimation(mAnim);
-        btnPlay.setText(getResources().getString(R.string.ic_pause));
-        btnBarPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_24dp));
-        int maxDuration = AudioUtils.getDuration(this, song.getFilePath());
-        seekBarTime.setMax(maxDuration);
-        seekBarTime.setProgress(0);
-        tvDuration.setText(AudioUtils.convertIntToTime(maxDuration));
+
         mPresenter.play(this, song);
         mIsPlayed = true;
 
@@ -222,8 +217,16 @@ public class MainActivity extends BaseActivity implements IMainView {
         tvHeadTitle.setText(song.getTitle());
         tvHeadArtist.setText(song.getArtist());
         slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+        ivImageAlbumCover.startAnimation(mAnim);
+        btnPlay.setText(getResources().getString(R.string.ic_pause));
+        btnBarPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_24dp));
+        int maxDuration = AudioUtils.getDuration(this, song.getFilePath());
+        seekBarTime.setMax(maxDuration);
+        seekBarTime.setProgress(0);
+        tvDuration.setText(AudioUtils.convertIntToTime(maxDuration));
         Bitmap cover = AudioUtils.getAlbumCover(this, song.getFilePath());
 
+        Log.e("TAGG", maxDuration + " duration");
         if (cover != null) {
             ivImageAlbumCover.setImageBitmap(cover);
             ivBarThumb.setImageBitmap(cover);
@@ -257,6 +260,8 @@ public class MainActivity extends BaseActivity implements IMainView {
             btnRepeat.setTextColor(getResources().getColor(R.color.colorAccent));
         }
         mIsRepeat = !mIsRepeat;
+        mPresenter.setRepeat(this, mIsRepeat);
+        MyToast.show(btnRepeat, mIsRepeat ? "lặp lại" : "tắt lặp lại");
 
     }
 

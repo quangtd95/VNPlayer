@@ -17,13 +17,12 @@ import td.quang.vnplayer.views.adapters.SongAdapter;
  */
 
 public class PlayOfflinePresenterImpl implements PlayOfflinePresenter {
+
     private IMainView mMainView;
-    private Context mContext;
     private UpdateUIBroadcast mUpdateUIBroadcast;
     private SongAdapter mSongAdapter;
 
-    public PlayOfflinePresenterImpl(Context context, IMainView iMainView) {
-        this.mContext = context;
+    public PlayOfflinePresenterImpl(IMainView iMainView) {
         this.mMainView = iMainView;
     }
 
@@ -31,7 +30,7 @@ public class PlayOfflinePresenterImpl implements PlayOfflinePresenter {
         this.mSongAdapter = songAdapter;
     }
 
-    public void registerBroadcast() {
+    public void registerBroadcast(Context mContext) {
         mUpdateUIBroadcast = new UpdateUIBroadcast(this);
         IntentFilter mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(UpdateUIBroadcast.ACTION_UPDATE_TIME);
@@ -72,8 +71,6 @@ public class PlayOfflinePresenterImpl implements PlayOfflinePresenter {
         mMainView.play(mSongAdapter.getNextSong());
         mMainView.swapPlaying(mSongAdapter.getNextSong());
         mSongAdapter.setNextSong();
-
-
     }
 
     @Override
@@ -81,6 +78,14 @@ public class PlayOfflinePresenterImpl implements PlayOfflinePresenter {
         mMainView.play(mSongAdapter.getPrevSong());
         mMainView.swapPlaying(mSongAdapter.getPrevSong());
         mSongAdapter.setPrevSong();
+    }
+
+    @Override public void setRepeat(Context mContext, boolean b) {
+        Intent intent = new Intent();
+        intent.setAction(ControlMusicBroadcast.ACTION_REPEAT);
+        intent.putExtra("repeat", b);
+        mContext.sendBroadcast(intent);
+
     }
 
     @Override

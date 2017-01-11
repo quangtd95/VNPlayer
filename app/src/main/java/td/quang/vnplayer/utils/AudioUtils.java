@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.util.Log;
 
 /**
  * Created by djwag on 1/7/2017.
@@ -36,15 +37,14 @@ public class AudioUtils {
     }
 
     public static int getDuration(Context mContext, String filePath) {
-        try {
-            Uri uri = Uri.parse(filePath);
-            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-            mmr.setDataSource(mContext, uri);
-            String durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-            return Integer.parseInt(durationStr);
-        } catch (Exception e) {
-            return 0;
-        }
+        Uri uri = Uri.parse(filePath);
+        Log.e("TAGG", filePath);
+        MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+        if (uri == null) Log.e("TAGG", "uri null");
+        mmr.setDataSource(mContext, uri);
+        String durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+        return Integer.parseInt(durationStr);
+
     }
 
     public static String convertIntToTime(int duration) {

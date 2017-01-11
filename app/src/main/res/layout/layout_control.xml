@@ -80,7 +80,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/ic_suffer"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/colorAccentDark"
             android:textSize="30sp"
             app:srcCompat="@drawable/ic_shuffle_white_24dp" />
 
@@ -161,7 +161,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/ic_repeat"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/colorAccentDark"
             android:textSize="30sp" />
     </LinearLayout>
 
