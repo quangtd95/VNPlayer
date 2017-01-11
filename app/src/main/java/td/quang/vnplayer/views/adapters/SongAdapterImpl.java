@@ -69,6 +69,10 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
         return songs.get(mCurrentPosition + 1);
     }
 
+    @Override public Song getFirstSong() {
+        return songs.get(0);
+    }
+
     @Override public Song getPrevSong() {
         if (mCurrentPosition == 0) return mCurrentSong;
         return songs.get(mCurrentPosition - 1);

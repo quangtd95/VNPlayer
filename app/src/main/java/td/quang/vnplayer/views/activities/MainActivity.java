@@ -74,6 +74,7 @@ public class MainActivity extends BaseActivity implements IMainView {
     private boolean mIsSuffer;
     private boolean mIsRepeat;
     private boolean mIsPause;
+    private boolean mIsPlayed;
     private List<BaseFragment> mFragments;
     private PlayOfflinePresenter mPresenter;
     private PlayingListFragment playingListFragment;
@@ -121,7 +122,10 @@ public class MainActivity extends BaseActivity implements IMainView {
 
     @Click
     public void btnPlayClicked() {
-        if (mIsPause) {
+        if (!mIsPlayed) {
+            play(mSongAdapter.getFirstSong());
+            swapPlaying(mSongAdapter.getFirstSong());
+        } else if (mIsPause) {
             resumeView();
         } else {
             pauseView();
@@ -130,7 +134,10 @@ public class MainActivity extends BaseActivity implements IMainView {
 
     @Click
     public void btnBarPlayClicked() {
-        if (mIsPause) {
+        if (!mIsPlayed) {
+            play(mSongAdapter.getFirstSong());
+            swapPlaying(mSongAdapter.getFirstSong());
+        } else if (mIsPause) {
             resumeView();
         } else {
             pauseView();
@@ -139,11 +146,13 @@ public class MainActivity extends BaseActivity implements IMainView {
 
     @Click
     public void btnNextClicked() {
+        if (!mIsPlayed) return;
         mPresenter.next();
     }
 
     @Click
     public void btnPrevClicked() {
+        if (!mIsPlayed) return;
         mPresenter.prev();
     }
 
@@ -172,6 +181,7 @@ public class MainActivity extends BaseActivity implements IMainView {
         seekBarTime.setProgress(0);
         tvDuration.setText(AudioUtils.convertIntToTime(maxDuration));
         mPresenter.play(this, song);
+        mIsPlayed = true;
 
     }
 
@@ -186,15 +196,19 @@ public class MainActivity extends BaseActivity implements IMainView {
 
     @Override
     public void resumeView() {
+
         ivImageAlbumCover.startAnimation(mAnim);
         btnPlay.setText(getResources().getString(R.string.ic_pause));
         btnBarPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_24dp));
         mIsPause = false;
         mPresenter.resume(this);
+
+
     }
 
     @Override
     public void setTimeSeekbar(int mCurrentTime, int visible) {
+        if (!mIsPlayed) return;
         seekBarTime.setProgress(mCurrentTime);
         tvCurrentTime.setVisibility(visible);
         tvCurrentTime.setText(AudioUtils.convertIntToTime(mCurrentTime));

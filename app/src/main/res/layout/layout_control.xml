@@ -50,7 +50,7 @@
                 android:layout_weight="1.00"
                 android:gravity="center"
                 android:paddingLeft="10dp"
-                android:text="1:03"
+                android:text="-:--"
                 android:textColor="@color/colorAccent"
                 android:textSize="15sp" />
 
@@ -144,7 +144,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:paddingRight="10dp"
-                android:text="3:35"
+                android:text="-:--"
                 android:textColor="@color/colorAccent"
                 android:textSize="15sp" />
         </LinearLayout>

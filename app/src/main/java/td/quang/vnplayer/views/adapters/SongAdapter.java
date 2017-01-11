@@ -22,6 +22,8 @@ public interface SongAdapter {
 
     Song getNextSong();
 
+    Song getFirstSong();
+
     Song getPrevSong();
 
     void setNextSong();

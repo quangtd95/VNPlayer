@@ -21,7 +21,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            app:srcCompat="@drawable/ic_menu_black_24dp" />
+            app:srcCompat="@drawable/ic_more_vert_black_24dp"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -41,7 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
-                android:text="3 Thang Ban"
+                android:text="-"
                 android:textStyle="normal|bold" />
 
             <TextView
@@ -49,7 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
-                android:text="Karik"
+                android:text="-"
                 android:textStyle="normal" />
         </LinearLayout>
 
@@ -63,7 +63,7 @@
             android:gravity="center"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:text="3"
+            android:text="-"
             android:textSize="?attr/actionBarSize" />
     </RelativeLayout>
 
