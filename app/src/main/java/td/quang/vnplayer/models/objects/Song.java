@@ -57,7 +57,7 @@ public class Song implements Parcelable {
     }
 
     public Uri getSource() {
-        return Uri.parse(filePath);
+        return Uri.parse(Uri.encode(filePath));
     }
 
     @Override public int describeContents() {
@@ -112,7 +112,7 @@ public class Song implements Parcelable {
         }
 
         public Builder setFilePath(String filePath) {
-            this.filePath = Uri.encode(filePath);
+            this.filePath = filePath;
             return this;
         }
 

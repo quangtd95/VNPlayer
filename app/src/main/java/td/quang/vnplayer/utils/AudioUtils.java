@@ -7,6 +7,8 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.util.Log;
 
+import td.quang.vnplayer.models.objects.Song;
+
 /**
  * Created by djwag on 1/7/2017.
  */
@@ -36,9 +38,8 @@ public class AudioUtils {
         }
     }
 
-    public static int getDuration(Context mContext, String filePath) {
-        Uri uri = Uri.parse(filePath);
-        Log.e("TAGG", filePath);
+    public static int getDuration(Context mContext, Song song) {
+        Uri uri = song.getSource();
         MediaMetadataRetriever mmr = new MediaMetadataRetriever();
         if (uri == null) Log.e("TAGG", "uri null");
         mmr.setDataSource(mContext, uri);
@@ -52,9 +53,19 @@ public class AudioUtils {
         int m = s / 60;
         s = s - m * 60;
         int h = m / 60;
-        m = m - h * 60;
-        String result = "";
-        if (h > 0) result += h + ":";
-        return result + m + ":" + s;
+        int i = m = m - h * 60;
+        StringBuilder result = new StringBuilder();
+        if (h > 0) {
+            result.append((h < 10) ? "0" : "");
+            result.append(h + ":");
+        }
+        Log.e("TAGG", result.toString());
+        result.append((m < 10) ? "0" : "");
+        result.append(m + ":");
+        Log.e("TAGG", result.toString());
+        result.append((s < 10) ? "0" : "");
+        result.append(s);
+        Log.e("TAGG", result.toString());
+        return result.toString();
     }
 }

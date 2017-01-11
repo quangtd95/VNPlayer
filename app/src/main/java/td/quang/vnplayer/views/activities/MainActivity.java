@@ -220,7 +220,7 @@ public class MainActivity extends BaseActivity implements IMainView {
         ivImageAlbumCover.startAnimation(mAnim);
         btnPlay.setText(getResources().getString(R.string.ic_pause));
         btnBarPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_24dp));
-        int maxDuration = AudioUtils.getDuration(this, song.getFilePath());
+        int maxDuration = AudioUtils.getDuration(this, song);
         seekBarTime.setMax(maxDuration);
         seekBarTime.setProgress(0);
         tvDuration.setText(AudioUtils.convertIntToTime(maxDuration));
