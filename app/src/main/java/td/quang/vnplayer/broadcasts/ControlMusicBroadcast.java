@@ -18,15 +18,17 @@ public class ControlMusicBroadcast extends BroadcastReceiver {
     public static final String ACTION_PAUSE = "TD.QUANG.VNPLAYER.PAUSE";
     public static final String ACTION_NEXT = "TD.QUANG.VNPLAYER.NEXT";
     public static final String ACTION_PREV = "TD.QUANG.VNPLAYER.PREV";
+    public static final String ACTION_SEEK = "TD.QUANG.VNPLAYER.SEEK";
+
     private MusicService musicService;
 
     public void setMusicService(MusicService musicService) {
         this.musicService = musicService;
     }
 
+
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.e("TAGG", "onreceive");
         String action = intent.getAction();
         if (action.equalsIgnoreCase(ACTION_PLAY)) {
             onPlayAction(intent);
@@ -46,8 +48,16 @@ public class ControlMusicBroadcast extends BroadcastReceiver {
         if (action.equalsIgnoreCase(ACTION_PREV)) {
 
         }
+        if (action.equalsIgnoreCase(ACTION_SEEK)) {
+            onSeekAction(intent);
+        }
     }
 
+    private void onSeekAction(Intent intent) {
+        Log.e("TAGG", "on seek action broadcast");
+        int position = intent.getIntExtra("position", -1);
+        musicService.seek(position);
+    }
     private void onPauseAction(Intent intent) {
         musicService.pause();
     }

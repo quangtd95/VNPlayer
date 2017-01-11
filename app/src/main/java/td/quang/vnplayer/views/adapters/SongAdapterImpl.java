@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import td.quang.vnplayer.R;
 import td.quang.vnplayer.models.objects.Song;
 import td.quang.vnplayer.utils.RandomColor;
-import td.quang.vnplayer.views.activities.PlayingView;
+import td.quang.vnplayer.views.activities.IMainView;
 import td.quang.vnplayer.views.fragments.home.SongsFragment;
 
 /**
@@ -26,7 +26,7 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
     private ArrayList<Song> songs;
     private Context mContext;
     private SongsFragment mFragment;
-    private PlayingView mPlayingView;
+    private IMainView mIMainView;
     private int mCurrentPosition;
     private Song mCurrentSong;
 
@@ -37,8 +37,8 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
 
 
     @Override
-    public void setPlayingView(PlayingView playingView) {
-        this.mPlayingView = playingView;
+    public void setPlayingView(IMainView IMainView) {
+        this.mIMainView = IMainView;
     }
 
     @Override
@@ -60,8 +60,8 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
     @Override public void playSongOnClick(int position) {
         mCurrentPosition = position;
         mCurrentSong = songs.get(mCurrentPosition);
-        mPlayingView.swapPlaying(mCurrentSong);
-        mPlayingView.play(mCurrentSong);
+        mIMainView.swapPlaying(mCurrentSong);
+        mIMainView.play(mCurrentSong);
     }
 
     @Override public Song getNextSong() {
@@ -74,12 +74,12 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
         return songs.get(mCurrentPosition - 1);
     }
 
-    @Override public void nextSong() {
+    @Override public void setNextSong() {
         mCurrentPosition++;
         if (mCurrentPosition == songs.size()) mCurrentPosition--;
     }
 
-    @Override public void prevSong() {
+    @Override public void setPrevSong() {
         mCurrentPosition--;
         if (mCurrentPosition == -1) mCurrentPosition++;
     }

@@ -9,10 +9,12 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.View;
 
 import java.io.IOException;
 
 import td.quang.vnplayer.broadcasts.ControlMusicBroadcast;
+import td.quang.vnplayer.broadcasts.UpdateUIBroadcast;
 import td.quang.vnplayer.models.objects.Song;
 
 /**
@@ -23,6 +25,9 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
     private ControlMusicBroadcast controlMusicBroadcast;
     private MediaPlayer mMediaPlayer;
     private boolean mIsPlaying;
+    private Thread threadUpdateSeekbar;
+    private int currentPosition;
+    private boolean b;
 
 
     @Override
@@ -35,6 +40,7 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
         filter.addAction(ControlMusicBroadcast.ACTION_STOP);
         filter.addAction(ControlMusicBroadcast.ACTION_PAUSE);
         filter.addAction(ControlMusicBroadcast.ACTION_RESUME);
+        filter.addAction(ControlMusicBroadcast.ACTION_SEEK);
         registerReceiver(controlMusicBroadcast, filter);
     }
 
@@ -45,7 +51,6 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
 
     @Override
     public void play(Song song) {
-
 
         Log.e("TAGG", "Play service");
         if (mMediaPlayer == null) {
@@ -91,12 +96,45 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
         mIsPlaying = false;
     }
 
-    @Override public void onCompletion(MediaPlayer mp) {
+    @Override
+    public void seek(int position) {
+        Log.e("TAGG", "service seek " + position);
+        mMediaPlayer.seekTo(position);
 
+    }
+
+    @Override public void onCompletion(MediaPlayer mp) {
+        Log.e("TAGG", "onCompletion");
+        Intent intent = new Intent();
+        intent.setAction(UpdateUIBroadcast.ACTION_COMPLETE);
+        sendBroadcast(intent);
     }
 
     @Override
     public void onPrepared(MediaPlayer mp) {
         mp.start();
+        Log.e("TAGG", "on prepared");
+        if (threadUpdateSeekbar == null) {
+            threadUpdateSeekbar = new Thread(() -> {
+                while (currentPosition < mp.getDuration()) {
+                    Intent intent = new Intent();
+                    intent.setAction(UpdateUIBroadcast.ACTION_UPDATE_TIME);
+                    intent.putExtra("currentTime", mp.getCurrentPosition());
+                    intent.putExtra("visible", b ? View.VISIBLE : View.INVISIBLE);
+                    b = !b;
+                    sendBroadcast(intent);
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            threadUpdateSeekbar.start();
+        }
+        if (threadUpdateSeekbar.isInterrupted()) {
+            threadUpdateSeekbar = null;
+        }
+
     }
 }

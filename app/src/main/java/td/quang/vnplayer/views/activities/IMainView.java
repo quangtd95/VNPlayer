@@ -7,26 +7,17 @@ import td.quang.vnplayer.views.adapters.SongAdapter;
  * Created by djwag on 1/8/2017.
  */
 
-public interface PlayingView {
+public interface IMainView {
     void swapPlaying(Song song);
 
     void play(Song song);
 
-    void setCurrentSong(Song song);
-
-    void setNextSong(Song song);
-
-    void setPrevSong(Song song);
-
     void setSongAdapter(SongAdapter songAdapter);
 
-    void resume();
+    void resumeView();
 
-    void pause();
-
-    void next();
-
-    void prev();
+    void pauseView();
 
 
+    void setTimeSeekbar(int mCurrentTime, int visible);
 }

@@ -12,6 +12,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
@@ -43,34 +44,23 @@ import td.quang.vnplayer.views.fragments.home.SongsFragment;
 import td.quang.vnplayer.views.fragments.playing.PlayingListFragment;
 
 @EActivity(R.layout.activity_main)
-public class MainActivity extends BaseActivity implements PlayingView {
-    @ViewById(R.id.slidingPanel)
-    SlidingUpPanelLayout slidingPanel;
-    @ViewById(R.id.tabLayout)
-    TabLayout mTabLayout;
-    @ViewById(R.id.viewPager)
-    ViewPager mViewPager;
-    @ViewById(R.id.barPlaying)
-    View barPlaying;
-    @ViewById(R.id.heading)
-    View heading;
-    @ViewById(R.id.ivImageAlbumCover)
-    CircleImageView ivImageAlbumCover;
-    @ViewById(R.id.btnSuffer)
-    MyButton btnSuffer;
-    @ViewById(R.id.btnRepeat)
-    MyButton btnRepeat;
-    @ViewById(R.id.btnPlay)
-    MyButton btnPlay;
-    @ViewById(R.id.btnHome)
-    MyButton btnHome;
-    @ViewById(R.id.btnList)
-    MyButton btnList;
-    @ViewById(R.id.btnNext)
-    MyButton btnNext;
-    @ViewById(R.id.btnPrev)
-    MyButton btnPrev;
-
+public class MainActivity extends BaseActivity implements IMainView {
+    @ViewById(R.id.slidingPanel) SlidingUpPanelLayout slidingPanel;
+    @ViewById(R.id.tabLayout) TabLayout mTabLayout;
+    @ViewById(R.id.viewPager) ViewPager mViewPager;
+    @ViewById(R.id.barPlaying) View barPlaying;
+    @ViewById(R.id.heading) View heading;
+    @ViewById(R.id.btnSuffer) MyButton btnSuffer;
+    @ViewById(R.id.btnRepeat) MyButton btnRepeat;
+    @ViewById(R.id.btnPlay) MyButton btnPlay;
+    @ViewById(R.id.btnHome) MyButton btnHome;
+    @ViewById(R.id.btnList) MyButton btnList;
+    @ViewById(R.id.btnNext) MyButton btnNext;
+    @ViewById(R.id.btnPrev) MyButton btnPrev;
+    @ViewById(R.id.seekBarTime) SeekBar seekBarTime;
+    @ViewById(R.id.ivImageAlbumCover) CircleImageView ivImageAlbumCover;
+    @ViewById(R.id.tvCurrentTime) TextView tvCurrentTime;
+    @ViewById(R.id.tvDuration) TextView tvDuration;
     TextView tvBarTitle;
     TextView tvHeadTitle;
     TextView tvBarArtist;
@@ -78,20 +68,15 @@ public class MainActivity extends BaseActivity implements PlayingView {
     ImageButton btnBarPlay;
     ImageView ivBarThumb;
 
-    private HomeViewPagerAdapter mAdapter;
-    private SongAdapter songAdapter;
+    private HomeViewPagerAdapter mViewPagerAdapter;
+    private SongAdapter mSongAdapter;
     private Animation mAnim;
-    private boolean mIsSuffer = false;
-    private boolean mIsRepeat = false;
-    private boolean mIsPause = false;
+    private boolean mIsSuffer;
+    private boolean mIsRepeat;
+    private boolean mIsPause;
     private List<BaseFragment> mFragments;
-    private PlayOfflinePresenter playOfflinePresenter;
+    private PlayOfflinePresenter mPresenter;
     private PlayingListFragment playingListFragment;
-
-    private Song mNextSong;
-    private Song mCurrentSong;
-    private Song mPrevSong;
-
 
     @Override
     protected void afterView() {
@@ -104,14 +89,14 @@ public class MainActivity extends BaseActivity implements PlayingView {
 
         mFragments = new ArrayList<>();
         SongsFragment songsFragment = new SongsFragment();
-        songsFragment.setPlayingView(this);
+        songsFragment.setIMainView(this);
         mFragments.add(songsFragment);
         mFragments.add(new AlbumsFragment());
         mFragments.add(new OnlineFragment());
         mFragments.add(new CloudFragment());
 
-        mAdapter = new HomeViewPagerAdapter(getSupportFragmentManager(), mFragments);
-        mViewPager.setAdapter(mAdapter);
+        mViewPagerAdapter = new HomeViewPagerAdapter(getSupportFragmentManager(), mFragments);
+        mViewPager.setAdapter(mViewPagerAdapter);
         mTabLayout.setupWithViewPager(mViewPager, true);
         mTabLayout.dispatchSetSelected(true);
 
@@ -123,42 +108,43 @@ public class MainActivity extends BaseActivity implements PlayingView {
         slidingPanel.setPanelHeight(height);
         slidingPanel.addPanelSlideListener(new SlidingPanelListener(this, barPlaying));
 
+
         mAnim = AnimationUtils.loadAnimation(this, R.anim.anim_rotate);
 
         playingListFragment = new PlayingListFragment();
-        playOfflinePresenter = new PlayOfflinePresenterImpl();
-
+        mPresenter = new PlayOfflinePresenterImpl(this, this);
+        seekBarTime.setOnSeekBarChangeListener(new SeekBarChangeListener(this, mPresenter));
+        mPresenter.registerBroadcast();
         startService(new Intent(MainActivity.this, MusicServiceImpl.class));
 
     }
 
-
     @Click
     public void btnPlayClicked() {
         if (mIsPause) {
-            resume();
+            resumeView();
         } else {
-            pause();
+            pauseView();
         }
     }
 
     @Click
     public void btnBarPlayClicked() {
         if (mIsPause) {
-            resume();
+            resumeView();
         } else {
-            pause();
+            pauseView();
         }
     }
 
     @Click
     public void btnNextClicked() {
-        next();
+        mPresenter.next();
     }
 
     @Click
     public void btnPrevClicked() {
-        prev();
+        mPresenter.prev();
     }
 
     @Click
@@ -178,60 +164,40 @@ public class MainActivity extends BaseActivity implements PlayingView {
 
     @Override
     public void play(Song song) {
-        mCurrentSong = song;
-        mNextSong = songAdapter.getNextSong();
-        mPrevSong = songAdapter.getPrevSong();
-
         ivImageAlbumCover.startAnimation(mAnim);
         btnPlay.setText(getResources().getString(R.string.ic_pause));
         btnBarPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_24dp));
-        playOfflinePresenter.play(this, song);
+        int maxDuration = AudioUtils.getDuration(this, song.getFilePath());
+        seekBarTime.setMax(maxDuration);
+        seekBarTime.setProgress(0);
+        tvDuration.setText(AudioUtils.convertIntToTime(maxDuration));
+        mPresenter.play(this, song);
 
     }
-
-    @Override public void setCurrentSong(Song song) {
-        mCurrentSong = song;
-    }
-
-    @Override public void setNextSong(Song song) {
-        mNextSong = song;
-    }
-
-    @Override public void setPrevSong(Song song) {
-        mPrevSong = song;
-    }
-
 
     @Override
-    public void pause() {
+    public void pauseView() {
         ivImageAlbumCover.clearAnimation();
         btnPlay.setText(getResources().getString(R.string.ic_play));
         btnBarPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_circle_outline_white_24dp));
         mIsPause = true;
-        playOfflinePresenter.pause(this);
+        mPresenter.pause(this);
     }
 
     @Override
-    public void resume() {
+    public void resumeView() {
         ivImageAlbumCover.startAnimation(mAnim);
         btnPlay.setText(getResources().getString(R.string.ic_pause));
         btnBarPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_24dp));
         mIsPause = false;
-        playOfflinePresenter.resume(this);
+        mPresenter.resume(this);
     }
 
-    @Override public void next() {
-        play(songAdapter.getNextSong());
-        swapPlaying(songAdapter.getNextSong());
-        songAdapter.nextSong();
-
-
-    }
-
-    @Override public void prev() {
-        play(songAdapter.getPrevSong());
-        swapPlaying(songAdapter.getPrevSong());
-        songAdapter.prevSong();
+    @Override
+    public void setTimeSeekbar(int mCurrentTime, int visible) {
+        seekBarTime.setProgress(mCurrentTime);
+        tvCurrentTime.setVisibility(visible);
+        tvCurrentTime.setText(AudioUtils.convertIntToTime(mCurrentTime));
     }
 
 
@@ -277,6 +243,7 @@ public class MainActivity extends BaseActivity implements PlayingView {
             btnRepeat.setTextColor(getResources().getColor(R.color.colorAccent));
         }
         mIsRepeat = !mIsRepeat;
+
     }
 
     private void sufferEvent() {
@@ -291,7 +258,8 @@ public class MainActivity extends BaseActivity implements PlayingView {
     }
 
     public void setSongAdapter(SongAdapter songAdapter) {
-        this.songAdapter = songAdapter;
+        this.mSongAdapter = songAdapter;
+        mPresenter.setSongAdapter(songAdapter);
     }
 }
 

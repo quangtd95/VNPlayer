@@ -35,7 +35,7 @@ public class AudioUtils {
         }
     }
 
-    private int getDuration(Context mContext, String filePath) {
+    public static int getDuration(Context mContext, String filePath) {
         try {
             Uri uri = Uri.parse(filePath);
             MediaMetadataRetriever mmr = new MediaMetadataRetriever();
@@ -45,5 +45,16 @@ public class AudioUtils {
         } catch (Exception e) {
             return 0;
         }
+    }
+
+    public static String convertIntToTime(int duration) {
+        int s = duration / 1000;
+        int m = s / 60;
+        s = s - m * 60;
+        int h = m / 60;
+        m = m - h * 60;
+        String result = "";
+        if (h > 0) result += h + ":";
+        return result + m + ":" + s;
     }
 }

@@ -14,7 +14,7 @@ import td.quang.vnplayer.R;
 import td.quang.vnplayer.presenters.loadsong.LoadSongPresenter;
 import td.quang.vnplayer.presenters.loadsong.LoadSongPresenterImpl;
 import td.quang.vnplayer.views.BaseFragment;
-import td.quang.vnplayer.views.activities.PlayingView;
+import td.quang.vnplayer.views.activities.IMainView;
 import td.quang.vnplayer.views.adapters.SongAdapterImpl;
 import td.quang.vnplayer.views.dialogs.MyDialog;
 
@@ -28,7 +28,7 @@ public class SongsFragment extends BaseFragment implements LoadSongView {
 
     private SongAdapterImpl songAdapter;
     private LoadSongPresenter presenter;
-    private PlayingView playingView;
+    private IMainView IMainView;
     private View view;
     private SweetAlertDialog dialogLoading;
 
@@ -36,8 +36,8 @@ public class SongsFragment extends BaseFragment implements LoadSongView {
         setName("Song");
     }
 
-    public void setPlayingView(PlayingView playingView) {
-        this.playingView = playingView;
+    public void setIMainView(IMainView IMainView) {
+        this.IMainView = IMainView;
     }
 
 
@@ -52,8 +52,8 @@ public class SongsFragment extends BaseFragment implements LoadSongView {
     protected void afterView() {
         Log.e("TAGG", "afterView Song Fragment");
         songAdapter = new SongAdapterImpl(this);
-        songAdapter.setPlayingView(playingView);
-        playingView.setSongAdapter(songAdapter);
+        songAdapter.setPlayingView(IMainView);
+        IMainView.setSongAdapter(songAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(songAdapter);
         presenter = LoadSongPresenterImpl.getInstance();

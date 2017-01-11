@@ -6,6 +6,14 @@
     android:clickable="true"
 
     >
+    <include
+        android:id="@+id/control"
+        layout="@layout/layout_control"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
 
     <include
         android:id="@+id/heading"
@@ -23,10 +31,6 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:background="@color/colorPrimary" />
-
-    <include
-        android:id="@+id/control"
-        layout="@layout/layout_control" />
 
     <SeekBar
         android:id="@+id/seekBarTime"

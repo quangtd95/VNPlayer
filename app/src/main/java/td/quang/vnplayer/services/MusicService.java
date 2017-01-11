@@ -15,4 +15,6 @@ public interface MusicService {
 
     void pause();
 
+    void seek(int position);
+
 }
