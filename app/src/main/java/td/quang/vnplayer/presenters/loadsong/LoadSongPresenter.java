@@ -1,5 +1,7 @@
 package td.quang.vnplayer.presenters.loadsong;
 
+import android.content.Context;
+
 import td.quang.vnplayer.views.adapters.SongAdapter;
 import td.quang.vnplayer.views.fragments.home.LoadSongView;
 
@@ -10,7 +12,7 @@ import td.quang.vnplayer.views.fragments.home.LoadSongView;
 public interface LoadSongPresenter {
     void init(LoadSongView view, SongAdapter songAdapter);
 
-    void loadSong();
+    void loadSong(Context mContext);
 
-    void deleteSong(String filePath, int position);
+    void deleteSong(Context mContext, String filePath, int position);
 }

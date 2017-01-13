@@ -3,7 +3,6 @@ package td.quang.vnplayer.broadcasts;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import td.quang.vnplayer.models.objects.Song;
 import td.quang.vnplayer.services.MusicService;
@@ -18,6 +17,7 @@ public class ControlMusicBroadcast extends BroadcastReceiver {
     public static final String ACTION_PAUSE = "TD.QUANG.VNPLAYER.PAUSE";
     public static final String ACTION_SEEK = "TD.QUANG.VNPLAYER.SEEK";
     public static final String ACTION_REPEAT = "TD.QUANG.VNPLAYER.REPEAT";
+    public static final String ACTION_SHUFFLE = "TD.QUANG.VNPLAYER.SUFFLE";
 
     private MusicService musicService;
 
@@ -47,6 +47,14 @@ public class ControlMusicBroadcast extends BroadcastReceiver {
         if (action.equalsIgnoreCase(ACTION_REPEAT)) {
             onRepeatAction(intent);
         }
+        if (action.equalsIgnoreCase(ACTION_SHUFFLE)) {
+            onShuffleAction(intent);
+        }
+    }
+
+    private void onShuffleAction(Intent intent) {
+        boolean b = intent.getBooleanExtra("shuffle", false);
+        musicService.setShuffle(b);
     }
 
     private void onRepeatAction(Intent intent) {
@@ -55,7 +63,6 @@ public class ControlMusicBroadcast extends BroadcastReceiver {
     }
 
     private void onSeekAction(Intent intent) {
-        Log.e("TAGG", "on seek action broadcast");
         int position = intent.getIntExtra("position", -1);
         musicService.seek(position);
     }
@@ -70,7 +77,6 @@ public class ControlMusicBroadcast extends BroadcastReceiver {
 
     private void onPlayAction(Intent intent) {
         Song song = intent.getExtras().getParcelable("data");
-        Log.e("TAGG", "BroadCast + " + song.getTitle());
         musicService.play(song);
 
     }

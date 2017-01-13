@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,16 +40,17 @@ public class SongsFragment extends BaseFragment implements LoadSongView {
     }
 
 
-    @Nullable @Override public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    @Nullable @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_list, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rvList);
         afterView();
         return view;
     }
 
+
     @Override
     protected void afterView() {
-        Log.e("TAGG", "afterView Song Fragment");
         songAdapter = new SongAdapterImpl(this);
         songAdapter.setPlayingView(IMainView);
         IMainView.setSongAdapter(songAdapter);
@@ -63,8 +63,7 @@ public class SongsFragment extends BaseFragment implements LoadSongView {
 
     @Override
     public void refreshListSong() {
-        Log.e("TAGG", "load song at fragment");
-        presenter.loadSong();
+        presenter.loadSong(getContext());
     }
 
     @Override
@@ -83,15 +82,6 @@ public class SongsFragment extends BaseFragment implements LoadSongView {
     }
 
     @Override
-    public void showDialogConfirmDelete(String filePath, int position) {
-        SweetAlertDialog dialog = MyDialog.showConfirm(getContext());
-        dialog.setConfirmClickListener(sweetAlertDialog -> {
-            presenter.deleteSong(filePath, position);
-            dialog.dismiss();
-        }).show();
-    }
-
-    @Override
     public void showDeleteSuccess() {
         MyDialog.showSuccess(getContext());
     }
@@ -101,5 +91,12 @@ public class SongsFragment extends BaseFragment implements LoadSongView {
         MyDialog.showError(getContext());
     }
 
-
+    @Override
+    public void showDialogConfirmDelete(String filePath, int position) {
+        SweetAlertDialog dialog = MyDialog.showConfirm(getContext());
+        dialog.setConfirmClickListener(sweetAlertDialog -> {
+            presenter.deleteSong(getContext(), filePath, position);
+            dialog.dismiss();
+        }).show();
+    }
 }

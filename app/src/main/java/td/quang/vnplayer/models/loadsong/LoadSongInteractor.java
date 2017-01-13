@@ -1,5 +1,7 @@
 package td.quang.vnplayer.models.loadsong;
 
+import android.content.Context;
+
 import td.quang.vnplayer.presenters.loadsong.OnDeleteFinishedListener;
 import td.quang.vnplayer.presenters.loadsong.OnLoadFinishedListener;
 
@@ -8,7 +10,7 @@ import td.quang.vnplayer.presenters.loadsong.OnLoadFinishedListener;
  */
 
 public interface LoadSongInteractor {
-    void loadSong(OnLoadFinishedListener listener);
+    void loadSong(Context context, OnLoadFinishedListener listener);
 
-    void deleteSong(OnDeleteFinishedListener listener, String filePath, int position);
+    void deleteSong(Context context, OnDeleteFinishedListener listener, String filePath, int position);
 }

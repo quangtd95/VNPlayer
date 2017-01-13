@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +39,6 @@ public class AlbumsFragment extends BaseFragment {
 
     @Override
     protected void afterView() {
-        Log.e("TAGG", "after View fragment album");
         albums = new ArrayList<>();
         albums.add(new Album("#####", "Adam lambert", ""));
         albums.add(new Album("#####", "Adam lambert", ""));

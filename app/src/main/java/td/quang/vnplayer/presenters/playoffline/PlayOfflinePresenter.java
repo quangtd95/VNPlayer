@@ -11,24 +11,31 @@ import td.quang.vnplayer.views.adapters.SongAdapter;
 
 public interface PlayOfflinePresenter {
 
-    void play(Context context, Song song);
+    void play(Context mContext, Song song);
 
-    void pause(Context context);
+    void pause(Context mContext);
 
-    void resume(Context context);
+    void resume(Context mContext);
 
     void next();
 
     void prev();
 
-    void setRepeat(Context context, boolean b);
+    void setRepeat(Context mContext, boolean b);
 
-    void seekTo(Context context, int position);
+    void setShuffle(Context mContext, boolean b);
+
+    void seekTo(Context mContext, int position);
 
     void onReceiveTimeValue(int duration, int visible);
 
-    void registerBroadcast(Context context);
+    void registerBroadcast(Context mContext);
+
+    public void unregisterBroadcast(Context mContext);
 
     void setSongAdapter(SongAdapter songAdapter);
 
+    void nextRandom();
+
+    void prevRandom();
 }

@@ -19,4 +19,5 @@ public interface MusicService {
 
     void setRepeat(boolean b);
 
+    void setShuffle(boolean b);
 }

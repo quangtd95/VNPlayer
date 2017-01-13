@@ -75,7 +75,7 @@
             android:background="@color/colorAccent" />
 
         <td.quang.vnplayer.views.customviews.MyButton
-            android:id="@+id/btnSuffer"
+            android:id="@+id/btnShuffle"
             style="@style/SelectableItemBackgroundLight"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -6,9 +6,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+import java.io.File;
 import java.util.ArrayList;
 
-import td.quang.vnplayer.App;
 import td.quang.vnplayer.models.objects.Song;
 import td.quang.vnplayer.presenters.loadsong.OnDeleteFinishedListener;
 import td.quang.vnplayer.presenters.loadsong.OnLoadFinishedListener;
@@ -18,14 +18,11 @@ import td.quang.vnplayer.presenters.loadsong.OnLoadFinishedListener;
  */
 
 public class LoadSongInteratorImpl implements LoadSongInteractor {
-    private Context mContext;
 
-    public LoadSongInteratorImpl() {
-        mContext = App.getContext();
-    }
+
 
     @Override
-    public void loadSong(OnLoadFinishedListener listener) {
+    public void loadSong(Context mContext, OnLoadFinishedListener listener) {
         ArrayList<Song> songs = new ArrayList<>();
         Cursor cursor = mContext.getContentResolver().query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -48,12 +45,14 @@ public class LoadSongInteratorImpl implements LoadSongInteractor {
      * @param position: position of song in recycleview , use this to notifydeleteItem
      */
     @Override
-    public void deleteSong(OnDeleteFinishedListener listener, String filePath, int position) {
-        int b = App.getContext().getContentResolver().
+    public void deleteSong(Context mContext, OnDeleteFinishedListener listener, String filePath, int position) {
+        int b = mContext.getContentResolver().
                 delete(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                         String.format("%s%s%s%s", MediaStore.Audio.Media.DATA, " ='", filePath, "'"), null);
-        App.getContext().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse(filePath)));
-        if (b != 0) {
+        mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse(filePath)));
+        File file = new File(filePath);
+        boolean b1 = file.delete();
+        if (b != 0 && b1) {
             listener.onDeleteSuccess(position);
         } else {
             listener.onDeleteFail();

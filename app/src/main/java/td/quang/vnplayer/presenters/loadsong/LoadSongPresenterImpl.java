@@ -1,6 +1,6 @@
 package td.quang.vnplayer.presenters.loadsong;
 
-import android.util.Log;
+import android.content.Context;
 
 import java.util.ArrayList;
 
@@ -39,16 +39,14 @@ public class LoadSongPresenterImpl implements LoadSongPresenter, OnLoadFinishedL
     }
 
     @Override
-    public void loadSong() {
-        Log.e("TAGG", "loadsong presenter");
+    public void loadSong(Context mContext) {
         mView.showLoading();
-        mInteractor.loadSong(this);
+        mInteractor.loadSong(mContext, this);
     }
 
     @Override
-    public void deleteSong(String filePath, int position) {
-        Log.e("TAGG", "delete song presenter");
-        mInteractor.deleteSong(this, filePath, position);
+    public void deleteSong(Context mContext, String filePath, int position) {
+        mInteractor.deleteSong(mContext, this, filePath, position);
     }
 
     @Override

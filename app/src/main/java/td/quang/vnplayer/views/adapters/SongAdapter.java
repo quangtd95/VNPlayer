@@ -26,9 +26,16 @@ public interface SongAdapter {
 
     Song getPrevSong();
 
-    void setNextSong();
+    void moveToNextSong();
 
-    void setPrevSong();
+    void moveToPrevSong();
 
     void deleteSong(Song song, int position);
+
+    Song getNextRandomSong();
+
+    Song getPrevRandomSong();
+
+    void setShuffle(boolean b);
+
 }

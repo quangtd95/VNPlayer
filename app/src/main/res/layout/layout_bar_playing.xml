@@ -5,7 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     android:background="@color/colorPrimary"
-    android:clickable="true">
+    >
+
+    <ImageButton
+        android:id="@+id/btnBarPlay"
+        style="@style/SelectableItemBackgroundLight"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="12dp"
+        android:layout_marginRight="12dp"
+        app:srcCompat="@drawable/ic_play_circle_outline_white_24dp"/>
 
     <ImageView
         android:id="@+id/ivBarThumb"
@@ -17,18 +29,8 @@
         android:padding="2dp"
         app:srcCompat="@drawable/icon_thumbnail" />
 
-    <ImageButton
-        android:id="@+id/btnBarPlay"
-        style="@style/SelectableItemBackgroundLight"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="10dp"
-        app:srcCompat="@drawable/ic_play_circle_outline_white_24dp" />
-
     <LinearLayout
+        android:id="@+id/llLayoutBarDetail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
@@ -58,5 +60,6 @@
             android:text="-"
             android:textColor="@android:color/white" />
     </LinearLayout>
+
 
 </RelativeLayout>

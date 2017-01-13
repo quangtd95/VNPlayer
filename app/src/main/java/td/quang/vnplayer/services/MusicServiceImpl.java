@@ -14,7 +14,7 @@ import android.view.View;
 import java.io.IOException;
 
 import td.quang.vnplayer.broadcasts.ControlMusicBroadcast;
-import td.quang.vnplayer.broadcasts.UpdateUIBroadcast;
+import td.quang.vnplayer.broadcasts.MusicServiceReceiver;
 import td.quang.vnplayer.models.objects.Song;
 
 /**
@@ -29,6 +29,7 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
     private int currentPosition;
     private boolean mIsRepeat;
     private boolean b;
+    private boolean mIsShuffle;
 
 
     @Override
@@ -43,6 +44,7 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
         filter.addAction(ControlMusicBroadcast.ACTION_RESUME);
         filter.addAction(ControlMusicBroadcast.ACTION_SEEK);
         filter.addAction(ControlMusicBroadcast.ACTION_REPEAT);
+        filter.addAction(ControlMusicBroadcast.ACTION_SHUFFLE);
         registerReceiver(controlMusicBroadcast, filter);
     }
 
@@ -53,8 +55,6 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
 
     @Override
     public void play(Song song) {
-
-        Log.e("TAGG", "Play service");
         if (mMediaPlayer == null) {
             mMediaPlayer = new MediaPlayer();
             mMediaPlayer.setWakeMode(getApplication(), PowerManager.PARTIAL_WAKE_LOCK);
@@ -64,16 +64,14 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
         }
 
         try {
-            if (song == null) Log.e("TAGG", "song null");
-            Log.e("TAGG", String.valueOf(song.getFilePath()));
             mMediaPlayer.setDataSource(getApplicationContext(), song.getSource());
-            mMediaPlayer.prepareAsync();
+            mMediaPlayer.setOnPreparedListener(this);
+            mMediaPlayer.setOnCompletionListener(this);
+            mMediaPlayer.prepare();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e("TAGG", "Music service setDatasource", e);
         }
         mIsPlaying = true;
-        mMediaPlayer.setOnPreparedListener(this);
-        mMediaPlayer.setOnCompletionListener(this);
     }
 
     @Override public void stop() {
@@ -100,7 +98,6 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
 
     @Override
     public void seek(int position) {
-        Log.e("TAGG", "service seek " + position);
         mMediaPlayer.seekTo(position);
 
     }
@@ -110,6 +107,10 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
         mIsRepeat = b;
     }
 
+    @Override public void setShuffle(boolean b) {
+        mIsShuffle = b;
+    }
+
     @Override
     public void onCompletion(MediaPlayer mp) {
         if (mIsRepeat) {
@@ -117,7 +118,8 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
             mp.start();
         } else {
             Intent intent = new Intent();
-            intent.setAction(UpdateUIBroadcast.ACTION_COMPLETE);
+            intent.setAction(MusicServiceReceiver.ACTION_COMPLETE);
+            intent.putExtra("shuffle", mIsShuffle);
             sendBroadcast(intent);
         }
 
@@ -126,12 +128,12 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
     @Override
     public void onPrepared(MediaPlayer mp) {
         mp.start();
-        Log.e("TAGG", "on prepared");
         if (threadUpdateSeekbar == null) {
             threadUpdateSeekbar = new Thread(() -> {
-                while (currentPosition < mp.getDuration()) {
+                int mDuration = mp.getDuration();
+                while (currentPosition < mDuration) {
                     Intent intent = new Intent();
-                    intent.setAction(UpdateUIBroadcast.ACTION_UPDATE_TIME);
+                    intent.setAction(MusicServiceReceiver.ACTION_UPDATE_TIME);
                     intent.putExtra("currentTime", mp.getCurrentPosition());
                     intent.putExtra("visible", b ? View.VISIBLE : View.INVISIBLE);
                     b = !b;
@@ -139,7 +141,6 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
                     try {
                         Thread.sleep(500);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
                     }
                 }
             });

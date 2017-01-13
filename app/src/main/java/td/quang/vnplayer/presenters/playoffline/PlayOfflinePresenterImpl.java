@@ -4,10 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.util.Log;
 
 import td.quang.vnplayer.broadcasts.ControlMusicBroadcast;
-import td.quang.vnplayer.broadcasts.UpdateUIBroadcast;
+import td.quang.vnplayer.broadcasts.MusicServiceReceiver;
 import td.quang.vnplayer.models.objects.Song;
 import td.quang.vnplayer.views.activities.IMainView;
 import td.quang.vnplayer.views.adapters.SongAdapter;
@@ -19,7 +18,7 @@ import td.quang.vnplayer.views.adapters.SongAdapter;
 public class PlayOfflinePresenterImpl implements PlayOfflinePresenter {
 
     private IMainView mMainView;
-    private UpdateUIBroadcast mUpdateUIBroadcast;
+    private MusicServiceReceiver mMusicServiceReceiver;
     private SongAdapter mSongAdapter;
 
     public PlayOfflinePresenterImpl(IMainView iMainView) {
@@ -30,12 +29,29 @@ public class PlayOfflinePresenterImpl implements PlayOfflinePresenter {
         this.mSongAdapter = songAdapter;
     }
 
+    @Override
+    public void nextRandom() {
+        Song mRandomSong = mSongAdapter.getNextRandomSong();
+        mMainView.play(mRandomSong);
+        mMainView.swapPlaying(mRandomSong);
+    }
+
+    @Override public void prevRandom() {
+        Song mPrevRandomSong = mSongAdapter.getPrevRandomSong();
+        mMainView.play(mPrevRandomSong);
+        mMainView.swapPlaying(mPrevRandomSong);
+    }
+
     public void registerBroadcast(Context mContext) {
-        mUpdateUIBroadcast = new UpdateUIBroadcast(this);
+        mMusicServiceReceiver = new MusicServiceReceiver(this);
         IntentFilter mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(UpdateUIBroadcast.ACTION_UPDATE_TIME);
-        mIntentFilter.addAction(UpdateUIBroadcast.ACTION_COMPLETE);
-        mContext.registerReceiver(mUpdateUIBroadcast, mIntentFilter);
+        mIntentFilter.addAction(MusicServiceReceiver.ACTION_UPDATE_TIME);
+        mIntentFilter.addAction(MusicServiceReceiver.ACTION_COMPLETE);
+        mContext.registerReceiver(mMusicServiceReceiver, mIntentFilter);
+    }
+
+    public void unregisterBroadcast(Context mContext) {
+        mContext.unregisterReceiver(mMusicServiceReceiver);
     }
 
 
@@ -47,7 +63,6 @@ public class PlayOfflinePresenterImpl implements PlayOfflinePresenter {
         bundle.putParcelable("data", song);
         intent.putExtras(bundle);
         context.sendBroadcast(intent);
-        Log.e("TAGG", "play presenter");
     }
 
     @Override
@@ -55,7 +70,6 @@ public class PlayOfflinePresenterImpl implements PlayOfflinePresenter {
         Intent intent = new Intent();
         intent.setAction(ControlMusicBroadcast.ACTION_PAUSE);
         context.sendBroadcast(intent);
-        Log.e("TAGG", "pauseView presenter");
     }
 
     @Override
@@ -63,21 +77,20 @@ public class PlayOfflinePresenterImpl implements PlayOfflinePresenter {
         Intent intent = new Intent();
         intent.setAction(ControlMusicBroadcast.ACTION_RESUME);
         context.sendBroadcast(intent);
-        Log.e("TAGG", "resumeView presenter");
     }
 
     @Override
     public void next() {
         mMainView.play(mSongAdapter.getNextSong());
         mMainView.swapPlaying(mSongAdapter.getNextSong());
-        mSongAdapter.setNextSong();
+        mSongAdapter.moveToNextSong();
     }
 
     @Override
     public void prev() {
         mMainView.play(mSongAdapter.getPrevSong());
         mMainView.swapPlaying(mSongAdapter.getPrevSong());
-        mSongAdapter.setPrevSong();
+        mSongAdapter.moveToPrevSong();
     }
 
     @Override public void setRepeat(Context mContext, boolean b) {
@@ -88,6 +101,14 @@ public class PlayOfflinePresenterImpl implements PlayOfflinePresenter {
 
     }
 
+    @Override public void setShuffle(Context mContext, boolean b) {
+        Intent intent = new Intent();
+        intent.setAction(ControlMusicBroadcast.ACTION_SHUFFLE);
+        intent.putExtra("shuffle", b);
+        mContext.sendBroadcast(intent);
+        mSongAdapter.setShuffle(b);
+    }
+
     @Override
     public void seekTo(Context context, int position) {
         Intent intent = new Intent();
@@ -96,7 +117,6 @@ public class PlayOfflinePresenterImpl implements PlayOfflinePresenter {
         bundle.putInt("position", position);
         intent.putExtras(bundle);
         context.sendBroadcast(intent);
-        Log.e("TAGG", "seek on presenter");
     }
 
     @Override

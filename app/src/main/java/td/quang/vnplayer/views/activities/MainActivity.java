@@ -13,6 +13,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -43,6 +44,7 @@ import td.quang.vnplayer.views.fragments.home.CloudFragment;
 import td.quang.vnplayer.views.fragments.home.OnlineFragment;
 import td.quang.vnplayer.views.fragments.home.SongsFragment;
 import td.quang.vnplayer.views.fragments.playing.PlayingListFragment;
+import td.quang.vnplayer.views.notifications.SongNotification;
 
 @EActivity(R.layout.activity_main)
 public class MainActivity extends BaseActivity implements IMainView {
@@ -51,7 +53,7 @@ public class MainActivity extends BaseActivity implements IMainView {
     @ViewById(R.id.viewPager) ViewPager mViewPager;
     @ViewById(R.id.barPlaying) View barPlaying;
     @ViewById(R.id.heading) View heading;
-    @ViewById(R.id.btnSuffer) MyButton btnSuffer;
+    @ViewById(R.id.btnShuffle) MyButton btnShuffle;
     @ViewById(R.id.btnRepeat) MyButton btnRepeat;
     @ViewById(R.id.btnPlay) MyButton btnPlay;
     @ViewById(R.id.btnHome) MyButton btnHome;
@@ -62,17 +64,20 @@ public class MainActivity extends BaseActivity implements IMainView {
     @ViewById(R.id.ivImageAlbumCover) CircleImageView ivImageAlbumCover;
     @ViewById(R.id.tvCurrentTime) TextView tvCurrentTime;
     @ViewById(R.id.tvDuration) TextView tvDuration;
+
+
     TextView tvBarTitle;
     TextView tvHeadTitle;
     TextView tvBarArtist;
     TextView tvHeadArtist;
     ImageButton btnBarPlay;
     ImageView ivBarThumb;
+    LinearLayout llLayoutBarDetail;
 
     private HomeViewPagerAdapter mViewPagerAdapter;
     private SongAdapter mSongAdapter;
     private Animation mAnim;
-    private boolean mIsSuffer;
+    private boolean mIsShuffle;
     private boolean mIsRepeat;
     private boolean mIsPause;
     private boolean mIsPlayed;
@@ -88,6 +93,7 @@ public class MainActivity extends BaseActivity implements IMainView {
         ivBarThumb = (ImageView) barPlaying.findViewById(R.id.ivBarThumb);
         tvHeadTitle = (TextView) heading.findViewById(R.id.tvHeadTitle);
         tvHeadArtist = (TextView) heading.findViewById(R.id.tvHeadArtist);
+        llLayoutBarDetail = (LinearLayout) barPlaying.findViewById(R.id.llLayoutBarDetail);
 
         mFragments = new ArrayList<>();
         SongsFragment songsFragment = new SongsFragment();
@@ -142,19 +148,37 @@ public class MainActivity extends BaseActivity implements IMainView {
             resumeView();
         } else {
             pauseView();
+
         }
     }
 
     @Click
+    public void llLayoutBarDetailClicked() {
+        slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+    }
+
+    @Click
     public void btnNextClicked() {
-        if (!mIsPlayed) return;
-        mPresenter.next();
+        if (!mIsPlayed) {
+            return;
+        }
+        if (mIsShuffle) {
+            mPresenter.nextRandom();
+        } else {
+            mPresenter.next();
+        }
     }
 
     @Click
     public void btnPrevClicked() {
-        if (!mIsPlayed) return;
-        mPresenter.prev();
+        if (!mIsPlayed) {
+            return;
+        }
+        if (mIsShuffle) {
+            mPresenter.prevRandom();
+        } else {
+            mPresenter.prev();
+        }
     }
 
     @Click
@@ -163,7 +187,7 @@ public class MainActivity extends BaseActivity implements IMainView {
     }
 
     @Click
-    public void btnSufferClicked() {
+    public void btnShuffleClicked() {
         sufferEvent();
     }
 
@@ -174,10 +198,9 @@ public class MainActivity extends BaseActivity implements IMainView {
 
     @Override
     public void play(Song song) {
-
         mPresenter.play(this, song);
         mIsPlayed = true;
-
+        SongNotification.getInstance().showNotificationControl(this, song);
     }
 
     @Override
@@ -191,13 +214,11 @@ public class MainActivity extends BaseActivity implements IMainView {
 
     @Override
     public void resumeView() {
-
         ivImageAlbumCover.startAnimation(mAnim);
         btnPlay.setText(getResources().getString(R.string.ic_pause));
         btnBarPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_24dp));
         mIsPause = false;
         mPresenter.resume(this);
-
 
     }
 
@@ -209,9 +230,9 @@ public class MainActivity extends BaseActivity implements IMainView {
         tvCurrentTime.setText(AudioUtils.convertIntToTime(mCurrentTime));
     }
 
-
     @Override
     public void swapPlaying(Song song) {
+        if (song == null) Log.e("TAGG", "song null");
         tvBarTitle.setText(song.getTitle());
         tvBarArtist.setText(song.getArtist());
         tvHeadTitle.setText(song.getTitle());
@@ -226,7 +247,6 @@ public class MainActivity extends BaseActivity implements IMainView {
         tvDuration.setText(AudioUtils.convertIntToTime(maxDuration));
         Bitmap cover = AudioUtils.getAlbumCover(this, song.getFilePath());
 
-        Log.e("TAGG", maxDuration + " duration");
         if (cover != null) {
             ivImageAlbumCover.setImageBitmap(cover);
             ivBarThumb.setImageBitmap(cover);
@@ -262,23 +282,28 @@ public class MainActivity extends BaseActivity implements IMainView {
         mIsRepeat = !mIsRepeat;
         mPresenter.setRepeat(this, mIsRepeat);
         MyToast.show(btnRepeat, mIsRepeat ? "lặp lại" : "tắt lặp lại");
-
     }
 
     private void sufferEvent() {
-        if (mIsSuffer) {
-            btnSuffer.setTextColor(getResources().getColor(R.color.colorAccentDark));
-            MyToast.show(btnSuffer, "tắt trộn bài");
+        if (mIsShuffle) {
+            btnShuffle.setTextColor(getResources().getColor(R.color.colorAccentDark));
+            MyToast.show(btnShuffle, "tắt trộn bài");
         } else {
-            btnSuffer.setTextColor(getResources().getColor(R.color.colorAccent));
-            MyToast.show(btnSuffer, "bật trộn bài");
+            btnShuffle.setTextColor(getResources().getColor(R.color.colorAccent));
+            MyToast.show(btnShuffle, "bật trộn bài");
         }
-        mIsSuffer = !mIsSuffer;
+        mIsShuffle = !mIsShuffle;
+        mPresenter.setShuffle(this, mIsShuffle);
     }
 
     public void setSongAdapter(SongAdapter songAdapter) {
         this.mSongAdapter = songAdapter;
         mPresenter.setSongAdapter(songAdapter);
+    }
+
+    @Override protected void onDestroy() {
+        super.onDestroy();
+        mPresenter.unregisterBroadcast(this);
     }
 }
 

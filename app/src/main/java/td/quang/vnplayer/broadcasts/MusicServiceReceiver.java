@@ -10,13 +10,13 @@ import td.quang.vnplayer.presenters.playoffline.PlayOfflinePresenter;
  * Created by djwag on 1/11/2017.
  */
 
-public class UpdateUIBroadcast extends BroadcastReceiver {
+public class MusicServiceReceiver extends BroadcastReceiver {
     public static final String ACTION_UPDATE_TIME = "TD.QUANG.VNPLAYER.UPDATE_TIME";
     public static final String ACTION_COMPLETE = "TD.QUANG.VNPLAYER.COMPLETE";
 
     private PlayOfflinePresenter mPresenter;
 
-    public UpdateUIBroadcast(PlayOfflinePresenter mPresenter) {
+    public MusicServiceReceiver(PlayOfflinePresenter mPresenter) {
         this.mPresenter = mPresenter;
     }
 
@@ -32,7 +32,12 @@ public class UpdateUIBroadcast extends BroadcastReceiver {
     }
 
     private void completeAction(Intent intent) {
-        mPresenter.next();
+        boolean mIsSuffer = intent.getBooleanExtra("suffer", false);
+        if (!mIsSuffer) {
+            mPresenter.next();
+        } else {
+            mPresenter.nextRandom();
+        }
     }
 
     private void updateTimeAction(Intent intent) {
