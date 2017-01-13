@@ -3,10 +3,10 @@ package td.quang.vnplayer.views.activities;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -21,6 +21,7 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
@@ -44,9 +45,9 @@ import td.quang.vnplayer.views.fragments.home.CloudFragment;
 import td.quang.vnplayer.views.fragments.home.OnlineFragment;
 import td.quang.vnplayer.views.fragments.home.SongsFragment;
 import td.quang.vnplayer.views.fragments.playing.PlayingListFragment;
-import td.quang.vnplayer.views.notifications.SongNotification;
 
 @EActivity(R.layout.activity_main)
+@OptionsMenu(R.menu.menu_main)
 public class MainActivity extends BaseActivity implements IMainView {
     @ViewById(R.id.slidingPanel) SlidingUpPanelLayout slidingPanel;
     @ViewById(R.id.tabLayout) TabLayout mTabLayout;
@@ -64,7 +65,7 @@ public class MainActivity extends BaseActivity implements IMainView {
     @ViewById(R.id.ivImageAlbumCover) CircleImageView ivImageAlbumCover;
     @ViewById(R.id.tvCurrentTime) TextView tvCurrentTime;
     @ViewById(R.id.tvDuration) TextView tvDuration;
-
+    @ViewById(R.id.toolbar) Toolbar toolbar;
 
     TextView tvBarTitle;
     TextView tvHeadTitle;
@@ -83,10 +84,12 @@ public class MainActivity extends BaseActivity implements IMainView {
     private boolean mIsPlayed;
     private List<BaseFragment> mFragments;
     private PlayOfflinePresenter mPresenter;
-    private PlayingListFragment playingListFragment;
+
 
     @Override
     protected void afterView() {
+        setSupportActionBar(toolbar);
+
         tvBarTitle = (TextView) barPlaying.findViewById(R.id.tvBarTitle);
         tvBarArtist = (TextView) barPlaying.findViewById(R.id.tvBarArtist);
         btnBarPlay = (ImageButton) barPlaying.findViewById(R.id.btnBarPlay);
@@ -119,10 +122,23 @@ public class MainActivity extends BaseActivity implements IMainView {
 
         mAnim = AnimationUtils.loadAnimation(this, R.anim.anim_rotate);
 
-        playingListFragment = new PlayingListFragment();
+        PlayingListFragment playingListFragment = new PlayingListFragment();
         mPresenter = new PlayOfflinePresenterImpl(this);
         seekBarTime.setOnSeekBarChangeListener(new SeekBarChangeListener(this, mPresenter));
         mPresenter.registerBroadcast(this);
+
+        //chưa xong.
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        try {
+            Song song = bundle.getParcelable("data");
+            int position = bundle.getInt("position");
+            swapPlaying(song);
+            mIsPlayed = true;
+        } catch (NullPointerException e) {
+        }
+
+
         startService(new Intent(MainActivity.this, MusicServiceImpl.class));
 
     }
@@ -200,7 +216,6 @@ public class MainActivity extends BaseActivity implements IMainView {
     public void play(Song song) {
         mPresenter.play(this, song);
         mIsPlayed = true;
-        SongNotification.getInstance().showNotificationControl(this, song);
     }
 
     @Override
@@ -267,10 +282,10 @@ public class MainActivity extends BaseActivity implements IMainView {
     }
 
     private void swapFragments() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.flContainer, playingListFragment);
-        fragmentTransaction.commit();
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//        fragmentTransaction.replace(R.id.flContainer, playingListFragment);
+//        fragmentTransaction.commit();
     }
 
     private void repeatEvent() {

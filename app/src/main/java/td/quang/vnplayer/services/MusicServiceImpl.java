@@ -16,6 +16,7 @@ import java.io.IOException;
 import td.quang.vnplayer.broadcasts.ControlMusicBroadcast;
 import td.quang.vnplayer.broadcasts.MusicServiceReceiver;
 import td.quang.vnplayer.models.objects.Song;
+import td.quang.vnplayer.views.notifications.SongNotification;
 
 /**
  * Created by djwag on 1/9/2017.
@@ -72,6 +73,7 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
             Log.e("TAGG", "Music service setDatasource", e);
         }
         mIsPlaying = true;
+        SongNotification.getInstance().showNotification(this, song);
     }
 
     @Override public void stop() {
