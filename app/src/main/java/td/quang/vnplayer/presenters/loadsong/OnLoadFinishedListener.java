@@ -9,7 +9,9 @@ import td.quang.vnplayer.models.objects.Song;
  */
 
 public interface OnLoadFinishedListener {
+
     void onLoadFail();
 
     void onLoadSuccess(ArrayList<Song> songs);
+
 }

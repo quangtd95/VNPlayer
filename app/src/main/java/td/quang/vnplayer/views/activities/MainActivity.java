@@ -6,8 +6,11 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -16,12 +19,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
@@ -39,6 +42,7 @@ import td.quang.vnplayer.views.BaseFragment;
 import td.quang.vnplayer.views.adapters.HomeViewPagerAdapter;
 import td.quang.vnplayer.views.adapters.SongAdapter;
 import td.quang.vnplayer.views.customviews.MyButton;
+import td.quang.vnplayer.views.dialogs.MyDialog;
 import td.quang.vnplayer.views.dialogs.MyToast;
 import td.quang.vnplayer.views.fragments.home.AlbumsFragment;
 import td.quang.vnplayer.views.fragments.home.CloudFragment;
@@ -47,8 +51,8 @@ import td.quang.vnplayer.views.fragments.home.SongsFragment;
 import td.quang.vnplayer.views.fragments.playing.PlayingListFragment;
 
 @EActivity(R.layout.activity_main)
-@OptionsMenu(R.menu.menu_main)
-public class MainActivity extends BaseActivity implements IMainView {
+
+public class MainActivity extends BaseActivity implements IMainView, SearchView.OnQueryTextListener {
     @ViewById(R.id.slidingPanel) SlidingUpPanelLayout slidingPanel;
     @ViewById(R.id.tabLayout) TabLayout mTabLayout;
     @ViewById(R.id.viewPager) ViewPager mViewPager;
@@ -84,6 +88,7 @@ public class MainActivity extends BaseActivity implements IMainView {
     private boolean mIsPlayed;
     private List<BaseFragment> mFragments;
     private PlayOfflinePresenter mPresenter;
+    private SearchView searchView;
 
 
     @Override
@@ -141,6 +146,17 @@ public class MainActivity extends BaseActivity implements IMainView {
 
         startService(new Intent(MainActivity.this, MusicServiceImpl.class));
 
+    }
+
+    @Override public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        // thêm search vào vào action bar
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem itemSearch = menu.findItem(R.id.action_searchc);
+        searchView = (SearchView) itemSearch.getActionView();
+        //set OnQueryTextListener cho search view để thực hiện search theo text
+        searchView.setOnQueryTextListener(this);
+        return true;
     }
 
     @Click
@@ -319,6 +335,24 @@ public class MainActivity extends BaseActivity implements IMainView {
     @Override protected void onDestroy() {
         super.onDestroy();
         mPresenter.unregisterBroadcast(this);
+    }
+
+    @Override public boolean onQueryTextSubmit(String query) {
+        if (mViewPager.getCurrentItem() != 2) {
+            MyDialog.showError(this, "just use to search online!");
+            return true;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        if (mViewPager.getCurrentItem() != 2) {
+            return true;
+        }
+        Toast.makeText(this, "searching online!", Toast.LENGTH_SHORT).show();
+
+        return true;
     }
 }
 

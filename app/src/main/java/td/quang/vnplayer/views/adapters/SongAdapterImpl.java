@@ -113,6 +113,7 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
 
     }
 
+
     @Override
     public void setShuffle(boolean b) {
         if (b) {
@@ -169,6 +170,7 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
         });
     }
 
+
     static class SongHolder extends RecyclerView.ViewHolder {
         TextView ivSongThumb;
         TextView tvSongTitle;
@@ -185,4 +187,6 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
             cardViewSong = (CardView) itemView.findViewById(R.id.cardLayoutSong);
         }
     }
+
+
 }
