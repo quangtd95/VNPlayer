@@ -1,5 +1,7 @@
 package td.quang.vnplayer.presenters.playoffline;
 
+import android.content.Intent;
+
 import td.quang.vnplayer.models.objects.Song;
 import td.quang.vnplayer.views.adapters.SongAdapter;
 
@@ -8,6 +10,10 @@ import td.quang.vnplayer.views.adapters.SongAdapter;
  */
 
 public interface PlayOfflinePresenter {
+
+    void getCurrentState();
+
+    void setCurrentState(Intent intent);
 
     void play(Song song);
 

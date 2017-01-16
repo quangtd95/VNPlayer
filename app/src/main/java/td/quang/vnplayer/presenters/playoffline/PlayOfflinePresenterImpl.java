@@ -38,6 +38,7 @@ public class PlayOfflinePresenterImpl implements PlayOfflinePresenter {
         mIntentFilter.addAction(MusicServiceReceiver.ACTION_PREV);
         mIntentFilter.addAction(MusicServiceReceiver.ACTION_PAUSE);
         mIntentFilter.addAction(MusicServiceReceiver.ACTION_RESUME);
+        mIntentFilter.addAction(MusicServiceReceiver.ACTION_RECEIVE_CURRENT_STATE);
         mMainView.getContext().registerReceiver(mMusicServiceReceiver, mIntentFilter);
     }
 
@@ -45,6 +46,17 @@ public class PlayOfflinePresenterImpl implements PlayOfflinePresenter {
         mMainView.getContext().unregisterReceiver(mMusicServiceReceiver);
     }
 
+
+    @Override
+    public void getCurrentState() {
+        Intent intent = new Intent();
+        intent.setAction(ControlMusicBroadcast.ACTION_GET_CURRENT_STATE);
+        mMainView.getContext().sendBroadcast(intent);
+    }
+
+    @Override public void setCurrentState(Intent intent) {
+        mMainView.setCurrentState(intent);
+    }
 
     @Override
     public void play(Song song) {

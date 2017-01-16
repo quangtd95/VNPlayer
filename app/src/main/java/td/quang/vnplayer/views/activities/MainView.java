@@ -1,6 +1,7 @@
 package td.quang.vnplayer.views.activities;
 
 import android.content.Context;
+import android.content.Intent;
 
 import td.quang.vnplayer.models.objects.Song;
 import td.quang.vnplayer.views.adapters.SongAdapter;
@@ -10,6 +11,8 @@ import td.quang.vnplayer.views.adapters.SongAdapter;
  */
 
 public interface MainView {
+
+    void setCurrentState(Intent intent);
     void playView(Song song);
 
     void play(Song song);

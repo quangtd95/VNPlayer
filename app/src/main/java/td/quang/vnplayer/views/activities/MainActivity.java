@@ -1,6 +1,7 @@
 package td.quang.vnplayer.views.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.support.design.widget.TabLayout;
@@ -130,6 +131,38 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
         seekBarTime.setOnSeekBarChangeListener(new SeekBarChangeListener(mPresenter));
         mPresenter.registerBroadcast();
 
+        getCurrentState();
+
+    }
+
+    private void getCurrentState() {
+        mPresenter.getCurrentState();
+    }
+
+    @Override
+    public void setCurrentState(Intent intent) {
+        mIsPlayed = intent.getBooleanExtra("playing", false);
+        Song song = intent.getParcelableExtra("song");
+        if (song != null) {
+            if (mIsPlayed) playView(song);
+            mSongAdapter.setCurrent(song);
+        }
+
+        mIsRepeat = intent.getBooleanExtra("repeat", false);
+        if (!mIsRepeat) {
+            btnRepeat.setTextColor(getResources().getColor(R.color.colorAccentDark));
+        } else {
+            btnRepeat.setTextColor(getResources().getColor(R.color.colorAccent));
+        }
+        mPresenter.setRepeat(mIsRepeat);
+
+        mIsShuffle = intent.getBooleanExtra("shuffle", false);
+        if (!mIsShuffle) {
+            btnShuffle.setTextColor(getResources().getColor(R.color.colorAccentDark));
+        } else {
+            btnShuffle.setTextColor(getResources().getColor(R.color.colorAccent));
+        }
+        mPresenter.setRepeat(mIsShuffle);
 
     }
 
@@ -215,6 +248,7 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
         repeatEvent();
     }
 
+
     @Override
     public void playView(Song song) {
         mIsPlayed = true;
@@ -264,7 +298,7 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
 
     @Override
     public void setTimeSeekbar(int mCurrentTime, int visible) {
-        if (!mIsPlayed) return;
+//        if (!mIsPlayed) return;
         seekBarTime.setProgress(mCurrentTime);
         tvCurrentTime.setVisibility(visible);
         tvCurrentTime.setText(AudioUtils.convertIntToTime(mCurrentTime));
@@ -315,10 +349,8 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
     private void sufferEvent() {
         if (mIsShuffle) {
             btnShuffle.setTextColor(getResources().getColor(R.color.colorAccentDark));
-            MyToast.show(btnShuffle, "tắt trộn bài");
         } else {
             btnShuffle.setTextColor(getResources().getColor(R.color.colorAccent));
-            MyToast.show(btnShuffle, "bật trộn bài");
         }
         mIsShuffle = !mIsShuffle;
         mPresenter.setShuffle(mIsShuffle);
@@ -336,7 +368,7 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
 
     @Override public boolean onQueryTextSubmit(String query) {
         if (mViewPager.getCurrentItem() != 2) {
-            MyDialog.showError(this, "just use to search online!");
+            MyDialog.showError(this, "just only use to search online!");
             return true;
         }
         onlineFragment.search(query);

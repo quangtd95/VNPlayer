@@ -40,6 +40,15 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
         mRandomList = new Stack<>();
     }
 
+    public void setCurrent(Song mCurrentSong) {
+        this.mCurrentSong = mCurrentSong;
+        for (int i = 0; i < songs.size(); i++) {
+            if (mCurrentSong.getFilePath().equalsIgnoreCase(songs.get(i).getFilePath())) {
+                mCurrentPosition = i;
+                break;
+            }
+        }
+    }
 
     @Override
     public void setPlayingView(MainView MainView) {
@@ -72,7 +81,7 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
     }
 
     @Override public Song getNextSong() {
-        if (mCurrentPosition == (songs.size() - 1)) return mCurrentSong;
+        if (mCurrentPosition >= (songs.size() - 1)) return getFirstSong();
         return songs.get(mCurrentPosition + 1);
     }
 
@@ -81,13 +90,13 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
     }
 
     @Override public Song getPrevSong() {
-        if (mCurrentPosition == 0) return songs.get(mCurrentPosition);
+        if (mCurrentPosition <= 0) return songs.get(mCurrentPosition);
         return songs.get(mCurrentPosition - 1);
     }
 
     @Override public void moveToNextSong() {
         mCurrentPosition++;
-        if (mCurrentPosition == songs.size()) mCurrentPosition++;
+        if (mCurrentPosition == songs.size()) mCurrentPosition = 0;
     }
 
     @Override public void moveToPrevSong() {
@@ -109,7 +118,9 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
     public Song getPrevRandomSong() {
         Log.e("TAGG", "random list prev pop= " + mRandomList.size() + "");
         if (mRandomList.size() > 1) mRandomList.pop();
-        return songs.get(mRandomList.peek());
+        if (mRandomList.size() > 0)
+            return songs.get(mRandomList.peek());
+        else return mCurrentSong;
 
     }
 

@@ -19,6 +19,7 @@ public class MusicServiceReceiver extends BroadcastReceiver {
     public static final String ACTION_PREV = "TD.QUANG.VNPLAYER.MUSICSERVICERECEIVER.PREV";
     public static final String ACTION_PAUSE = "TD.QUANG.VNPLAYER.MUSICSERVICERECEIVER.PAUSE";
     public static final String ACTION_RESUME = "TD.QUANG.VNPLAYER.MUSICSERVICERECEIVER.RESUME";
+    public static final String ACTION_RECEIVE_CURRENT_STATE = "TD.QUANG.VNPLAYER.MUSICSERVICERECEIVER.RECEIVE_CURRENT_STATE";
 
     @Setter private PlayOfflinePresenter mPresenter;
     @Setter private MainView mMainView;
@@ -49,7 +50,14 @@ public class MusicServiceReceiver extends BroadcastReceiver {
         if (action.equalsIgnoreCase(ACTION_RESUME)) {
             resumeAction(intent);
         }
+        if (action.equalsIgnoreCase(ACTION_RECEIVE_CURRENT_STATE)) {
+            receiveCurrentState(intent);
+        }
 
+    }
+
+    private void receiveCurrentState(Intent intent) {
+        mPresenter.setCurrentState(intent);
     }
 
     private void resumeAction(Intent intent) {

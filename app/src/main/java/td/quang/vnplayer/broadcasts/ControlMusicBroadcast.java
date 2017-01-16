@@ -18,6 +18,7 @@ public class ControlMusicBroadcast extends BroadcastReceiver {
     public static final String ACTION_SEEK = "TD.QUANG.VNPLAYER.CONTROLMUSICBROADCAST.SEEK";
     public static final String ACTION_REPEAT = "TD.QUANG.VNPLAYER.CONTROLMUSICBROADCAST.REPEAT";
     public static final String ACTION_SHUFFLE = "TD.QUANG.VNPLAYER.CONTROLMUSICBROADCAST.SUFFLE";
+    public static final String ACTION_GET_CURRENT_STATE = "TD.QUANG.VNPLAYER.CONTROLMUSICBROADCAST.GET_CURRENT_STATE";
 
     private MusicService musicService;
 
@@ -50,7 +51,14 @@ public class ControlMusicBroadcast extends BroadcastReceiver {
         if (action.equalsIgnoreCase(ACTION_SHUFFLE)) {
             onShuffleAction(intent);
         }
+        if (action.equalsIgnoreCase(ACTION_GET_CURRENT_STATE)) {
+            onGetCurrentStateAction(intent);
+        }
 
+    }
+
+    private void onGetCurrentStateAction(Intent intent) {
+        musicService.getCurrentState();
     }
 
 

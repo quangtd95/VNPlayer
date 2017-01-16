@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">vnPlayer</string>
     <string name="action_settings">Settings</string>
-    <string name="action_shuffle_all">Shuffle all</string>
+    <string name="action_schedule">Set alarm</string>
     <string name="action_search">Search</string>
     <integer name="splash_time">2000</integer>
     <string name="ic_play">&#xf01d;</string>

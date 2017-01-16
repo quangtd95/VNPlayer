@@ -10,6 +10,8 @@ import td.quang.vnplayer.views.activities.MainView;
  */
 
 public interface SongAdapter {
+
+    void setCurrent(Song song);
     void setPlayingView(MainView MainView);
 
     void setData(ArrayList<Song> songs);

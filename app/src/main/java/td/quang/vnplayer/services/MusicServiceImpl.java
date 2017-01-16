@@ -27,7 +27,8 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
     private MediaPlayer mMediaPlayer;
     private boolean mIsPlaying;
     private Thread threadUpdateSeekbar;
-    private int currentPosition;
+    private int mCurrentPosition;
+    private Song mCurrentSong;
     private boolean mIsRepeat;
     private boolean b;
     private boolean mIsShuffle;
@@ -47,6 +48,7 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
         filter.addAction(ControlMusicBroadcast.ACTION_SEEK);
         filter.addAction(ControlMusicBroadcast.ACTION_REPEAT);
         filter.addAction(ControlMusicBroadcast.ACTION_SHUFFLE);
+        filter.addAction(ControlMusicBroadcast.ACTION_GET_CURRENT_STATE);
         registerReceiver(controlMusicBroadcast, filter);
         mSongNotification = SongNotification.getInstance();
     }
@@ -58,6 +60,7 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
 
     @Override
     public void play(Song song) {
+        mCurrentSong = song;
         if (mMediaPlayer == null) {
             mMediaPlayer = new MediaPlayer();
             mMediaPlayer.setWakeMode(getApplication(), PowerManager.PARTIAL_WAKE_LOCK);
@@ -122,6 +125,17 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
         mIsShuffle = b;
     }
 
+    @Override public void getCurrentState() {
+        Intent intent = new Intent();
+        intent.setAction(MusicServiceReceiver.ACTION_RECEIVE_CURRENT_STATE);
+        intent.putExtra("shuffle", mIsShuffle);
+        intent.putExtra("repeat", mIsRepeat);
+        intent.putExtra("playing", mIsPlaying);
+        intent.putExtra("song", mCurrentSong);
+        intent.putExtra("position", mCurrentPosition);
+        sendBroadcast(intent);
+    }
+
     @Override
     public void onCompletion(MediaPlayer mp) {
         if (mIsRepeat) {
@@ -141,10 +155,11 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
         if (threadUpdateSeekbar == null) {
             threadUpdateSeekbar = new Thread(() -> {
                 int mDuration = mp.getDuration();
-                while (currentPosition < mDuration) {
+                while (mCurrentPosition < mDuration) {
                     Intent intent = new Intent();
                     intent.setAction(MusicServiceReceiver.ACTION_UPDATE_TIME);
-                    intent.putExtra("currentTime", mp.getCurrentPosition());
+                    mCurrentPosition = mp.getCurrentPosition();
+                    intent.putExtra("currentTime", mCurrentPosition);
                     if (mIsPlaying) {
                         intent.putExtra("visible", View.VISIBLE);
                     } else {
