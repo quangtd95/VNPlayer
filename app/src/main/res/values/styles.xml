@@ -28,14 +28,5 @@
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
     </style>
 
-    <style name="SelectableItemThemeDark">
-        <item name="colorControlHighlight">@color/colorRippleDark</item>
-    </style>
-
-
-    <style name="SelectableItemBackgroundDark">
-        <item name="android:theme">@style/SelectableItemThemeDark</item>
-        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
-    </style>
 
 </resources>

@@ -2,12 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/play"
-        android:title="Play" />
-    <item
-        android:id="@+id/addToQueue"
-        android:title="Add to queue" />
+        android:title="@string/play"/>
     <item
         android:id="@+id/delete"
-        android:title="Delete" />
+        android:title="@string/delete"/>
 
 </menu>

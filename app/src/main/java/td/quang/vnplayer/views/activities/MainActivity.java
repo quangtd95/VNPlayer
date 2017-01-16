@@ -1,14 +1,12 @@
 package td.quang.vnplayer.views.activities;
 
-import android.content.Intent;
+import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
-import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
@@ -35,7 +32,6 @@ import td.quang.vnplayer.R;
 import td.quang.vnplayer.models.objects.Song;
 import td.quang.vnplayer.presenters.playoffline.PlayOfflinePresenter;
 import td.quang.vnplayer.presenters.playoffline.PlayOfflinePresenterImpl;
-import td.quang.vnplayer.services.MusicServiceImpl;
 import td.quang.vnplayer.utils.AudioUtils;
 import td.quang.vnplayer.views.BaseActivity;
 import td.quang.vnplayer.views.BaseFragment;
@@ -52,7 +48,7 @@ import td.quang.vnplayer.views.fragments.playing.PlayingListFragment;
 
 @EActivity(R.layout.activity_main)
 
-public class MainActivity extends BaseActivity implements IMainView, SearchView.OnQueryTextListener {
+public class MainActivity extends BaseActivity implements MainView, SearchView.OnQueryTextListener {
     @ViewById(R.id.slidingPanel) SlidingUpPanelLayout slidingPanel;
     @ViewById(R.id.tabLayout) TabLayout mTabLayout;
     @ViewById(R.id.viewPager) ViewPager mViewPager;
@@ -89,6 +85,7 @@ public class MainActivity extends BaseActivity implements IMainView, SearchView.
     private List<BaseFragment> mFragments;
     private PlayOfflinePresenter mPresenter;
     private SearchView searchView;
+    private OnlineFragment onlineFragment;
 
 
     @Override
@@ -105,14 +102,16 @@ public class MainActivity extends BaseActivity implements IMainView, SearchView.
 
         mFragments = new ArrayList<>();
         SongsFragment songsFragment = new SongsFragment();
-        songsFragment.setIMainView(this);
+        songsFragment.setMainView(this);
         mFragments.add(songsFragment);
         mFragments.add(new AlbumsFragment());
-        mFragments.add(new OnlineFragment());
+        onlineFragment = new OnlineFragment();
+        mFragments.add(onlineFragment);
         mFragments.add(new CloudFragment());
 
         mViewPagerAdapter = new HomeViewPagerAdapter(getSupportFragmentManager(), mFragments);
         mViewPager.setAdapter(mViewPagerAdapter);
+        mViewPager.setOffscreenPageLimit(4);
         mTabLayout.setupWithViewPager(mViewPager, true);
         mTabLayout.dispatchSetSelected(true);
 
@@ -124,37 +123,20 @@ public class MainActivity extends BaseActivity implements IMainView, SearchView.
         slidingPanel.setPanelHeight(height);
         slidingPanel.addPanelSlideListener(new SlidingPanelListener(this, barPlaying));
 
-
         mAnim = AnimationUtils.loadAnimation(this, R.anim.anim_rotate);
 
         PlayingListFragment playingListFragment = new PlayingListFragment();
         mPresenter = new PlayOfflinePresenterImpl(this);
-        seekBarTime.setOnSeekBarChangeListener(new SeekBarChangeListener(this, mPresenter));
-        mPresenter.registerBroadcast(this);
+        seekBarTime.setOnSeekBarChangeListener(new SeekBarChangeListener(mPresenter));
+        mPresenter.registerBroadcast();
 
-        //chưa xong.
-        Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-        try {
-            Song song = bundle.getParcelable("data");
-            int position = bundle.getInt("position");
-            swapPlaying(song);
-            mIsPlayed = true;
-        } catch (NullPointerException e) {
-        }
-
-
-        startService(new Intent(MainActivity.this, MusicServiceImpl.class));
 
     }
 
     @Override public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        // thêm search vào vào action bar
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem itemSearch = menu.findItem(R.id.action_searchc);
         searchView = (SearchView) itemSearch.getActionView();
-        //set OnQueryTextListener cho search view để thực hiện search theo text
         searchView.setOnQueryTextListener(this);
         return true;
     }
@@ -162,24 +144,29 @@ public class MainActivity extends BaseActivity implements IMainView, SearchView.
     @Click
     public void btnPlayClicked() {
         if (!mIsPlayed) {
+            playView(mSongAdapter.getFirstSong());
             play(mSongAdapter.getFirstSong());
-            swapPlaying(mSongAdapter.getFirstSong());
         } else if (mIsPause) {
             resumeView();
+            mPresenter.resume();
         } else {
             pauseView();
+            mPresenter.pause();
         }
     }
 
     @Click
     public void btnBarPlayClicked() {
         if (!mIsPlayed) {
+            playView(mSongAdapter.getFirstSong());
             play(mSongAdapter.getFirstSong());
-            swapPlaying(mSongAdapter.getFirstSong());
+
         } else if (mIsPause) {
             resumeView();
+            mPresenter.resume();
         } else {
             pauseView();
+            mPresenter.pause();
 
         }
     }
@@ -229,41 +216,8 @@ public class MainActivity extends BaseActivity implements IMainView, SearchView.
     }
 
     @Override
-    public void play(Song song) {
-        mPresenter.play(this, song);
+    public void playView(Song song) {
         mIsPlayed = true;
-    }
-
-    @Override
-    public void pauseView() {
-        ivImageAlbumCover.clearAnimation();
-        btnPlay.setText(getResources().getString(R.string.ic_play));
-        btnBarPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_circle_outline_white_24dp));
-        mIsPause = true;
-        mPresenter.pause(this);
-    }
-
-    @Override
-    public void resumeView() {
-        ivImageAlbumCover.startAnimation(mAnim);
-        btnPlay.setText(getResources().getString(R.string.ic_pause));
-        btnBarPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_24dp));
-        mIsPause = false;
-        mPresenter.resume(this);
-
-    }
-
-    @Override
-    public void setTimeSeekbar(int mCurrentTime, int visible) {
-        if (!mIsPlayed) return;
-        seekBarTime.setProgress(mCurrentTime);
-        tvCurrentTime.setVisibility(visible);
-        tvCurrentTime.setText(AudioUtils.convertIntToTime(mCurrentTime));
-    }
-
-    @Override
-    public void swapPlaying(Song song) {
-        if (song == null) Log.e("TAGG", "song null");
         tvBarTitle.setText(song.getTitle());
         tvBarArtist.setText(song.getArtist());
         tvHeadTitle.setText(song.getTitle());
@@ -288,6 +242,49 @@ public class MainActivity extends BaseActivity implements IMainView, SearchView.
 
     }
 
+    @Override public void play(Song song) {
+        mPresenter.play(song);
+    }
+
+    @Override
+    public void pauseView() {
+        ivImageAlbumCover.clearAnimation();
+        btnPlay.setText(getResources().getString(R.string.ic_play));
+        btnBarPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_circle_outline_white_24dp));
+        mIsPause = true;
+    }
+
+    @Override
+    public void resumeView() {
+        ivImageAlbumCover.startAnimation(mAnim);
+        btnPlay.setText(getResources().getString(R.string.ic_pause));
+        btnBarPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_24dp));
+        mIsPause = false;
+    }
+
+    @Override
+    public void setTimeSeekbar(int mCurrentTime, int visible) {
+        if (!mIsPlayed) return;
+        seekBarTime.setProgress(mCurrentTime);
+        tvCurrentTime.setVisibility(visible);
+        tvCurrentTime.setText(AudioUtils.convertIntToTime(mCurrentTime));
+    }
+
+    @Override
+    public void setIsPause(boolean b) {
+        mIsPause = b;
+
+    }
+
+    @Override public boolean isShuffle() {
+        return mIsShuffle;
+    }
+
+    @Override public Context getContext() {
+        return this;
+    }
+
+
     @Override
     public void onBackPressed() {
         if (slidingPanel.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
@@ -311,7 +308,7 @@ public class MainActivity extends BaseActivity implements IMainView, SearchView.
             btnRepeat.setTextColor(getResources().getColor(R.color.colorAccent));
         }
         mIsRepeat = !mIsRepeat;
-        mPresenter.setRepeat(this, mIsRepeat);
+        mPresenter.setRepeat(mIsRepeat);
         MyToast.show(btnRepeat, mIsRepeat ? "lặp lại" : "tắt lặp lại");
     }
 
@@ -324,7 +321,7 @@ public class MainActivity extends BaseActivity implements IMainView, SearchView.
             MyToast.show(btnShuffle, "bật trộn bài");
         }
         mIsShuffle = !mIsShuffle;
-        mPresenter.setShuffle(this, mIsShuffle);
+        mPresenter.setShuffle(mIsShuffle);
     }
 
     public void setSongAdapter(SongAdapter songAdapter) {
@@ -334,7 +331,7 @@ public class MainActivity extends BaseActivity implements IMainView, SearchView.
 
     @Override protected void onDestroy() {
         super.onDestroy();
-        mPresenter.unregisterBroadcast(this);
+        mPresenter.unregisterBroadcast();
     }
 
     @Override public boolean onQueryTextSubmit(String query) {
@@ -342,6 +339,7 @@ public class MainActivity extends BaseActivity implements IMainView, SearchView.
             MyDialog.showError(this, "just use to search online!");
             return true;
         }
+        onlineFragment.search(query);
         return true;
     }
 
@@ -350,8 +348,6 @@ public class MainActivity extends BaseActivity implements IMainView, SearchView.
         if (mViewPager.getCurrentItem() != 2) {
             return true;
         }
-        Toast.makeText(this, "searching online!", Toast.LENGTH_SHORT).show();
-
         return true;
     }
 }

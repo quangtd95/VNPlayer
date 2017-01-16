@@ -1,7 +1,5 @@
 package td.quang.vnplayer.presenters.playoffline;
 
-import android.content.Context;
-
 import td.quang.vnplayer.models.objects.Song;
 import td.quang.vnplayer.views.adapters.SongAdapter;
 
@@ -11,27 +9,27 @@ import td.quang.vnplayer.views.adapters.SongAdapter;
 
 public interface PlayOfflinePresenter {
 
-    void play(Context mContext, Song song);
+    void play(Song song);
 
-    void pause(Context mContext);
+    void pause();
 
-    void resume(Context mContext);
+    void resume();
 
     void next();
 
     void prev();
 
-    void setRepeat(Context mContext, boolean b);
+    void setRepeat(boolean b);
 
-    void setShuffle(Context mContext, boolean b);
+    void setShuffle(boolean b);
 
-    void seekTo(Context mContext, int position);
+    void seekTo(int position);
 
     void onReceiveTimeValue(int duration, int visible);
 
-    void registerBroadcast(Context mContext);
+    void registerBroadcast();
 
-    public void unregisterBroadcast(Context mContext);
+    void unregisterBroadcast();
 
     void setSongAdapter(SongAdapter songAdapter);
 

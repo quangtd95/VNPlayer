@@ -13,6 +13,7 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.IntegerRes;
 
 import td.quang.vnplayer.R;
+import td.quang.vnplayer.services.MusicServiceImpl;
 import td.quang.vnplayer.views.BaseActivity;
 
 /**
@@ -43,6 +44,7 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     protected void afterView() {
+        startService(new Intent(this, MusicServiceImpl.class));
         addAnimations();
 
 

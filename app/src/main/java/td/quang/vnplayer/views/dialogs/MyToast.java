@@ -15,7 +15,7 @@ public class MyToast {
         int x = points[0];
         int y = points[1] - view.getHeight();
         Toast toast = Toast.makeText(view.getContext(), message, Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.LEFT | Gravity.TOP, x, y);
+        toast.setGravity(Gravity.START | Gravity.TOP, x, y);
         toast.show();
     }
 }

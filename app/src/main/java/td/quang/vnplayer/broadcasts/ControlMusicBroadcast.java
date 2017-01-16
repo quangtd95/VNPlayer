@@ -11,13 +11,13 @@ import td.quang.vnplayer.services.MusicService;
  * Created by djwag on 1/9/2017.
  */
 public class ControlMusicBroadcast extends BroadcastReceiver {
-    public static final String ACTION_PLAY = "TD.QUANG.VNPLAYER.PLAY";
-    public static final String ACTION_STOP = "TD.QUANG.VNPLAYER.STOP";
-    public static final String ACTION_RESUME = "TD.QUANG.VNPLAYER.RESUME";
-    public static final String ACTION_PAUSE = "TD.QUANG.VNPLAYER.PAUSE";
-    public static final String ACTION_SEEK = "TD.QUANG.VNPLAYER.SEEK";
-    public static final String ACTION_REPEAT = "TD.QUANG.VNPLAYER.REPEAT";
-    public static final String ACTION_SHUFFLE = "TD.QUANG.VNPLAYER.SUFFLE";
+    public static final String ACTION_PLAY = "TD.QUANG.VNPLAYER.CONTROLMUSICBROADCAST.PLAY";
+    public static final String ACTION_STOP = "TD.QUANG.VNPLAYER.CONTROLMUSICBROADCAST.STOP";
+    public static final String ACTION_RESUME = "TD.QUANG.VNPLAYER.CONTROLMUSICBROADCAST.RESUME";
+    public static final String ACTION_PAUSE = "TD.QUANG.VNPLAYER.CONTROLMUSICBROADCAST.PAUSE";
+    public static final String ACTION_SEEK = "TD.QUANG.VNPLAYER.CONTROLMUSICBROADCAST.SEEK";
+    public static final String ACTION_REPEAT = "TD.QUANG.VNPLAYER.CONTROLMUSICBROADCAST.REPEAT";
+    public static final String ACTION_SHUFFLE = "TD.QUANG.VNPLAYER.CONTROLMUSICBROADCAST.SUFFLE";
 
     private MusicService musicService;
 
@@ -50,7 +50,9 @@ public class ControlMusicBroadcast extends BroadcastReceiver {
         if (action.equalsIgnoreCase(ACTION_SHUFFLE)) {
             onShuffleAction(intent);
         }
+
     }
+
 
     private void onShuffleAction(Intent intent) {
         boolean b = intent.getBooleanExtra("shuffle", false);

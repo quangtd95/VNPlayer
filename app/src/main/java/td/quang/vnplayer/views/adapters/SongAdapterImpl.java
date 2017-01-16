@@ -18,7 +18,7 @@ import java.util.Stack;
 import td.quang.vnplayer.R;
 import td.quang.vnplayer.models.objects.Song;
 import td.quang.vnplayer.utils.RandomColor;
-import td.quang.vnplayer.views.activities.IMainView;
+import td.quang.vnplayer.views.activities.MainView;
 import td.quang.vnplayer.views.fragments.home.SongsFragment;
 
 /**
@@ -29,7 +29,7 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
     private ArrayList<Song> songs;
     private Context mContext;
     private SongsFragment mFragment;
-    private IMainView mIMainView;
+    private MainView mMainView;
     private int mCurrentPosition;
     private Song mCurrentSong;
     private Stack<Integer> mRandomList;
@@ -42,8 +42,8 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
 
 
     @Override
-    public void setPlayingView(IMainView IMainView) {
-        this.mIMainView = IMainView;
+    public void setPlayingView(MainView MainView) {
+        this.mMainView = MainView;
     }
 
     @Override
@@ -65,8 +65,8 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
     @Override public void playSongOnClick(int position) {
         mCurrentPosition = position;
         mCurrentSong = songs.get(mCurrentPosition);
-        mIMainView.swapPlaying(mCurrentSong);
-        mIMainView.play(mCurrentSong);
+        mMainView.playView(mCurrentSong);
+        mMainView.play(mCurrentSong);
         mRandomList.clear();
         mRandomList.add(position);
     }
@@ -113,7 +113,6 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
 
     }
 
-
     @Override
     public void setShuffle(boolean b) {
         if (b) {
@@ -148,9 +147,7 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
             showMenu(holder.btnSongOption, position);
             return false;
         });
-        holder.cardViewSong.setOnClickListener(v -> {
-            playSongOnClick(position);
-        });
+        holder.cardViewSong.setOnClickListener(v -> playSongOnClick(position));
     }
 
     private void showMenu(View view, int position) {

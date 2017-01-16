@@ -3,14 +3,14 @@ package td.quang.vnplayer.views.adapters;
 import java.util.ArrayList;
 
 import td.quang.vnplayer.models.objects.Song;
-import td.quang.vnplayer.views.activities.IMainView;
+import td.quang.vnplayer.views.activities.MainView;
 
 /**
  * Created by djwag on 1/10/2017.
  */
 
 public interface SongAdapter {
-    void setPlayingView(IMainView IMainView);
+    void setPlayingView(MainView MainView);
 
     void setData(ArrayList<Song> songs);
 

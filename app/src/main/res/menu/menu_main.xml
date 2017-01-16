@@ -12,11 +12,9 @@
         appcompat:showAsAction="always"
         tools:ignore="AppCompatResource"/>
     <item
-        android:id="@+id/action_shuffle_all"
         android:orderInCategory="100"
         android:title="@string/action_shuffle_all"/>
     <item
-        android:id="@+id/action_settings"
         android:orderInCategory="101"
         android:title="@string/action_settings"
         app:showAsAction="never"/>

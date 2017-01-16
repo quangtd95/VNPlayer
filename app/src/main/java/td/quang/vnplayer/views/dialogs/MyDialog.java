@@ -32,6 +32,11 @@ public class MyDialog {
     }
 
     public static void showError(Context mContext, String text) {
+        if (text == null) {
+            showError(mContext);
+            return;
+        }
+
         new SweetAlertDialog(mContext, SweetAlertDialog.ERROR_TYPE)
                 .setTitleText("Oops...")
                 .setContentText(text)
@@ -39,6 +44,10 @@ public class MyDialog {
     }
 
     public static void showSuccess(Context mContext, String text) {
+        if (text == null) {
+            showError(mContext);
+            return;
+        }
         new SweetAlertDialog(mContext, SweetAlertDialog.SUCCESS_TYPE)
                 .setTitleText("Successfully!")
                 .setContentText(text)
@@ -52,10 +61,7 @@ public class MyDialog {
                 .show();
     }
 
-    /**
-     * @param mContext
-     * @return must declare listener when touch ok
-     */
+
     public static SweetAlertDialog showConfirm(Context mContext) {
         return new SweetAlertDialog(mContext, SweetAlertDialog.WARNING_TYPE)
                 .setTitleText("Are you sure?")
@@ -63,6 +69,6 @@ public class MyDialog {
                 .setCancelText("No,cancel plx!")
                 .setConfirmText("Yes,delete it!")
                 .showCancelButton(true)
-                .setCancelClickListener(sDialog -> sDialog.cancel());
+                .setCancelClickListener(SweetAlertDialog::cancel);
     }
 }

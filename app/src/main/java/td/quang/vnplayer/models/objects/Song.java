@@ -5,10 +5,12 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import lombok.Data;
+
 /**
  * Created by djwag on 1/4/2017.
  */
-
+@Data
 public class Song implements Parcelable {
     public static final Creator<Song> CREATOR = new Creator<Song>() {
         @Override
@@ -54,61 +56,6 @@ public class Song implements Parcelable {
         duration = in.readInt();
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getArtist() {
-        return artist;
-    }
-
-    public void setArtist(String artist) {
-        this.artist = artist;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getAlbum() {
-        return album;
-    }
-
-    public void setAlbum(String album) {
-        this.album = album;
-    }
-
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
-
-    public Bitmap getAlbumCover() {
-        return albumCover;
-    }
-
-    public void setAlbumCover(Bitmap albumCover) {
-        this.albumCover = albumCover;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
 
     public Uri getSource() {
         return Uri.parse(Uri.encode(filePath));

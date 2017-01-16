@@ -31,6 +31,7 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
     private boolean mIsRepeat;
     private boolean b;
     private boolean mIsShuffle;
+    private SongNotification mSongNotification;
 
 
     @Override
@@ -47,6 +48,7 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
         filter.addAction(ControlMusicBroadcast.ACTION_REPEAT);
         filter.addAction(ControlMusicBroadcast.ACTION_SHUFFLE);
         registerReceiver(controlMusicBroadcast, filter);
+        mSongNotification = SongNotification.getInstance();
     }
 
     @Nullable @Override
@@ -73,7 +75,12 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
             Log.e("TAGG", "Music service setDatasource", e);
         }
         mIsPlaying = true;
-        SongNotification.getInstance().showNotification(this, song);
+
+        if (!mSongNotification.isShow()) mSongNotification.showNotification(this, song);
+        else {
+            mSongNotification.updateNotification(this, song);
+        }
+        mSongNotification.updateNotification(this, false);
     }
 
     @Override public void stop() {
@@ -81,12 +88,13 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
         mMediaPlayer.release();
         mMediaPlayer = null;
         mIsPlaying = false;
-
+        mSongNotification.updateNotification(this, true);
     }
 
     @Override public void resume() {
         if (!mIsPlaying) {
             mMediaPlayer.start();
+            mSongNotification.updateNotification(this, false);
         }
         mIsPlaying = true;
     }
@@ -94,6 +102,7 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
     @Override public void pause() {
         if (mIsPlaying) {
             mMediaPlayer.pause();
+            mSongNotification.updateNotification(this, true);
         }
         mIsPlaying = false;
     }
@@ -124,7 +133,6 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
             intent.putExtra("shuffle", mIsShuffle);
             sendBroadcast(intent);
         }
-
     }
 
     @Override
@@ -137,8 +145,13 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
                     Intent intent = new Intent();
                     intent.setAction(MusicServiceReceiver.ACTION_UPDATE_TIME);
                     intent.putExtra("currentTime", mp.getCurrentPosition());
-                    intent.putExtra("visible", b ? View.VISIBLE : View.INVISIBLE);
-                    b = !b;
+                    if (mIsPlaying) {
+                        intent.putExtra("visible", View.VISIBLE);
+                    } else {
+                        intent.putExtra("visible", b ? View.VISIBLE : View.INVISIBLE);
+                        b = !b;
+                    }
+
                     sendBroadcast(intent);
                     try {
                         Thread.sleep(500);

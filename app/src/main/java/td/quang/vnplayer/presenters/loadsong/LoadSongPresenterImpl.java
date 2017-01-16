@@ -64,13 +64,13 @@ public class LoadSongPresenterImpl implements LoadSongPresenter, OnLoadFinishedL
 
     @Override
     public void onDeleteSuccess(int position) {
-        mView.showDeleteSuccess();
+        mView.showSuccess(null);
         mAdapter.removeItem(position);
 
     }
 
     @Override
     public void onDeleteFail() {
-        mView.showDeleteError();
+        mView.showError(null);
     }
 }

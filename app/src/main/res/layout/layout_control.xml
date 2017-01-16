@@ -32,7 +32,6 @@
             app:srcCompat="@drawable/ic_music_note_white_24dp" />
 
         <TextView
-            android:id="@+id/textView5"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/colorAccent" />
@@ -69,7 +68,6 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/textView6"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/colorAccent" />
@@ -116,7 +114,6 @@
             app:srcCompat="@drawable/ic_playlist_play_white_24dp" />
 
         <TextView
-            android:id="@+id/textView7"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/colorAccent" />
@@ -150,7 +147,6 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/textView9"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/colorAccent" />

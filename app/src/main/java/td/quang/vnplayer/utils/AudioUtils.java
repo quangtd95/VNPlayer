@@ -52,7 +52,6 @@ public class AudioUtils {
         int m = s / 60;
         s = s - m * 60;
         int h = m / 60;
-        int i = m = m - h * 60;
         StringBuilder result = new StringBuilder();
         if (h > 0) {
             result.append((h < 10) ? "0" : "");

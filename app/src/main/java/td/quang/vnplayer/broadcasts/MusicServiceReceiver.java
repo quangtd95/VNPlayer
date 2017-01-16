@@ -4,20 +4,28 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import lombok.Setter;
 import td.quang.vnplayer.presenters.playoffline.PlayOfflinePresenter;
+import td.quang.vnplayer.views.activities.MainView;
 
 /**
  * Created by djwag on 1/11/2017.
  */
 
 public class MusicServiceReceiver extends BroadcastReceiver {
-    public static final String ACTION_UPDATE_TIME = "TD.QUANG.VNPLAYER.UPDATE_TIME";
-    public static final String ACTION_COMPLETE = "TD.QUANG.VNPLAYER.COMPLETE";
+    public static final String ACTION_UPDATE_TIME = "TD.QUANG.VNPLAYER.MUSICSERVICERECEIVER.UPDATE_TIME";
+    public static final String ACTION_COMPLETE = "TD.QUANG.VNPLAYER.MUSICSERVICERECEIVER.COMPLETE";
+    public static final String ACTION_NEXT = "TD.QUANG.VNPLAYER.MUSICSERVICERECEIVER.NEXT";
+    public static final String ACTION_PREV = "TD.QUANG.VNPLAYER.MUSICSERVICERECEIVER.PREV";
+    public static final String ACTION_PAUSE = "TD.QUANG.VNPLAYER.MUSICSERVICERECEIVER.PAUSE";
+    public static final String ACTION_RESUME = "TD.QUANG.VNPLAYER.MUSICSERVICERECEIVER.RESUME";
 
-    private PlayOfflinePresenter mPresenter;
+    @Setter private PlayOfflinePresenter mPresenter;
+    @Setter private MainView mMainView;
 
-    public MusicServiceReceiver(PlayOfflinePresenter mPresenter) {
-        this.mPresenter = mPresenter;
+    public MusicServiceReceiver(PlayOfflinePresenter mPresenter, MainView mainView) {
+        setMPresenter(mPresenter);
+        setMMainView(mainView);
     }
 
     @Override
@@ -29,6 +37,36 @@ public class MusicServiceReceiver extends BroadcastReceiver {
         if (action.equalsIgnoreCase(ACTION_COMPLETE)) {
             completeAction(intent);
         }
+        if (action.equalsIgnoreCase(ACTION_NEXT)) {
+            nextAction(intent);
+        }
+        if (action.equalsIgnoreCase(ACTION_PREV)) {
+            prevAction(intent);
+        }
+        if (action.equalsIgnoreCase(ACTION_PAUSE)) {
+            pauseAction(intent);
+        }
+        if (action.equalsIgnoreCase(ACTION_RESUME)) {
+            resumeAction(intent);
+        }
+
+    }
+
+    private void resumeAction(Intent intent) {
+        mPresenter.resume();
+    }
+
+    private void pauseAction(Intent intent) {
+        mPresenter.pause();
+    }
+
+    private void prevAction(Intent intent) {
+        mPresenter.prev();
+
+    }
+
+    private void nextAction(Intent intent) {
+        mPresenter.next();
     }
 
     private void completeAction(Intent intent) {
