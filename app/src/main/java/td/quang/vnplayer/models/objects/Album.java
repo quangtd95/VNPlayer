@@ -3,7 +3,7 @@ package td.quang.vnplayer.models.objects;
 import lombok.Data;
 
 /**
- * Created by djwag on 1/4/2017.
+ * Created by Quang_TD on 1/4/2017.
  */
 @Data
 public class Album {

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,47 +11,35 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Random;
-import java.util.Stack;
 
 import td.quang.vnplayer.R;
 import td.quang.vnplayer.models.objects.Song;
+import td.quang.vnplayer.presenters.playoffline.PlayOfflinePresenter;
+import td.quang.vnplayer.presenters.playoffline.PlayOfflinePresenterImpl;
 import td.quang.vnplayer.utils.RandomColor;
 import td.quang.vnplayer.views.activities.MainView;
 import td.quang.vnplayer.views.fragments.home.SongsFragment;
 
 /**
- * Created by djwag on 1/4/2017.
+ * Created by Quang_TD on 1/4/2017.
  */
 
 public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHolder> implements SongAdapter {
     private ArrayList<Song> songs;
     private Context mContext;
     private SongsFragment mFragment;
-    private MainView mMainView;
-    private int mCurrentPosition;
-    private Song mCurrentSong;
-    private Stack<Integer> mRandomList;
+    private PlayOfflinePresenter mPresenter;
 
     public SongAdapterImpl(SongsFragment songsFragment) {
         mFragment = songsFragment;
         mContext = mFragment.getContext();
-        mRandomList = new Stack<>();
-    }
+        mPresenter = PlayOfflinePresenterImpl.getInstance();
 
-    public void setCurrent(Song mCurrentSong) {
-        this.mCurrentSong = mCurrentSong;
-        for (int i = 0; i < songs.size(); i++) {
-            if (mCurrentSong.getFilePath().equalsIgnoreCase(songs.get(i).getFilePath())) {
-                mCurrentPosition = i;
-                break;
-            }
-        }
     }
 
     @Override
     public void setPlayingView(MainView MainView) {
-        this.mMainView = MainView;
+        td.quang.vnplayer.views.activities.MainView mMainView = MainView;
     }
 
     @Override
@@ -72,67 +59,12 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
     }
 
     @Override public void playSongOnClick(int position) {
-        mCurrentPosition = position;
-        mCurrentSong = songs.get(mCurrentPosition);
-        mMainView.playView(mCurrentSong);
-        mMainView.play(mCurrentSong);
-        mRandomList.clear();
-        mRandomList.add(position);
-    }
+        mPresenter.createPlayList(songs, position);
 
-    @Override public Song getNextSong() {
-        if (mCurrentPosition >= (songs.size() - 1)) return getFirstSong();
-        return songs.get(mCurrentPosition + 1);
     }
-
-    @Override public Song getFirstSong() {
-        return songs.get(0);
-    }
-
-    @Override public Song getPrevSong() {
-        if (mCurrentPosition <= 0) return songs.get(mCurrentPosition);
-        return songs.get(mCurrentPosition - 1);
-    }
-
-    @Override public void moveToNextSong() {
-        mCurrentPosition++;
-        if (mCurrentPosition == songs.size()) mCurrentPosition = 0;
-    }
-
-    @Override public void moveToPrevSong() {
-        mCurrentPosition--;
-        if (mCurrentPosition == -1) mCurrentPosition = 0;
-    }
-
 
     @Override public void deleteSong(Song song, int position) {
         mFragment.showDialogConfirmDelete(song.getFilePath(), position);
-    }
-
-    @Override public Song getNextRandomSong() {
-        mRandomList.add(new Random().nextInt(songs.size()));
-        Log.e("TAGG", "random list next = " + mRandomList.size() + "");
-        return songs.get(mRandomList.peek());
-    }
-
-    public Song getPrevRandomSong() {
-        Log.e("TAGG", "random list prev pop= " + mRandomList.size() + "");
-        if (mRandomList.size() > 1) mRandomList.pop();
-        if (mRandomList.size() > 0)
-            return songs.get(mRandomList.peek());
-        else return mCurrentSong;
-
-    }
-
-    @Override
-    public void setShuffle(boolean b) {
-        if (b) {
-            mRandomList.clear();
-            mRandomList.add(mCurrentPosition);
-            Log.e("TAGG", "random list set sufer = " + mRandomList.size() + "");
-        } else {
-            mRandomList.clear();
-        }
     }
 
     @Override
@@ -142,7 +74,7 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
 
     @Override
     public SongHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.layout_song, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.layout_song_home, parent, false);
         return new SongHolder(view);
     }
 

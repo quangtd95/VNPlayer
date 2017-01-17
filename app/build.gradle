@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'android-apt'
+apply plugin: 'realm-android'
 def AAVersion = '3.2'
 apt {
     arguments {
@@ -49,7 +50,6 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     //Lombok
     provided 'org.projectlombok:lombok:1.12.2'
-
     //slide up layout
     compile 'com.sothree.slidinguppanel:library:3.3.1'
 //circle image
@@ -60,15 +60,15 @@ dependencies {
     compile 'org.greenrobot:eventbus:3.0.0'
     //rainbow
     compile 'hanks.xyz:htextview-library:0.1.5'
-
     //annotation
     compile 'com.android.support:support-annotations:24.0.0'
     apt "org.androidannotations:androidannotations:3.2"
     compile 'org.androidannotations:androidannotations-api:3.2'
-
     //retrofit
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
     compile 'com.squareup.okhttp3:okhttp:3.5.0'
+
+
 }
 

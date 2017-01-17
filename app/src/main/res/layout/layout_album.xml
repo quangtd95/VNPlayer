@@ -18,6 +18,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
+            android:contentDescription="@string/no_image_loaded"
             android:scaleType="fitXY"
             app:srcCompat="@drawable/icon_thumbnail"/>
 

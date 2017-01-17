@@ -15,5 +15,7 @@
     <string name="no_image_loaded">No Image loaded</string>
     <string name="play">Play</string>
     <string name="delete">Delete</string>
+    <string name="add_to_queue">Add to queue</string>
+    <string name="remove_this_song">Remove this song</string>
 
 </resources>

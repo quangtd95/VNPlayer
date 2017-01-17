@@ -16,22 +16,17 @@ import td.quang.vnplayer.models.objects.Album;
 import td.quang.vnplayer.views.BaseFragment;
 import td.quang.vnplayer.views.adapters.AlbumAdapter;
 
-/**
- * Created by Quang_TD on 12/28/2016.
- */
+
 //@EFragment(R.layout.fragment_list)
 public class AlbumsFragment extends BaseFragment {
     //    @ViewById(R.id.rvList)
     private RecyclerView mRecyclerView;
-    private AlbumAdapter albumAdapter;
-    private List<Album> albums;
-    private View view;
 
     public AlbumsFragment() {
         setName("Album");
     }
     @Nullable @Override public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_list, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rvList);
         afterView();
         return view;
@@ -39,13 +34,13 @@ public class AlbumsFragment extends BaseFragment {
 
     @Override
     protected void afterView() {
-        albums = new ArrayList<>();
+        List<Album> albums = new ArrayList<>();
         albums.add(new Album("#####", "Adam lambert", ""));
         albums.add(new Album("#####", "Adam lambert", ""));
         albums.add(new Album("#####", "Adam lambert", ""));
         albums.add(new Album("#####", "Adam lambert", ""));
         albums.add(new Album("#####", "Adam lambert", ""));
-        albumAdapter = new AlbumAdapter(getContext(), albums);
+        AlbumAdapter albumAdapter = new AlbumAdapter(getContext(), albums);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
         mRecyclerView.setAdapter(albumAdapter);
     }

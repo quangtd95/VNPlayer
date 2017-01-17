@@ -15,12 +15,12 @@ import td.quang.vnplayer.R;
 import td.quang.vnplayer.models.objects.Album;
 
 /**
- * Created by djwag on 1/4/2017.
+ * Created by Quang_TD on 1/4/2017.
  */
 
 public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumHolder> {
-    private Context mContext;
-    private List<Album> albums;
+    private final Context mContext;
+    private final List<Album> albums;
 
     public AlbumAdapter(Context mContext, List<Album> albums) {
         this.mContext = mContext;

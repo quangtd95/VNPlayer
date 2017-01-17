@@ -17,7 +17,7 @@ import td.quang.vnplayer.services.MusicServiceImpl;
 import td.quang.vnplayer.views.BaseActivity;
 
 /**
- * Created by djwag on 1/4/2017.
+ * Created by Quang_TD on 1/4/2017.
  */
 @EActivity(R.layout.activity_splash)
 public class SplashActivity extends BaseActivity {
@@ -26,10 +26,8 @@ public class SplashActivity extends BaseActivity {
     @ViewById(R.id.tvSlogan) HTextView tvSlogan;
     @IntegerRes(R.integer.splash_time) int timeSplash;
 
-    private Animation animation;
-
     private void addAnimations() {
-        animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.anim_alpha);
+        Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.anim_alpha);
         linearLayout.startAnimation(animation);
         tvSlogan.animateText("Quang TD95");
         tvSlogan.invalidate();

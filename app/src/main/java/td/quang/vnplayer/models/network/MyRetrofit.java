@@ -13,7 +13,7 @@ import td.quang.vnplayer.models.objects.OnlineSong;
 import td.quang.vnplayer.presenters.playonline.OnQueryFinishedListener;
 
 /**
- * Created by djwag on 1/14/2017.
+ * Created by Quang_TD on 1/14/2017.
  */
 
 public class MyRetrofit implements Callback<OnlineSongList> {
@@ -30,13 +30,10 @@ public class MyRetrofit implements Callback<OnlineSongList> {
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-
         OnlineSongAPI onlineSongAPI = retrofit.create(OnlineSongAPI.class);
-
         Gson gson = new Gson();
-        String json = gson.toJson(new RequestData(100, 0, keyword, "hot"));
+        String json = gson.toJson(new RequestData(20, 0, keyword, "hot"));
         Call<OnlineSongList> onlineSongListCall = onlineSongAPI.getOnlineSongs(json);
-
         onlineSongListCall.enqueue(this);
     }
 
@@ -45,6 +42,6 @@ public class MyRetrofit implements Callback<OnlineSongList> {
     }
 
     @Override public void onFailure(Call<OnlineSongList> call, Throwable t) {
-
+        queryFinishedListener.onQueryFail();
     }
 }

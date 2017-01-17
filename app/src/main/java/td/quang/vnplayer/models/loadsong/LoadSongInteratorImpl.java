@@ -14,12 +14,10 @@ import td.quang.vnplayer.presenters.loadsong.OnDeleteFinishedListener;
 import td.quang.vnplayer.presenters.loadsong.OnLoadFinishedListener;
 
 /**
- * Created by djwag on 1/7/2017.
+ * Created by Quang_TD on 1/7/2017.
  */
 
 public class LoadSongInteratorImpl implements LoadSongInteractor {
-
-
 
     @Override
     public void loadSong(Context mContext, OnLoadFinishedListener listener) {

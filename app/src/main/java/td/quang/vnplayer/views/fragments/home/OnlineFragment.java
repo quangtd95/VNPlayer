@@ -17,8 +17,8 @@ import td.quang.vnplayer.models.objects.OnlineSong;
 import td.quang.vnplayer.presenters.playonline.PlayOnlinePresenter;
 import td.quang.vnplayer.presenters.playonline.PlayOnlinePresenterImpl;
 import td.quang.vnplayer.views.BaseFragment;
+import td.quang.vnplayer.views.activities.MainView;
 import td.quang.vnplayer.views.adapters.OnlineAdapterImpl;
-import td.quang.vnplayer.views.dialogs.MyDialog;
 
 /**
  * Created by Quang_TD on 12/28/2016.
@@ -26,10 +26,10 @@ import td.quang.vnplayer.views.dialogs.MyDialog;
 
 public class OnlineFragment extends BaseFragment implements LoadSongView {
     private SweetAlertDialog dialogLoading;
-    private View mView;
-    private RecyclerView mRecyclerView;
     private OnlineAdapterImpl onlineAdapter;
     private PlayOnlinePresenter playOnlinePresenter;
+    private MainView mMainView;
+
 
     public OnlineFragment() {
         setName("Online");
@@ -37,8 +37,8 @@ public class OnlineFragment extends BaseFragment implements LoadSongView {
 
     @Nullable @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment_list, container, false);
-        mRecyclerView = (RecyclerView) mView.findViewById(R.id.rvList);
+        View mView = inflater.inflate(R.layout.fragment_list, container, false);
+        RecyclerView mRecyclerView = (RecyclerView) mView.findViewById(R.id.rvList);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         onlineAdapter = new OnlineAdapterImpl(this);
         mRecyclerView.setAdapter(onlineAdapter);
@@ -46,10 +46,14 @@ public class OnlineFragment extends BaseFragment implements LoadSongView {
         return mView;
     }
 
+    public void setMainView(MainView mainView) {
+        this.mMainView = mainView;
+    }
+
     @Override
     protected void afterView() {
         playOnlinePresenter = new PlayOnlinePresenterImpl();
-        playOnlinePresenter.setLoadSongView(this);
+        playOnlinePresenter.setView(mMainView, this);
     }
 
     @Override public void refreshListSong() {
@@ -63,28 +67,9 @@ public class OnlineFragment extends BaseFragment implements LoadSongView {
 
     }
 
-    @Override public void showLoading() {
-        dialogLoading = MyDialog.showLoading(getContext());
-    }
-
-    @Override public void hideLoading() {
-        MyDialog.hideLoading(dialogLoading);
-    }
-
-    @Override public void showDialogLoadFail() {
-        MyDialog.showError(getContext());
-    }
 
     @Override public void showDialogConfirmDelete(String filePath, int position) {
 
-    }
-
-    @Override public void showSuccess(String message) {
-        MyDialog.showSuccess(getContext(), message);
-    }
-
-    @Override public void showError(String message) {
-        MyDialog.showError(getContext());
     }
 
     public void search(String keyword) {

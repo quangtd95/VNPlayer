@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import td.quang.vnplayer.models.objects.OnlineSong;
 
 /**
- * Created by djwag on 1/7/2017.
+ * Created by Quang_TD on 1/7/2017.
  */
 
 public interface LoadSongView {
@@ -13,15 +13,7 @@ public interface LoadSongView {
 
     void refreshListSong(ArrayList<OnlineSong> list);
 
-    void showLoading();
-
-    void hideLoading();
-
-    void showDialogLoadFail();
-
     void showDialogConfirmDelete(String filePath, int position);
 
-    void showSuccess(String message);
 
-    void showError(String message);
 }

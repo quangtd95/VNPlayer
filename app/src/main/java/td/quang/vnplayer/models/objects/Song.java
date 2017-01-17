@@ -1,17 +1,18 @@
 package td.quang.vnplayer.models.objects;
 
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import io.realm.RealmObject;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
- * Created by djwag on 1/4/2017.
+ * Created by Quang_TD on 1/4/2017.
  */
-@Data
-public class Song implements Parcelable {
+@EqualsAndHashCode(callSuper = false) @Data
+public class Song extends RealmObject implements Parcelable {
     public static final Creator<Song> CREATOR = new Creator<Song>() {
         @Override
         public Song createFromParcel(Parcel in) {
@@ -28,7 +29,6 @@ public class Song implements Parcelable {
     private String title;
     private String album;
     private String filePath;
-    private Bitmap albumCover;
     private int duration;
 
     public Song() {
@@ -42,7 +42,6 @@ public class Song implements Parcelable {
         album = builder.album;
         filePath = builder.filePath;
         duration = builder.duration;
-        albumCover = builder.albumCover;
 
     }
 
@@ -52,10 +51,8 @@ public class Song implements Parcelable {
         title = in.readString();
         album = in.readString();
         filePath = in.readString();
-        albumCover = in.readParcelable(Bitmap.class.getClassLoader());
         duration = in.readInt();
     }
-
 
     public Uri getSource() {
         return Uri.parse(Uri.encode(filePath));
@@ -71,7 +68,6 @@ public class Song implements Parcelable {
         dest.writeString(title);
         dest.writeString(album);
         dest.writeString(filePath);
-        dest.writeParcelable(albumCover, flags);
         dest.writeInt(duration);
     }
 
@@ -83,7 +79,6 @@ public class Song implements Parcelable {
         private String album;
         private String filePath;
         private int duration;
-        private Bitmap albumCover;
 
         public Builder() {
         }
@@ -112,20 +107,16 @@ public class Song implements Parcelable {
             return this;
         }
 
-        public Builder setFilePath(String filePath) {
-            this.filePath = filePath;
-            return this;
-        }
-
         public Builder setDuration(int duration) {
             this.duration = duration;
             return this;
         }
 
-        public Builder setAlbumCover(Bitmap albumCover) {
-            this.albumCover = albumCover;
+        public Builder setFilePath(String filePath) {
+            this.filePath = filePath;
             return this;
         }
+
 
     }
 }

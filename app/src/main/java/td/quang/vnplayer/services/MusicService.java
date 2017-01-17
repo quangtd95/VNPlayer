@@ -1,19 +1,22 @@
 package td.quang.vnplayer.services;
 
-import td.quang.vnplayer.models.objects.Song;
-
 /**
- * Created by djwag on 1/9/2017.
+ * Created by Quang_TD on 1/9/2017.
  */
 
 public interface MusicService {
-    void play(Song song);
+    //    void play(Song song);
+    void play(int position);
 
     void stop();
 
     void resume();
 
     void pause();
+
+    void next();
+
+    void prev();
 
     void seek(int position);
 
@@ -22,4 +25,8 @@ public interface MusicService {
     void setShuffle(boolean b);
 
     void getCurrentState();
+
+    void getPlaylist(int position);
+
+    void removeInPlayList(int position);
 }

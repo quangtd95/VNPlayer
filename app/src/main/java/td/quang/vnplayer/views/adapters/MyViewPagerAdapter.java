@@ -9,13 +9,13 @@ import java.util.List;
 import td.quang.vnplayer.views.BaseFragment;
 
 /**
- * Created by djwag on 1/4/2017.
+ * Created by Quang_TD on 1/4/2017.
  */
 
-public class HomeViewPagerAdapter extends FragmentPagerAdapter {
+public class MyViewPagerAdapter extends FragmentPagerAdapter {
     private List<BaseFragment> fragments;
 
-    public HomeViewPagerAdapter(FragmentManager fm, List<BaseFragment> fragments) {
+    public MyViewPagerAdapter(FragmentManager fm, List<BaseFragment> fragments) {
         super(fm);
         this.fragments = fragments;
     }

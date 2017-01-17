@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import td.quang.vnplayer.models.objects.Song;
 
 /**
- * Created by djwag on 1/7/2017.
+ * Created by Quang_TD on 1/7/2017.
  */
 
 public interface OnLoadFinishedListener {

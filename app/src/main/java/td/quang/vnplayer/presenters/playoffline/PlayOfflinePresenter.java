@@ -2,20 +2,25 @@ package td.quang.vnplayer.presenters.playoffline;
 
 import android.content.Intent;
 
+import java.util.List;
+
 import td.quang.vnplayer.models.objects.Song;
-import td.quang.vnplayer.views.adapters.SongAdapter;
+import td.quang.vnplayer.views.activities.MainView;
 
 /**
- * Created by djwag on 1/8/2017.
+ * Created by Quang_TD on 1/8/2017.
  */
 
 public interface PlayOfflinePresenter {
+    void setMainView(MainView mainView);
+
+    void createPlayList(List<Song> songs, int position);
 
     void getCurrentState();
 
     void setCurrentState(Intent intent);
 
-    void play(Song song);
+    void play(int position);
 
     void pause();
 
@@ -24,6 +29,8 @@ public interface PlayOfflinePresenter {
     void next();
 
     void prev();
+
+    void updateView(Song song, int position, boolean ispause);
 
     void setRepeat(boolean b);
 
@@ -37,9 +44,5 @@ public interface PlayOfflinePresenter {
 
     void unregisterBroadcast();
 
-    void setSongAdapter(SongAdapter songAdapter);
-
-    void nextRandom();
-
-    void prevRandom();
+    void updatePositionPlayList(int position);
 }

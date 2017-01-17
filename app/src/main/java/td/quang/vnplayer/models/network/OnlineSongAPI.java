@@ -5,7 +5,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 /**
- * Created by djwag on 1/14/2017.
+ * Created by Quang_TD on 1/14/2017.
  */
 
 public interface OnlineSongAPI {

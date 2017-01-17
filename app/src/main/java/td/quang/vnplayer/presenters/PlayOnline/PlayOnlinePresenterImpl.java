@@ -4,18 +4,21 @@ import java.util.ArrayList;
 
 import td.quang.vnplayer.models.network.MyRetrofit;
 import td.quang.vnplayer.models.objects.OnlineSong;
+import td.quang.vnplayer.views.activities.MainView;
 import td.quang.vnplayer.views.fragments.home.LoadSongView;
 
 /**
- * Created by djwag on 1/14/2017.
+ * Created by Quang_TD on 1/14/2017.
  */
 
 public class PlayOnlinePresenterImpl implements PlayOnlinePresenter, OnQueryFinishedListener {
-    private LoadSongView loadSongView;
 
+    private MainView mMainView;
+    private LoadSongView mLoadSongView;
 
-    public void setLoadSongView(LoadSongView loadSongView) {
-        this.loadSongView = loadSongView;
+    public void setView(MainView mMainView, LoadSongView mLoadSongView) {
+        this.mMainView = mMainView;
+        this.mLoadSongView = mLoadSongView;
     }
 
     @Override
@@ -23,20 +26,19 @@ public class PlayOnlinePresenterImpl implements PlayOnlinePresenter, OnQueryFini
         MyRetrofit myRetrofit = new MyRetrofit();
         myRetrofit.setQueryFinishedListener(this);
         myRetrofit.search(keyword);
-        loadSongView.showLoading();
+        mMainView.showLoading();
     }
 
     @Override
     public void onQuerySuccess(ArrayList<OnlineSong> onlineSongs) {
-        loadSongView.hideLoading();
-        loadSongView.showSuccess("there are " + onlineSongs.size() + " result.");
-        loadSongView.refreshListSong(onlineSongs);
-
+        mMainView.hideLoading();
+        mMainView.showSuccess("there are " + onlineSongs.size() + " result.");
+        mLoadSongView.refreshListSong(onlineSongs);
     }
 
     @Override
     public void onQueryFail() {
-        loadSongView.hideLoading();
-        loadSongView.showError("error");
+        mMainView.hideLoading();
+        mMainView.showError("cann't receive data");
     }
 }

@@ -7,27 +7,34 @@ import td.quang.vnplayer.models.objects.Song;
 import td.quang.vnplayer.views.adapters.SongAdapter;
 
 /**
- * Created by djwag on 1/8/2017.
+ * Created by Quang_TD on 1/8/2017.
  */
 
 public interface MainView {
 
     void setCurrentState(Intent intent);
-    void playView(Song song);
-
-    void play(Song song);
 
     void setSongAdapter(SongAdapter songAdapter);
 
-    void resumeView();
+    void playView(Song song, int position, boolean isPause);
 
     void pauseView();
 
-    void setTimeSeekbar(int mCurrentTime, int visible);
+    void resumeView();
 
-    void setIsPause(boolean b);
+    void setCurrentPosition(int position);
 
-    boolean isShuffle();
+    void setTimeSeekBar(int mCurrentTime, int visible);
 
     Context getContext();
+
+    void updatePlayList();
+
+    void showLoading();
+
+    void hideLoading();
+
+    void showSuccess(String message);
+
+    void showError(String message);
 }

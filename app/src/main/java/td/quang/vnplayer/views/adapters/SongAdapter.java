@@ -6,12 +6,11 @@ import td.quang.vnplayer.models.objects.Song;
 import td.quang.vnplayer.views.activities.MainView;
 
 /**
- * Created by djwag on 1/10/2017.
+ * Created by Quang_TD on 1/10/2017.
  */
 
 public interface SongAdapter {
 
-    void setCurrent(Song song);
     void setPlayingView(MainView MainView);
 
     void setData(ArrayList<Song> songs);
@@ -22,22 +21,7 @@ public interface SongAdapter {
 
     void playSongOnClick(int position);
 
-    Song getNextSong();
-
-    Song getFirstSong();
-
-    Song getPrevSong();
-
-    void moveToNextSong();
-
-    void moveToPrevSong();
-
     void deleteSong(Song song, int position);
 
-    Song getNextRandomSong();
-
-    Song getPrevRandomSong();
-
-    void setShuffle(boolean b);
 
 }

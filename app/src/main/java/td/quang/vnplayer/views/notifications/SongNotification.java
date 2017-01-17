@@ -12,13 +12,15 @@ import android.widget.RemoteViews;
 
 import lombok.Getter;
 import td.quang.vnplayer.R;
-import td.quang.vnplayer.broadcasts.MusicServiceReceiver;
+import td.quang.vnplayer.broadcasts.BroadCastToUI;
+import td.quang.vnplayer.broadcasts.BroadcastToService;
 import td.quang.vnplayer.models.objects.Song;
 import td.quang.vnplayer.utils.AudioUtils;
 import td.quang.vnplayer.views.activities.MainActivity_;
 
+
 /**
- * Created by djwag on 1/11/2017.
+ * Created by Quang_TD on 1/11/2017.
  */
 
 public class SongNotification {
@@ -41,11 +43,11 @@ public class SongNotification {
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
 
         Intent intentNext = new Intent();
-        intentNext.setAction(MusicServiceReceiver.ACTION_NEXT);
+        intentNext.setAction(BroadCastToUI.ACTION_NEXT);
         PendingIntent pendingIntentNext = PendingIntent.getBroadcast(mContext, 0, intentNext, 0);
 
         Intent intentPrev = new Intent();
-        intentPrev.setAction(MusicServiceReceiver.ACTION_PREV);
+        intentPrev.setAction(BroadCastToUI.ACTION_PREV);
         PendingIntent pendingIntentPrev = PendingIntent.getBroadcast(mContext, 0, intentPrev, 0);
 
 
@@ -89,11 +91,11 @@ public class SongNotification {
 
     public void updateNotification(Context mContext, boolean isPause) {
         Intent intentResume = new Intent();
-        intentResume.setAction(MusicServiceReceiver.ACTION_RESUME);
+        intentResume.setAction(BroadcastToService.ACTION_RESUME);
         PendingIntent pendingIntentResume = PendingIntent.getBroadcast(mContext, 0, intentResume, 0);
 
         Intent intentPause = new Intent();
-        intentPause.setAction(MusicServiceReceiver.ACTION_PAUSE);
+        intentPause.setAction(BroadcastToService.ACTION_PAUSE);
         PendingIntent pendingIntentPause = PendingIntent.getBroadcast(mContext, 0, intentPause, 0);
 
         if (isPause) {
@@ -108,8 +110,8 @@ public class SongNotification {
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
 
+
     public void updateNotification(Context mContext, Song song) {
-        // update the title
         mRemoteView.setTextViewText(R.id.tvNotiTitle, song.getTitle());
         mRemoteView.setTextViewText(R.id.tvNotiArtist, song.getArtist());
         Bitmap bitmap = AudioUtils.getAlbumCover(mContext, song.getFilePath());
@@ -118,7 +120,6 @@ public class SongNotification {
         } else {
             mRemoteView.setImageViewResource(R.id.ivNotiThumb, R.drawable.icon_thumbnail);
         }
-
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
 

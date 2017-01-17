@@ -1,7 +1,7 @@
 package td.quang.vnplayer.models.network;
 
 /**
- * Created by djwag on 1/14/2017.
+ * Created by Quang_TD on 1/14/2017.
  */
 
 public class RequestData {

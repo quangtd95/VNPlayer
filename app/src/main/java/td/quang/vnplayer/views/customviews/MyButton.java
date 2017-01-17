@@ -9,7 +9,7 @@ import android.widget.Button;
 import td.quang.vnplayer.utils.MyFont;
 
 /**
- * Created by djwag on 1/4/2017.
+ * Created by Quang_TD on 1/4/2017.
  */
 
 public class MyButton extends Button {

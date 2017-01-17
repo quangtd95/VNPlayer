@@ -28,23 +28,21 @@ public class SongsFragment extends BaseFragment implements LoadSongView {
 
     private RecyclerView mRecyclerView;
 
-    private SongAdapterImpl songAdapter;
     private LoadSongPresenter presenter;
-    private MainView MainView;
-    private View view;
-    private SweetAlertDialog dialogLoading;
+    private MainView mMainView;
+
     public SongsFragment() {
         setName("Song");
     }
 
     public void setMainView(MainView mainView) {
-        this.MainView = mainView;
+        this.mMainView = mainView;
     }
 
 
     @Nullable @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_list, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rvList);
         afterView();
         return view;
@@ -53,13 +51,13 @@ public class SongsFragment extends BaseFragment implements LoadSongView {
 
     @Override
     protected void afterView() {
-        songAdapter = new SongAdapterImpl(this);
-        songAdapter.setPlayingView(MainView);
-        MainView.setSongAdapter(songAdapter);
+        SongAdapterImpl songAdapter = new SongAdapterImpl(this);
+        songAdapter.setPlayingView(mMainView);
+        mMainView.setSongAdapter(songAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(songAdapter);
         presenter = LoadSongPresenterImpl.getInstance();
-        presenter.init(this, songAdapter);
+        presenter.init(mMainView, songAdapter);
         refreshListSong();
     }
 
@@ -70,31 +68,6 @@ public class SongsFragment extends BaseFragment implements LoadSongView {
 
     @Override public void refreshListSong(ArrayList<OnlineSong> list) {
 
-    }
-
-    @Override
-    public void showLoading() {
-        dialogLoading = MyDialog.showLoading(getContext());
-    }
-
-    @Override
-    public void hideLoading() {
-        MyDialog.hideLoading(dialogLoading);
-    }
-
-    @Override
-    public void showDialogLoadFail() {
-        MyDialog.showError(getContext());
-    }
-
-    @Override
-    public void showSuccess(String message) {
-        MyDialog.showError(getContext());
-    }
-
-    @Override
-    public void showError(String message) {
-        MyDialog.showError(getContext());
     }
 
     @Override

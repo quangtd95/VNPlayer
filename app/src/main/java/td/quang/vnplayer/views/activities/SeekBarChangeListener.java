@@ -5,7 +5,7 @@ import android.widget.SeekBar;
 import td.quang.vnplayer.presenters.playoffline.PlayOfflinePresenter;
 
 /**
- * Created by djwag on 1/11/2017.
+ * Created by Quang_TD on 1/11/2017.
  */
 
 public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {

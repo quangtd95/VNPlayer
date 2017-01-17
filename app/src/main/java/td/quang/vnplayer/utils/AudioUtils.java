@@ -10,7 +10,7 @@ import android.util.Log;
 import td.quang.vnplayer.models.objects.Song;
 
 /**
- * Created by djwag on 1/7/2017.
+ * Created by Quang_TD on 1/7/2017.
  */
 
 public class AudioUtils {
@@ -35,6 +35,7 @@ public class AudioUtils {
     }
 
     public static int getDuration(Context mContext, Song song) {
+        if (song.getDuration() > 0) return song.getDuration();
         try {
             Uri uri = song.getSource();
             MediaMetadataRetriever mmr = new MediaMetadataRetriever();
@@ -55,10 +56,10 @@ public class AudioUtils {
         StringBuilder result = new StringBuilder();
         if (h > 0) {
             result.append((h < 10) ? "0" : "");
-            result.append(h + ":");
+            result.append(h).append(":");
         }
         result.append((m < 10) ? "0" : "");
-        result.append(m + ":");
+        result.append(m).append(":");
         result.append((s < 10) ? "0" : "");
         result.append(s);
         return result.toString();

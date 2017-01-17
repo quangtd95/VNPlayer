@@ -5,7 +5,7 @@ import android.graphics.Color;
 import java.util.Random;
 
 /**
- * Created by djwag on 1/7/2017.
+ * Created by Quang_TD on 1/7/2017.
  */
 
 public class RandomColor {

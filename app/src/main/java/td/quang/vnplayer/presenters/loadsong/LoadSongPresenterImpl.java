@@ -7,17 +7,17 @@ import java.util.ArrayList;
 import td.quang.vnplayer.models.loadsong.LoadSongInteractor;
 import td.quang.vnplayer.models.loadsong.LoadSongInteratorImpl;
 import td.quang.vnplayer.models.objects.Song;
+import td.quang.vnplayer.views.activities.MainView;
 import td.quang.vnplayer.views.adapters.SongAdapter;
-import td.quang.vnplayer.views.fragments.home.LoadSongView;
 
 /**
- * Created by djwag on 1/7/2017.
+ * Created by Quang_TD on 1/7/2017.
  */
 
 public class LoadSongPresenterImpl implements LoadSongPresenter, OnLoadFinishedListener, OnDeleteFinishedListener {
 
     private static LoadSongPresenter sInstance;
-    private LoadSongView mView;
+    private MainView mMainView;
     private SongAdapter mAdapter;
     private LoadSongInteractor mInteractor;
 
@@ -33,14 +33,14 @@ public class LoadSongPresenterImpl implements LoadSongPresenter, OnLoadFinishedL
     }
 
     @Override
-    public void init(LoadSongView view, SongAdapter songAdapter) {
-        this.mView = view;
+    public void init(MainView mMainView, SongAdapter songAdapter) {
+        this.mMainView = mMainView;
         this.mAdapter = songAdapter;
     }
 
     @Override
     public void loadSong(Context mContext) {
-        mView.showLoading();
+        mMainView.showLoading();
         mInteractor.loadSong(mContext, this);
     }
 
@@ -51,26 +51,24 @@ public class LoadSongPresenterImpl implements LoadSongPresenter, OnLoadFinishedL
 
     @Override
     public void onLoadFail() {
-        mView.hideLoading();
-        mView.showDialogLoadFail();
+        mMainView.hideLoading();
+        mMainView.showError("error when load music");
     }
 
     @Override
     public void onLoadSuccess(ArrayList<Song> songs) {
-        mView.hideLoading();
+        mMainView.hideLoading();
         mAdapter.setData(songs);
         mAdapter.notifyData();
     }
 
     @Override
     public void onDeleteSuccess(int position) {
-        mView.showSuccess(null);
+        mMainView.showSuccess(null);
         mAdapter.removeItem(position);
-
     }
-
     @Override
     public void onDeleteFail() {
-        mView.showError(null);
+        mMainView.showError(null);
     }
 }

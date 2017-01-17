@@ -3,14 +3,14 @@ package td.quang.vnplayer.broadcasts;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 
-import td.quang.vnplayer.models.objects.Song;
 import td.quang.vnplayer.services.MusicService;
 
 /**
- * Created by djwag on 1/9/2017.
+ * Created by Quang_TD on 1/9/2017.
  */
-public class ControlMusicBroadcast extends BroadcastReceiver {
+public class BroadcastToService extends BroadcastReceiver {
     public static final String ACTION_PLAY = "TD.QUANG.VNPLAYER.CONTROLMUSICBROADCAST.PLAY";
     public static final String ACTION_STOP = "TD.QUANG.VNPLAYER.CONTROLMUSICBROADCAST.STOP";
     public static final String ACTION_RESUME = "TD.QUANG.VNPLAYER.CONTROLMUSICBROADCAST.RESUME";
@@ -19,6 +19,10 @@ public class ControlMusicBroadcast extends BroadcastReceiver {
     public static final String ACTION_REPEAT = "TD.QUANG.VNPLAYER.CONTROLMUSICBROADCAST.REPEAT";
     public static final String ACTION_SHUFFLE = "TD.QUANG.VNPLAYER.CONTROLMUSICBROADCAST.SUFFLE";
     public static final String ACTION_GET_CURRENT_STATE = "TD.QUANG.VNPLAYER.CONTROLMUSICBROADCAST.GET_CURRENT_STATE";
+    public static final String ACTION_NEW_PLAYLIST = "TD.QUANG.VNPLAYER.CONTROLMUSICBROADCAST.NEW_PLAYLIST";
+    public static final String ACTION_NEXT = "TD.QUANG.VNPLAYER.CONTROLMUSICBROADCAST.NEXT";
+    public static final String ACTION_PREV = "TD.QUANG.VNPLAYER.CONTROLMUSICBROADCAST.PREV";
+    public static final String ACTION_REMOVE_IN_PLAYLIST = "TD.QUANG.VNPLAYER.CONTROLMUSICBROADCAST.REMOVE_IN_PLAYLIST";
 
     private MusicService musicService;
 
@@ -42,6 +46,7 @@ public class ControlMusicBroadcast extends BroadcastReceiver {
         if (action.equalsIgnoreCase(ACTION_PAUSE)) {
             onPauseAction(intent);
         }
+
         if (action.equalsIgnoreCase(ACTION_SEEK)) {
             onSeekAction(intent);
         }
@@ -54,7 +59,48 @@ public class ControlMusicBroadcast extends BroadcastReceiver {
         if (action.equalsIgnoreCase(ACTION_GET_CURRENT_STATE)) {
             onGetCurrentStateAction(intent);
         }
+        if (action.equalsIgnoreCase(ACTION_NEW_PLAYLIST)) {
+            onNewPlayListAction(intent);
+        }
+        if (action.equalsIgnoreCase(ACTION_NEXT)) {
+            onNextAction(intent);
+        }
+        if (action.equalsIgnoreCase(ACTION_PREV)) {
+            onPrevAction(intent);
+        }
+        if (action.equalsIgnoreCase(ACTION_REMOVE_IN_PLAYLIST)) {
+            onRemoveInPlayListAction(intent);
+        }
 
+    }
+
+    private void onRemoveInPlayListAction(Intent intent) {
+        Bundle bundle = intent.getExtras();
+        int position = bundle.getInt("position");
+        musicService.removeInPlayList(position);
+    }
+
+    private void onPrevAction(Intent intent) {
+        musicService.prev();
+    }
+
+    private void onNextAction(Intent intent) {
+        musicService.next();
+    }
+
+
+    private void onPauseAction(Intent intent) {
+        musicService.pause();
+    }
+
+    private void onResumeAction(Intent intent) {
+        musicService.resume();
+    }
+
+    private void onNewPlayListAction(Intent intent) {
+        Bundle bundle = intent.getExtras();
+        int position = bundle.getInt("position");
+        musicService.getPlaylist(position);
     }
 
     private void onGetCurrentStateAction(Intent intent) {
@@ -76,19 +122,11 @@ public class ControlMusicBroadcast extends BroadcastReceiver {
         int position = intent.getIntExtra("position", -1);
         musicService.seek(position);
     }
-    private void onPauseAction(Intent intent) {
-        musicService.pause();
-    }
-
-    private void onResumeAction(Intent intent) {
-        musicService.resume();
-    }
 
 
     private void onPlayAction(Intent intent) {
-        Song song = intent.getExtras().getParcelable("data");
-        musicService.play(song);
-
+        int position = intent.getExtras().getInt("position");
+        musicService.play(position);
     }
 
     private void onStopAction(Intent intent) {
