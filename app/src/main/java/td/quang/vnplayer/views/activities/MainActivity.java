@@ -116,6 +116,7 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
         if (song != null) {
             playView(song, currentPosition, !mIsPlayed);
             playingFragment.setCurrentTime(mCurrentTime);
+            playingFragment.updatePlayList();
             slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         }
         playingFragment.setRepeatView(mIsRepeat);

@@ -12,7 +12,6 @@ import android.widget.RemoteViews;
 
 import lombok.Getter;
 import td.quang.vnplayer.R;
-import td.quang.vnplayer.broadcasts.BroadCastToUI;
 import td.quang.vnplayer.broadcasts.BroadcastToService;
 import td.quang.vnplayer.models.objects.Song;
 import td.quang.vnplayer.utils.AudioUtils;
@@ -43,11 +42,11 @@ public class SongNotification {
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
 
         Intent intentNext = new Intent();
-        intentNext.setAction(BroadCastToUI.ACTION_NEXT);
+        intentNext.setAction(BroadcastToService.ACTION_NEXT);
         PendingIntent pendingIntentNext = PendingIntent.getBroadcast(mContext, 0, intentNext, 0);
 
         Intent intentPrev = new Intent();
-        intentPrev.setAction(BroadCastToUI.ACTION_PREV);
+        intentPrev.setAction(BroadcastToService.ACTION_PREV);
         PendingIntent pendingIntentPrev = PendingIntent.getBroadcast(mContext, 0, intentPrev, 0);
 
 

@@ -2,7 +2,9 @@ apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'android-apt'
 apply plugin: 'realm-android'
+apply plugin: 'com.google.gms.google-services'
 def AAVersion = '3.2'
+
 apt {
     arguments {
         resourcePackageName "td.quang.vnplayer"
