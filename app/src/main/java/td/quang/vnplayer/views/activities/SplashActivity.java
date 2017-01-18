@@ -1,54 +1,50 @@
 package td.quang.vnplayer.views.activities;
 
 import android.content.Intent;
-import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 
-import butterknife.BindInt;
-import butterknife.ButterKnife;
+import com.hanks.htextview.HTextView;
+
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.res.IntegerRes;
+
 import td.quang.vnplayer.R;
+import td.quang.vnplayer.services.MusicServiceImpl;
 import td.quang.vnplayer.views.BaseActivity;
 
 /**
- * Created by djwag on 1/4/2017.
+ * Created by Quang_TD on 1/4/2017.
  */
-
+@EActivity(R.layout.activity_splash)
 public class SplashActivity extends BaseActivity {
-    @BindInt(R.integer.splash_time)
-    int timeSplash;
-    private LinearLayout linearLayout;
-    private Animation animation;
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ButterKnife.bind(this);
-        addComponents();
-        addAnimations();
-    }
+    @ViewById(R.id.llLayout) LinearLayout linearLayout;
+    @ViewById(R.id.tvSlogan) HTextView tvSlogan;
+    @IntegerRes(R.integer.splash_time) int timeSplash;
 
     private void addAnimations() {
+        Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.anim_alpha);
         linearLayout.startAnimation(animation);
+        tvSlogan.animateText("Quang TD95");
+        tvSlogan.invalidate();
         Handler handler = new Handler();
         handler.postDelayed(() -> {
-            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+            Intent intent = new Intent(SplashActivity.this, MainActivity_.class);
             startActivity(intent);
             finish();
         }, timeSplash);
     }
 
+
     @Override
-    public void addComponents() {
-        setContentView(R.layout.activity_splash);
-        linearLayout = (LinearLayout) this.findViewById(R.id.llLayout);
-        animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.anim_alpha);
+    protected void afterView() {
+        startService(new Intent(this, MusicServiceImpl.class));
+        addAnimations();
+
 
     }
 }

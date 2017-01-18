@@ -4,9 +4,5 @@
     <color name="colorPrimaryDark">#455a64</color>
     <color name="colorAccent">#ffffff</color>
     <color name="colorAccentDark">#FFA1A1A1</color>
-    <color name="cancel_btn_clr">#FF00FF</color>
-    <color name="primaryPressed">#FF00FF</color>
-    <color name="primaryFocused">#FF1234</color>
-    <color name="primary">#012345</color>
-    <color name="ripple_color">#ffffff</color>
+    <color name="colorRippleLight">@android:color/white</color>
 </resources>

@@ -9,67 +9,73 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import td.quang.vnplayer.R;
-import td.quang.vnplayer.models.objects.Song;
-import td.quang.vnplayer.views.adapters.SongAdapter;
+import td.quang.vnplayer.models.objects.OnlineSong;
+import td.quang.vnplayer.presenters.loadsong.LoadSongPresenter;
+import td.quang.vnplayer.presenters.loadsong.LoadSongPresenterImpl;
+import td.quang.vnplayer.views.BaseFragment;
+import td.quang.vnplayer.views.activities.MainView;
+import td.quang.vnplayer.views.adapters.SongAdapterImpl;
+import td.quang.vnplayer.views.dialogs.MyDialog;
 
 /**
  * Created by Quang_TD on 12/28/2016.
  */
 
-public class SongsFragment extends HomeBaseFragment {
-    private static SongsFragment instance;
-    @BindView(R.id.rvList)
-    RecyclerView mRecyclerView;
-    private SongAdapter songAdapter;
-    private List<Song> songs;
+public class SongsFragment extends BaseFragment implements LoadSongView {
 
-    private View view;
+    private RecyclerView mRecyclerView;
 
-    public static SongsFragment getInstance() {
-        if (instance == null) {
-            synchronized (SongsFragment.class) {
-                if (instance == null) {
-                    instance = new SongsFragment();
-                    instance.setName("Song");
-                }
-            }
-        }
-        return instance;
+    private LoadSongPresenter presenter;
+    private MainView mMainView;
+
+    public SongsFragment() {
+        setName("Song");
     }
 
-    @Nullable
-    @Override
+    public void setMainView(MainView mainView) {
+        this.mMainView = mainView;
+    }
+
+
+    @Nullable @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_list, null);
-        ButterKnife.bind(this, view);
-        init();
+        View view = inflater.inflate(R.layout.fragment_list, container, false);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.rvList);
+        afterView();
         return view;
     }
 
+
     @Override
-    public void init() {
-        songs = new ArrayList<>();
-        Song.Builder builder = new Song.Builder("3 ThangBan", "", 1);
-        builder.setArtist("karik");
-        Song song1 = builder.build();
-        songs.add(song1);
-        Song.Builder builder1 = new Song.Builder("Enjoy your life", "", 2);
-        builder1.setArtist("karik");
-        Song song2 = builder1.build();
-        songs.add(song2);
-        for (int i = 0; i < 100; i++) {
-            songs.add((new Random().nextBoolean()) ? song1 : song2);
-        }
-        songAdapter = new SongAdapter(getContext(), songs);
+    protected void afterView() {
+        SongAdapterImpl songAdapter = new SongAdapterImpl(this);
+        songAdapter.setPlayingView(mMainView);
+        mMainView.setSongAdapter(songAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(songAdapter);
+        presenter = LoadSongPresenterImpl.getInstance();
+        presenter.init(mMainView, songAdapter);
+        refreshListSong();
+    }
 
+    @Override
+    public void refreshListSong() {
+        presenter.loadSong(getContext());
+    }
 
+    @Override public void refreshListSong(ArrayList<OnlineSong> list) {
+
+    }
+
+    @Override
+    public void showDialogConfirmDelete(String filePath, int position) {
+        SweetAlertDialog dialog = MyDialog.showConfirm(getContext());
+        dialog.setConfirmClickListener(sweetAlertDialog -> {
+            presenter.deleteSong(getContext(), filePath, position);
+            dialog.dismiss();
+        }).show();
     }
 }

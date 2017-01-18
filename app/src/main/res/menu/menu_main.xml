@@ -1,20 +1,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="td.quang.vnplayer.views.activities.MainActivity">
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:appcompat="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="td.quang.vnplayer.views.activities.MainActivity">
     <item
         android:id="@+id/action_searchc"
         android:icon="@drawable/ic_search_white_24dp"
-        android:showAsAction="always"
+        android:itemTextAppearance="@style/myCustomMenuTextApearance"
         android:title="@string/action_search"
-        tools:ignore="AppCompatResource" />
+        appcompat:actionViewClass="android.support.v7.widget.SearchView"
+        appcompat:showAsAction="always"
+        tools:ignore="AppCompatResource"/>
     <item
-        android:id="@+id/action_shuffle_all"
         android:orderInCategory="100"
-        android:title="@string/action_shuffle_all" />
+        android:title="@string/action_schedule"/>
     <item
-        android:id="@+id/action_settings"
         android:orderInCategory="101"
         android:title="@string/action_settings"
-        app:showAsAction="never" />
+        app:showAsAction="never"/>
 </menu>

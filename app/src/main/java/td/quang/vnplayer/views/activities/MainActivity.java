@@ -1,197 +1,255 @@
 package td.quang.vnplayer.views.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.RelativeLayout;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import de.hdodenhof.circleimageview.CircleImageView;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import td.quang.vnplayer.R;
+import td.quang.vnplayer.models.objects.Song;
+import td.quang.vnplayer.presenters.playoffline.PlayOfflinePresenter;
+import td.quang.vnplayer.presenters.playoffline.PlayOfflinePresenterImpl;
 import td.quang.vnplayer.views.BaseActivity;
-import td.quang.vnplayer.views.adapters.HomeViewPagerAdapter;
-import td.quang.vnplayer.views.customviews.MyButton;
+import td.quang.vnplayer.views.BaseFragment;
+import td.quang.vnplayer.views.adapters.MyViewPagerAdapter;
+import td.quang.vnplayer.views.adapters.SongAdapter;
+import td.quang.vnplayer.views.dialogs.MyDialog;
 import td.quang.vnplayer.views.fragments.home.AlbumsFragment;
 import td.quang.vnplayer.views.fragments.home.CloudFragment;
-import td.quang.vnplayer.views.fragments.home.HomeBaseFragment;
 import td.quang.vnplayer.views.fragments.home.OnlineFragment;
 import td.quang.vnplayer.views.fragments.home.SongsFragment;
-import td.quang.vnplayer.views.fragments.playing.PlayingListFragment;
+import td.quang.vnplayer.views.fragments.playing.PlayingFragment;
+import td.quang.vnplayer.views.fragments.playing.PlayingFragment_;
 
-public class MainActivity extends BaseActivity implements OnClickListener {
-    @BindView(R.id.slidingPanel)
-    SlidingUpPanelLayout slidingPanel;
-    @BindView(R.id.tabLayout)
-    TabLayout mTabLayout;
-    @BindView(R.id.viewPager)
-    ViewPager mViewPager;
-    @BindView(R.id.barPlaying)
-    View barPlaying;
-    @BindView(R.id.ivAlbumCover)
-    CircleImageView ivAlbumCover;
-    @BindView(R.id.btnSuffer)
-    MyButton btnSuffer;
-    @BindView(R.id.btnRepeat)
-    MyButton btnRepeat;
-    @BindView(R.id.btnPlay)
-    MyButton btnPlay;
-    @BindView(R.id.btnHome)
-    MyButton btnHome;
-    @BindView(R.id.btnList)
-    MyButton btnList;
+@EActivity(R.layout.activity_main)
+public class MainActivity extends BaseActivity implements MainView, SearchView.OnQueryTextListener, EventFromFragmentListener {
+    @ViewById(R.id.slidingPanel) SlidingUpPanelLayout slidingPanel;
+    @ViewById(R.id.tabLayout) TabLayout mTabLayout;
+    @ViewById(R.id.viewPagerHome) ViewPager mViewPagerHome;
+    @ViewById(R.id.toolbar) Toolbar toolbar;
 
-    private HomeViewPagerAdapter adapter;
-    private List<HomeBaseFragment> fragments;
-    private Animation animRotate;
-    private boolean isPlay = false;
-    private boolean isSuffer = false;
-    private boolean isRepeat = false;
-    private PlayingListFragment playingListFragment;
+    private SongAdapter mSongAdapter;
+    private PlayOfflinePresenter mPresenter;
+    private OnlineFragment onlineFragment;
+    private SweetAlertDialog dialogLoading;
+    private PlayingFragment playingFragment;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
-        addComponents();
-        addEvents();
+    @Override public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem itemSearch = menu.findItem(R.id.action_searchc);
+        SearchView searchView = (SearchView) itemSearch.getActionView();
+        searchView.setOnQueryTextListener(this);
+        return true;
+    }
+
+    @Override protected void afterView() {
+        setSupportActionBar(toolbar);
+        addPlayingFragment();
+        setUpHomeViewPager();
+
+        mPresenter = PlayOfflinePresenterImpl.getInstance();
+        mPresenter.setMainView(this);
+        mPresenter.registerBroadcast();
+        getCurrentState();
 
     }
 
-    private void addEvents() {
-        slidingPanel.addPanelSlideListener(new SlidingPanelListener(this, barPlaying));
-        btnSuffer.setOnClickListener(this);
-        btnRepeat.setOnClickListener(this);
-        btnPlay.setOnClickListener(this);
-        btnHome.setOnClickListener(this);
-        btnList.setOnClickListener(this);
+    private void addPlayingFragment() {
+        playingFragment = new PlayingFragment_();
+        playingFragment.setListener(this);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.frameLayoutPlaying, playingFragment);
+        fragmentTransaction.commit();
     }
 
+    private void setUpHomeViewPager() {
+        List<BaseFragment> mHomeFragments = new ArrayList<>();
+        SongsFragment songsFragment = new SongsFragment();
+        songsFragment.setMainView(this);
+        mHomeFragments.add(songsFragment);
+        mHomeFragments.add(new AlbumsFragment());
+        onlineFragment = new OnlineFragment();
+        onlineFragment.setMainView(this);
+        mHomeFragments.add(onlineFragment);
+        mHomeFragments.add(new CloudFragment());
 
-    @Override
-    public void addComponents() {
-
-        fragments = new ArrayList<>();
-        fragments.add(OnlineFragment.getInstance());
-        fragments.add(CloudFragment.getInstance());
-        fragments.add(SongsFragment.getInstance());
-        fragments.add(AlbumsFragment.getInstance());
-        adapter = new HomeViewPagerAdapter(getSupportFragmentManager(), fragments);
-        mViewPager.setAdapter(adapter);
-        mTabLayout.setupWithViewPager(mViewPager, true);
+        MyViewPagerAdapter mHomeViewPagerAdapter = new MyViewPagerAdapter(getSupportFragmentManager(), mHomeFragments);
+        mViewPagerHome.setAdapter(mHomeViewPagerAdapter);
+        mViewPagerHome.setOffscreenPageLimit(4);
+        mTabLayout.setupWithViewPager(mViewPagerHome, true);
         mTabLayout.dispatchSetSelected(true);
+    }
 
+    private void getCurrentState() {
+        mPresenter.getCurrentState();
+    }
+
+    @Override public void setCurrentState(Intent intent) {
+        Bundle bundle = intent.getExtras();
+        boolean mIsShuffle = bundle.getBoolean("shuffle");
+        boolean mIsRepeat = bundle.getBoolean("repeat");
+        boolean mIsPlayed = bundle.getBoolean("playing");
+        Song song = bundle.getParcelable("song");
+        int currentPosition = bundle.getInt("position", 0);
+        int mCurrentTime = bundle.getInt("time", 0);
+
+        if (song != null) {
+            playView(song, currentPosition, !mIsPlayed);
+            playingFragment.setCurrentTime(mCurrentTime);
+            slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+        }
+        playingFragment.setRepeatView(mIsRepeat);
+        playingFragment.setShuffleView(mIsShuffle);
+    }
+
+    public void setUpSlidingPanel(RelativeLayout dragView) {
         final TypedArray styledAttributes = this.getTheme().obtainStyledAttributes(
                 new int[]{android.R.attr.actionBarSize});
         int height = (int) styledAttributes.getDimension(0, 0);
         styledAttributes.recycle();
-
         slidingPanel.setPanelHeight(height);
-        animRotate = AnimationUtils.loadAnimation(this, R.anim.anim_rotate);
+        slidingPanel.addPanelSlideListener(new SlidingPanelListener(this, dragView));
 
-        playingListFragment = PlayingListFragment.getInstance();
     }
 
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == btnPlay.getId()) {
-            playEvent();
+    @Override public void slidingDown() {
+        slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+    }
+
+    @Override public void slidingUp() {
+        slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+    }
+
+
+    @Override public void setTimeSeekBar(int mCurrentTime, int visible) {
+        playingFragment.setTimeSeekBar(mCurrentTime, visible);
+    }
+
+    @Override public void setCurrentPosition(int position) {
+        playingFragment.setCurrentPositionPlaylist(position);
+    }
+
+    @Override public Context getContext() {
+        return this;
+    }
+
+    @Override public void updatePlayList() {
+        playingFragment.updatePlayList();
+    }
+
+    public void setSongAdapter(SongAdapter songAdapter) {
+        this.mSongAdapter = songAdapter;
+    }
+
+    @Override public boolean onQueryTextSubmit(String query) {
+        if (mViewPagerHome.getCurrentItem() != 2) {
+            MyDialog.showError(this, "just only use to search online!");
+            return true;
         }
-        if (v.getId() == btnSuffer.getId()) {
-            sufferEvent();
+        onlineFragment.search(query);
+        return true;
+    }
+
+    @Override public boolean onQueryTextChange(String newText) {
+        if (mViewPagerHome.getCurrentItem() != 2) {
+            return true;
         }
-        if (v.getId() == btnRepeat.getId()) {
-            repeatEvent();
+        return true;
+    }
+
+    @Override public void onPlayNewAction() {
+        mSongAdapter.playSongOnClick(0);
+    }
+
+    @Override public void playView(Song song, int position, boolean isPause) {
+        slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+        playingFragment.setPlayingView(song);
+        playingFragment.setCurrentPositionPlaylist(position);
+        if (isPause) playingFragment.setPauseView();
+        else {
+            playingFragment.setResumeView();
         }
-        if (v.getId() == btnHome.getId()) {
+    }
+
+    @Override public void onResumeAction() {
+        mPresenter.resume();
+    }
+
+    @Override public void pauseView() {
+        playingFragment.setPauseView();
+    }
+
+    @Override public void resumeView() {
+        playingFragment.setResumeView();
+    }
+
+    @Override public void onPauseAction() {
+        mPresenter.pause();
+    }
+
+    @Override public void onNextAction() {
+        mPresenter.next();
+    }
+
+    @Override public void onPrevAction() {
+        mPresenter.prev();
+    }
+
+    @Override public void onShuffleAction(boolean mIsShuffle) {
+        mPresenter.setShuffle(mIsShuffle);
+    }
+
+    @Override public void onRepeatAction(boolean mIsRepeat) {
+        mPresenter.setRepeat(mIsRepeat);
+    }
+
+    @Override public void showLoading() {
+        dialogLoading = MyDialog.showLoading(getContext());
+    }
+
+    @Override public void hideLoading() {
+        MyDialog.hideLoading(dialogLoading);
+    }
+
+    @Override public void showSuccess(String message) {
+        MyDialog.showSuccess(getContext(), message);
+    }
+
+    @Override public void showError(String message) {
+        MyDialog.showError(getContext());
+    }
+
+    @Override protected void onDestroy() {
+        super.onDestroy();
+        mPresenter.unregisterBroadcast();
+    }
+
+    @Override public void onBackPressed() {
+        if (slidingPanel.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
             slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-        }
-        if (v.getId() == btnList.getId()) {
-            swapFragments();
-        }
-    }
-
-    private void swapFragments() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.flContainer, playingListFragment);
-        fragmentTransaction.commit();
-    }
-
-    private void repeatEvent() {
-        if (isRepeat) {
-            btnRepeat.setTextColor(getResources().getColor(R.color.colorAccentDark));
         } else {
-            btnRepeat.setTextColor(getResources().getColor(R.color.colorAccent));
+            super.onBackPressed();
         }
-        isRepeat = !isRepeat;
-    }
-
-    private void sufferEvent() {
-        if (isSuffer) {
-            btnSuffer.setTextColor(getResources().getColor(R.color.colorAccentDark));
-        } else {
-            btnSuffer.setTextColor(getResources().getColor(R.color.colorAccent));
-        }
-        isSuffer = !isSuffer;
-    }
-
-    private void playEvent() {
-        if (isPlay) {
-            ivAlbumCover.clearAnimation();
-            btnPlay.setText(getResources().getString(R.string.ic_play));
-        } else {
-            ivAlbumCover.startAnimation(animRotate);
-            btnPlay.setText(getResources().getString(R.string.ic_pause));
-        }
-        isPlay = !isPlay;
     }
 }
 
-class SlidingPanelListener implements SlidingUpPanelLayout.PanelSlideListener {
-    private View dragView;
-    private Context mContext;
-
-    public SlidingPanelListener(Context mContext, View dragView) {
-        this.mContext = mContext;
-        this.dragView = dragView;
-    }
-
-    @Override
-    public void onPanelSlide(View panel, float slideOffset) {
-
-    }
-
-    @Override
-    public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
-        if (newState == SlidingUpPanelLayout.PanelState.EXPANDED) {
-            if (dragView.getVisibility() == View.GONE) return;
-            Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.anim_fade_down);
-            dragView.startAnimation(animation);
-            Handler handler = new Handler();
-            handler.postDelayed(() -> dragView.setVisibility(View.GONE), animation.getDuration());
-        }
-        if (newState == SlidingUpPanelLayout.PanelState.COLLAPSED) {
-            if (dragView.getVisibility() == View.VISIBLE) return;
-            dragView.setVisibility(View.VISIBLE);
-            Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.anim_fade_up);
-            dragView.startAnimation(animation);
-
-        }
-    }
-}
 

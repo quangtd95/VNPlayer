@@ -1,11 +1,9 @@
 <resources>
     <string name="app_name">vnPlayer</string>
     <string name="action_settings">Settings</string>
-    <string name="action_shuffle_all">Shuffle all</string>
+    <string name="action_schedule">Set alarm</string>
     <string name="action_search">Search</string>
-    <string name="slogan">cảm xúc chỉ có thể tốt hơn</string>
-    <string name="ic_search">&#xf002;</string>
-    <integer name="splash_time">1000</integer>
+    <integer name="splash_time">2000</integer>
     <string name="ic_play">&#xf01d;</string>
     <string name="ic_pause">&#xf28c;</string>
     <string name="ic_prev">&#xf049;</string>
@@ -14,6 +12,10 @@
     <string name="ic_music">&#xf001;</string>
     <string name="ic_playlist">&#xf0ca;</string>
     <string name="ic_suffer">&#xf0ec;</string>
-
+    <string name="no_image_loaded">No Image loaded</string>
+    <string name="play">Play</string>
+    <string name="delete">Delete</string>
+    <string name="add_to_queue">Add to queue</string>
+    <string name="remove_this_song">Remove this song</string>
 
 </resources>

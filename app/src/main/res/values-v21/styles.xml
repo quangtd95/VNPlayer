@@ -6,4 +6,14 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
     </style>
+
+    <style name="SelectableItemTheme">
+        <item name="colorControlHighlight">@color/colorRippleLight</item>
+    </style>
+
+
+    <style name="SelectableItemBackgroundLight">
+        <item name="android:theme">@style/SelectableItemTheme</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+    </style>
 </resources>
