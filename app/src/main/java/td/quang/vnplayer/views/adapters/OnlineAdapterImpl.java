@@ -29,9 +29,8 @@ public class OnlineAdapterImpl extends RecyclerView.Adapter<OnlineAdapterImpl.On
     private LinkedList<Song> songs;
     private Context mContext;
 
-    public OnlineAdapterImpl(OnlineFragment songsFragment) {
-        OnlineFragment mFragment = songsFragment;
-        mContext = mFragment.getContext();
+    public OnlineAdapterImpl(OnlineFragment onlineFragment) {
+        mContext = onlineFragment.getContext();
         mPresenter = MainMainPresenterImpl.getInstance();
         songs = new LinkedList<>();
     }

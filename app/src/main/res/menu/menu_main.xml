@@ -10,7 +10,7 @@
         android:title="@string/action_search"
         appcompat:actionViewClass="android.support.v7.widget.SearchView"
         appcompat:showAsAction="always"
-        tools:ignore="AppCompatResource">
+        tools:ignore="AlwaysShowAction,AppCompatResource">
 
     </item>
     <item

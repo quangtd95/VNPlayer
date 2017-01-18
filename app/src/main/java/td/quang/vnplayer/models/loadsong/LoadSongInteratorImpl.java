@@ -44,13 +44,10 @@ public class LoadSongInteratorImpl implements LoadSongInteractor {
      */
     @Override
     public void deleteSong(Context mContext, OnDeleteFinishedListener listener, String filePath, int position) {
-        int b = mContext.getContentResolver().
-                delete(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                        String.format("%s%s%s%s", MediaStore.Audio.Media.DATA, " ='", filePath, "'"), null);
         mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse(filePath)));
         File file = new File(filePath);
         boolean b1 = file.delete();
-        if (b != 0 && b1) {
+        if (b1) {
             listener.onDeleteSuccess(position);
         } else {
             listener.onDeleteFail();

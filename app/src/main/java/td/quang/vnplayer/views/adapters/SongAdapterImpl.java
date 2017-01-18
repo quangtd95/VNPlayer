@@ -39,7 +39,6 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
 
     @Override
     public void setPlayingView(MainView MainView) {
-        td.quang.vnplayer.views.activities.MainView mMainView = MainView;
     }
 
     @Override
@@ -114,6 +113,7 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
         });
         holder.cardViewSong.setOnClickListener(v -> playSongOnClick(position));
     }
+
     static class SongHolder extends RecyclerView.ViewHolder {
         TextView ivSongThumb;
         TextView tvSongTitle;

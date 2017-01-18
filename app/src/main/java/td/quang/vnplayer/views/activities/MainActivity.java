@@ -54,12 +54,16 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
 
     private SongAdapter mSongAdapter;
     private MainPresenter mMainPresenter;
-    private OnlineFragment onlineFragment;
+
     private SweetAlertDialog dialogLoading;
-    private PlayingFragment playingFragment;
+
     private SearchView mSearchView;
-    private CloudFragment cloudFragment;
     private SongsFragment songsFragment;
+    private AlbumsFragment albumFragment;
+    private OnlineFragment onlineFragment;
+    private CloudFragment cloudFragment;
+    private PlayingFragment playingFragment;
+
 
     @Override public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -102,11 +106,12 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
         List<BaseFragment> mHomeFragments = new ArrayList<>();
         songsFragment = new SongsFragment();
         songsFragment.setMainView(this);
+        albumFragment = new AlbumsFragment();
         onlineFragment = new OnlineFragment();
         onlineFragment.setMainView(this);
         cloudFragment = new CloudFragment_();
         mHomeFragments.add(songsFragment);
-        mHomeFragments.add(new AlbumsFragment());
+        mHomeFragments.add(albumFragment);
         mHomeFragments.add(cloudFragment);
         mHomeFragments.add(onlineFragment);
 

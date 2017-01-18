@@ -46,7 +46,6 @@ public class MyFirebase {
     private DatabaseReference songNameRef;
 
     @Setter private FirebaseTaskListener firebaseTaskListener;
-
     @Getter private List<SongMetadata> mCloudSongs;
 
     private MyFirebase() {
