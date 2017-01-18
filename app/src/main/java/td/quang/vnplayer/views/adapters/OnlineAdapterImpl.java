@@ -16,7 +16,7 @@ import java.util.LinkedList;
 import td.quang.vnplayer.R;
 import td.quang.vnplayer.models.objects.OnlineSong;
 import td.quang.vnplayer.models.objects.Song;
-import td.quang.vnplayer.presenters.playoffline.PlayOfflinePresenterImpl;
+import td.quang.vnplayer.presenters.playoffline.MainMainPresenterImpl;
 import td.quang.vnplayer.utils.RandomColor;
 import td.quang.vnplayer.views.fragments.home.OnlineFragment;
 
@@ -25,7 +25,7 @@ import td.quang.vnplayer.views.fragments.home.OnlineFragment;
  */
 
 public class OnlineAdapterImpl extends RecyclerView.Adapter<OnlineAdapterImpl.OnlineHolder> implements OnlineAdapter {
-    private final PlayOfflinePresenterImpl mPresenter;
+    private final MainMainPresenterImpl mPresenter;
     private ArrayList<OnlineSong> onlineSongs;
     private LinkedList<Song> songs;
     private Context mContext;
@@ -33,7 +33,7 @@ public class OnlineAdapterImpl extends RecyclerView.Adapter<OnlineAdapterImpl.On
     public OnlineAdapterImpl(OnlineFragment songsFragment) {
         OnlineFragment mFragment = songsFragment;
         mContext = mFragment.getContext();
-        mPresenter = PlayOfflinePresenterImpl.getInstance();
+        mPresenter = MainMainPresenterImpl.getInstance();
         songs = new LinkedList<>();
     }
 

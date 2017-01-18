@@ -21,7 +21,7 @@ import java.util.List;
 import lombok.Setter;
 import td.quang.vnplayer.R;
 import td.quang.vnplayer.models.objects.Song;
-import td.quang.vnplayer.presenters.playoffline.PlayOfflinePresenterImpl;
+import td.quang.vnplayer.presenters.playoffline.MainMainPresenterImpl;
 import td.quang.vnplayer.utils.AudioUtils;
 import td.quang.vnplayer.views.BaseFragment;
 import td.quang.vnplayer.views.activities.EventFromFragmentListener;
@@ -69,7 +69,7 @@ public class PlayingFragment extends BaseFragment {
 
     @AfterViews
     protected void afterView() {
-        PlayOfflinePresenterImpl mPresenter = PlayOfflinePresenterImpl.getInstance();
+        MainMainPresenterImpl mPresenter = MainMainPresenterImpl.getInstance();
         setUpPlayingViewPager();
         seekBarTime.setOnSeekBarChangeListener(new SeekBarChangeListener(mPresenter));
         listener.setUpSlidingPanel(dragView);

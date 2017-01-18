@@ -1,5 +1,6 @@
 package td.quang.vnplayer.presenters.playoffline;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -8,34 +9,47 @@ import java.util.List;
 
 import td.quang.vnplayer.broadcasts.BroadCastToUI;
 import td.quang.vnplayer.broadcasts.BroadcastToService;
+import td.quang.vnplayer.models.cloud.MyFirebase;
+import td.quang.vnplayer.models.cloud.UpLoadFinishedListener;
 import td.quang.vnplayer.models.databases.PlayListManager;
 import td.quang.vnplayer.models.databases.PlayListManagerImpl;
 import td.quang.vnplayer.models.objects.Song;
+import td.quang.vnplayer.utils.InternetUtils;
 import td.quang.vnplayer.views.activities.MainView;
 
 /**
  * Created by Quang_TD on 1/8/2017.
  */
 
-public class PlayOfflinePresenterImpl implements PlayOfflinePresenter, OnPreparePlaylistListener {
+public class MainMainPresenterImpl implements MainPresenter, OnPreparePlaylistListener, UpLoadFinishedListener {
 
-    private static PlayOfflinePresenterImpl instance;
+    private static MainMainPresenterImpl instance;
     private MainView mMainView;
     private BroadCastToUI mBroadCastToUI;
     private PlayListManager mPlayListManager;
 
-    private PlayOfflinePresenterImpl() {
+    private MainMainPresenterImpl() {
         mPlayListManager = PlayListManagerImpl.getInstance();
         mPlayListManager.setOnPreparePlaylistListener(this);
+        MyFirebase.getInstance().setUpLoadFinishedListener(this);
+
     }
 
-    public static PlayOfflinePresenterImpl getInstance() {
-        if (instance == null) instance = new PlayOfflinePresenterImpl();
+    public static MainMainPresenterImpl getInstance() {
+        if (instance == null) instance = new MainMainPresenterImpl();
         return instance;
     }
 
     @Override public void updatePositionPlayList(int position) {
         mMainView.setCurrentPosition(position);
+    }
+
+    @Override public void uploadToCloud(Context mContext, Song song) {
+        if (!InternetUtils.checkInternet(mContext)) {
+            mMainView.showError("Turn on network to upload");
+            return;
+        }
+        MyFirebase.getInstance().upload(mContext, song);
     }
 
     public void registerBroadcast() {
@@ -168,5 +182,11 @@ public class PlayOfflinePresenterImpl implements PlayOfflinePresenter, OnPrepare
 
     }
 
+    @Override public void onUploadSuccess(String message) {
+        mMainView.showSuccess(message);
+    }
 
+    @Override public void onUploadFail(String message) {
+        mMainView.showError(message);
+    }
 }

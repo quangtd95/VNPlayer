@@ -75,6 +75,7 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
     public void play(int position) {
         mCurrentSong = mPlayList.get(position);
         mCurrentPosition = position;
+        mThreadUpdateSeekbar = null;
         if (mMediaPlayer == null) {
             mMediaPlayer = new MediaPlayer();
             mMediaPlayer.setWakeMode(getApplication(), PowerManager.PARTIAL_WAKE_LOCK);
@@ -84,11 +85,12 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
         }
         try {
             mMediaPlayer.setDataSource(getApplicationContext(), mCurrentSong.getSource());
+            Log.e("TAGG", mCurrentSong.getSource().toString());
             mMediaPlayer.setOnPreparedListener(this);
             mMediaPlayer.setOnCompletionListener(this);
             mMediaPlayer.prepareAsync();
         } catch (IOException e) {
-            Log.e("TAGG", e.toString());
+            Log.e("TAGG", "Loi o  day" + e.getMessage() + e.getCause() + e.getStackTrace());
 
         }
         mIsPlaying = true;

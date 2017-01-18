@@ -25,8 +25,8 @@ import java.util.List;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import td.quang.vnplayer.R;
 import td.quang.vnplayer.models.objects.Song;
-import td.quang.vnplayer.presenters.playoffline.PlayOfflinePresenter;
-import td.quang.vnplayer.presenters.playoffline.PlayOfflinePresenterImpl;
+import td.quang.vnplayer.presenters.playoffline.MainMainPresenterImpl;
+import td.quang.vnplayer.presenters.playoffline.MainPresenter;
 import td.quang.vnplayer.views.BaseActivity;
 import td.quang.vnplayer.views.BaseFragment;
 import td.quang.vnplayer.views.adapters.MyViewPagerAdapter;
@@ -39,6 +39,7 @@ import td.quang.vnplayer.views.fragments.home.SongsFragment;
 import td.quang.vnplayer.views.fragments.playing.PlayingFragment;
 import td.quang.vnplayer.views.fragments.playing.PlayingFragment_;
 
+
 @EActivity(R.layout.activity_main)
 public class MainActivity extends BaseActivity implements MainView, SearchView.OnQueryTextListener, EventFromFragmentListener {
     @ViewById(R.id.slidingPanel) SlidingUpPanelLayout slidingPanel;
@@ -47,7 +48,7 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
     @ViewById(R.id.toolbar) Toolbar toolbar;
 
     private SongAdapter mSongAdapter;
-    private PlayOfflinePresenter mPresenter;
+    private MainPresenter mMainPresenter;
     private OnlineFragment onlineFragment;
     private SweetAlertDialog dialogLoading;
     private PlayingFragment playingFragment;
@@ -66,9 +67,9 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
         addPlayingFragment();
         setUpHomeViewPager();
 
-        mPresenter = PlayOfflinePresenterImpl.getInstance();
-        mPresenter.setMainView(this);
-        mPresenter.registerBroadcast();
+        mMainPresenter = MainMainPresenterImpl.getInstance();
+        mMainPresenter.setMainView(this);
+        mMainPresenter.registerBroadcast();
         getCurrentState();
 
     }
@@ -101,7 +102,7 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
     }
 
     private void getCurrentState() {
-        mPresenter.getCurrentState();
+        mMainPresenter.getCurrentState();
     }
 
     @Override public void setCurrentState(Intent intent) {
@@ -194,7 +195,7 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
     }
 
     @Override public void onResumeAction() {
-        mPresenter.resume();
+        mMainPresenter.resume();
     }
 
     @Override public void pauseView() {
@@ -206,23 +207,23 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
     }
 
     @Override public void onPauseAction() {
-        mPresenter.pause();
+        mMainPresenter.pause();
     }
 
     @Override public void onNextAction() {
-        mPresenter.next();
+        mMainPresenter.next();
     }
 
     @Override public void onPrevAction() {
-        mPresenter.prev();
+        mMainPresenter.prev();
     }
 
     @Override public void onShuffleAction(boolean mIsShuffle) {
-        mPresenter.setShuffle(mIsShuffle);
+        mMainPresenter.setShuffle(mIsShuffle);
     }
 
     @Override public void onRepeatAction(boolean mIsRepeat) {
-        mPresenter.setRepeat(mIsRepeat);
+        mMainPresenter.setRepeat(mIsRepeat);
     }
 
     @Override public void showLoading() {
@@ -238,12 +239,12 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
     }
 
     @Override public void showError(String message) {
-        MyDialog.showError(getContext());
+        MyDialog.showError(getContext(), message);
     }
 
     @Override protected void onDestroy() {
         super.onDestroy();
-        mPresenter.unregisterBroadcast();
+        mMainPresenter.unregisterBroadcast();
     }
 
     @Override public void onBackPressed() {

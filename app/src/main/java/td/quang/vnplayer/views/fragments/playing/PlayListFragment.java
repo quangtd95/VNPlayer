@@ -44,7 +44,7 @@ public class PlayListFragment extends BaseFragment {
         mPlayListPresenter = PlayListPresenterImpl.getInstance();
         mPlaylist = new ArrayList<>();
         mPlayListAdapter = new PlayListAdapter(getContext(), mPlaylist);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setAdapter(mPlayListAdapter);
 
     }

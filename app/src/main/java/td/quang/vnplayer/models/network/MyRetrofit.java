@@ -38,7 +38,18 @@ public class MyRetrofit implements Callback<OnlineSongList> {
     }
 
     @Override public void onResponse(Call<OnlineSongList> call, Response<OnlineSongList> response) {
-        queryFinishedListener.onQuerySuccess((ArrayList<OnlineSong>) response.body().docs);
+        ArrayList<OnlineSong> onlineSongs = (ArrayList<OnlineSong>) response.body().docs;
+        removeEmplySong(onlineSongs);
+        queryFinishedListener.onQuerySuccess(onlineSongs);
+    }
+
+    private void removeEmplySong(ArrayList<OnlineSong> onlineSongs) {
+        for (int i = 0; i < onlineSongs.size(); i++) {
+            if (onlineSongs.get(i).getFilePath().equalsIgnoreCase("")) {
+                onlineSongs.remove(i);
+                i--;
+            }
+        }
     }
 
     @Override public void onFailure(Call<OnlineSongList> call, Throwable t) {

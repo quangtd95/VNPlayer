@@ -71,4 +71,10 @@ public class MyDialog {
                 .showCancelButton(true)
                 .setCancelClickListener(SweetAlertDialog::cancel);
     }
+
+    public static void showMessage(Context mContext, String message) {
+        new SweetAlertDialog(mContext)
+                .setTitleText(message)
+                .show();
+    }
 }

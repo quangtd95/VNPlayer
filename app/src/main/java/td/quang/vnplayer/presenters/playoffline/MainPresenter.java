@@ -1,5 +1,6 @@
 package td.quang.vnplayer.presenters.playoffline;
 
+import android.content.Context;
 import android.content.Intent;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import td.quang.vnplayer.views.activities.MainView;
  * Created by Quang_TD on 1/8/2017.
  */
 
-public interface PlayOfflinePresenter {
+public interface MainPresenter {
     void setMainView(MainView mainView);
 
     void createPlayList(List<Song> songs, int position);
@@ -45,4 +46,6 @@ public interface PlayOfflinePresenter {
     void unregisterBroadcast();
 
     void updatePositionPlayList(int position);
+
+    void uploadToCloud(Context mContext, Song song);
 }
