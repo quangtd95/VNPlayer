@@ -3,7 +3,10 @@ package td.quang.vnplayer.views.activities;
 import android.content.Context;
 import android.content.Intent;
 
+import java.util.List;
+
 import td.quang.vnplayer.models.objects.Song;
+import td.quang.vnplayer.models.objects.SongMetadata;
 import td.quang.vnplayer.views.adapters.SongAdapter;
 
 /**
@@ -37,4 +40,6 @@ public interface MainView {
     void showSuccess(String message);
 
     void showError(String message);
+
+    void updateCloud(List<SongMetadata> mCloudSongs);
 }

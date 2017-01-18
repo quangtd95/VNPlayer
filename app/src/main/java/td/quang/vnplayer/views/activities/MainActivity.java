@@ -25,6 +25,7 @@ import java.util.List;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import td.quang.vnplayer.R;
 import td.quang.vnplayer.models.objects.Song;
+import td.quang.vnplayer.models.objects.SongMetadata;
 import td.quang.vnplayer.presenters.playoffline.MainMainPresenterImpl;
 import td.quang.vnplayer.presenters.playoffline.MainPresenter;
 import td.quang.vnplayer.views.BaseActivity;
@@ -34,6 +35,7 @@ import td.quang.vnplayer.views.adapters.SongAdapter;
 import td.quang.vnplayer.views.dialogs.MyDialog;
 import td.quang.vnplayer.views.fragments.home.AlbumsFragment;
 import td.quang.vnplayer.views.fragments.home.CloudFragment;
+import td.quang.vnplayer.views.fragments.home.CloudFragment_;
 import td.quang.vnplayer.views.fragments.home.OnlineFragment;
 import td.quang.vnplayer.views.fragments.home.SongsFragment;
 import td.quang.vnplayer.views.fragments.playing.PlayingFragment;
@@ -53,6 +55,8 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
     private SweetAlertDialog dialogLoading;
     private PlayingFragment playingFragment;
     private SearchView mSearchView;
+    private CloudFragment cloudFragment;
+    private SongsFragment songsFragment;
 
     @Override public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -85,14 +89,15 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
 
     private void setUpHomeViewPager() {
         List<BaseFragment> mHomeFragments = new ArrayList<>();
-        SongsFragment songsFragment = new SongsFragment();
+        songsFragment = new SongsFragment();
         songsFragment.setMainView(this);
-        mHomeFragments.add(songsFragment);
-        mHomeFragments.add(new AlbumsFragment());
         onlineFragment = new OnlineFragment();
         onlineFragment.setMainView(this);
+        cloudFragment = new CloudFragment_();
+        mHomeFragments.add(songsFragment);
+        mHomeFragments.add(new AlbumsFragment());
+        mHomeFragments.add(cloudFragment);
         mHomeFragments.add(onlineFragment);
-        mHomeFragments.add(new CloudFragment());
 
         MyViewPagerAdapter mHomeViewPagerAdapter = new MyViewPagerAdapter(getSupportFragmentManager(), mHomeFragments);
         mViewPagerHome.setAdapter(mHomeViewPagerAdapter);
@@ -164,7 +169,7 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
     }
 
     @Override public boolean onQueryTextSubmit(String query) {
-        if (mViewPagerHome.getCurrentItem() != 2) {
+        if (mViewPagerHome.getCurrentItem() != 3) {
             MyDialog.showError(this, "just only use to search online!");
             return true;
         }
@@ -174,7 +179,7 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
     }
 
     @Override public boolean onQueryTextChange(String newText) {
-        if (mViewPagerHome.getCurrentItem() != 2) {
+        if (mViewPagerHome.getCurrentItem() != 3) {
             return true;
         }
         return true;
@@ -240,6 +245,10 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
 
     @Override public void showError(String message) {
         MyDialog.showError(getContext(), message);
+    }
+
+    @Override public void updateCloud(List<SongMetadata> mCloudSongs) {
+        cloudFragment.updateCloud(mCloudSongs);
     }
 
     @Override protected void onDestroy() {

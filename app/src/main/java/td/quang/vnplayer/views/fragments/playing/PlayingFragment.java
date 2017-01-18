@@ -78,7 +78,7 @@ public class PlayingFragment extends BaseFragment {
     public void setUpPlayingViewPager() {
         List<BaseFragment> mPlayingFragments = new ArrayList<>();
         albumCoverFragment = new AlbumCoverFragment();
-        playListFragment = new PlayListFragment();
+        playListFragment = new PlayListFragment_();
         mPlayingFragments.add(albumCoverFragment);
         mPlayingFragments.add(playListFragment);
         MyViewPagerAdapter mPlayingViewPagerAdapter = new MyViewPagerAdapter(getFragmentManager(), mPlayingFragments);

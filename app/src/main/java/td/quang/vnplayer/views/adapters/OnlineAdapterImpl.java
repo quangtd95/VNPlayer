@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -47,9 +46,7 @@ public class OnlineAdapterImpl extends RecyclerView.Adapter<OnlineAdapterImpl.On
             songs.add(onlineSongs.get(i).toOffline());
         }
         mPresenter.createPlayList(songs, position);
-        Toast.makeText(mContext, onlineSongs.get(position).getFilePath(), Toast.LENGTH_SHORT).show();
     }
-
 
 
     @Override

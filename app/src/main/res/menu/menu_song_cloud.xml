@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/play"
+        android:title="@string/play"/>
+    <item
+        android:id="@+id/downloadCloudSong"
+        android:title="@string/download_this_song"/>
+</menu>

@@ -11,7 +11,9 @@ import lombok.EqualsAndHashCode;
 /**
  * Created by Quang_TD on 1/4/2017.
  */
+
 @EqualsAndHashCode(callSuper = false) @Data
+
 public class Song extends RealmObject implements Parcelable {
     public static final Creator<Song> CREATOR = new Creator<Song>() {
         @Override
@@ -42,7 +44,6 @@ public class Song extends RealmObject implements Parcelable {
         album = builder.album;
         filePath = builder.filePath;
         duration = builder.duration;
-
     }
 
     protected Song(Parcel in) {
@@ -52,6 +53,10 @@ public class Song extends RealmObject implements Parcelable {
         album = in.readString();
         filePath = in.readString();
         duration = in.readInt();
+    }
+
+    public String hashId() {
+        return String.valueOf(title.hashCode());
     }
 
     public Uri getSource() {

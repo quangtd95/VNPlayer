@@ -48,4 +48,8 @@ public interface MainPresenter {
     void updatePositionPlayList(int position);
 
     void uploadToCloud(Context mContext, Song song);
+
+    void getAllFromCloud();
+
+    void downloadFileFromCloud(String filePath);
 }

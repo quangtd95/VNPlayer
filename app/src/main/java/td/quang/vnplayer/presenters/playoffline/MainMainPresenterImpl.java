@@ -14,6 +14,7 @@ import td.quang.vnplayer.models.cloud.UpLoadFinishedListener;
 import td.quang.vnplayer.models.databases.PlayListManager;
 import td.quang.vnplayer.models.databases.PlayListManagerImpl;
 import td.quang.vnplayer.models.objects.Song;
+import td.quang.vnplayer.models.objects.SongMetadata;
 import td.quang.vnplayer.utils.InternetUtils;
 import td.quang.vnplayer.views.activities.MainView;
 
@@ -52,23 +53,15 @@ public class MainMainPresenterImpl implements MainPresenter, OnPreparePlaylistLi
         MyFirebase.getInstance().upload(mContext, song);
     }
 
-    public void registerBroadcast() {
-        mBroadCastToUI = new BroadCastToUI(this, mMainView);
-        IntentFilter mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(BroadCastToUI.ACTION_UPDATE_TIME);
-        mIntentFilter.addAction(BroadCastToUI.ACTION_COMPLETE);
-        mIntentFilter.addAction(BroadCastToUI.ACTION_NEXT);
-        mIntentFilter.addAction(BroadCastToUI.ACTION_PREV);
-        mIntentFilter.addAction(BroadCastToUI.ACTION_PAUSE);
-        mIntentFilter.addAction(BroadCastToUI.ACTION_RESUME);
-        mIntentFilter.addAction(BroadCastToUI.ACTION_RECEIVE_CURRENT_STATE);
-        mIntentFilter.addAction(BroadCastToUI.ACTION_UPDATE_SONG);
-        mMainView.getContext().registerReceiver(mBroadCastToUI, mIntentFilter);
+    @Override public void getAllFromCloud() {
+        List<SongMetadata> mCloudSongs = MyFirebase.getInstance().getMCloudSongs();
+        mMainView.updateCloud(mCloudSongs);
     }
 
-    public void unregisterBroadcast() {
-        mMainView.getContext().unregisterReceiver(mBroadCastToUI);
+    @Override public void downloadFileFromCloud(String filePath) {
+        MyFirebase.getInstance().downloadFromCloud(filePath);
     }
+
 
     @Override public void setMainView(MainView mainView) {
         mMainView = mainView;
@@ -188,5 +181,24 @@ public class MainMainPresenterImpl implements MainPresenter, OnPreparePlaylistLi
 
     @Override public void onUploadFail(String message) {
         mMainView.showError(message);
+    }
+
+    public void registerBroadcast() {
+        mBroadCastToUI = new BroadCastToUI(this, mMainView);
+        IntentFilter mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(BroadCastToUI.ACTION_UPDATE_TIME);
+        mIntentFilter.addAction(BroadCastToUI.ACTION_COMPLETE);
+        mIntentFilter.addAction(BroadCastToUI.ACTION_NEXT);
+        mIntentFilter.addAction(BroadCastToUI.ACTION_PREV);
+        mIntentFilter.addAction(BroadCastToUI.ACTION_PAUSE);
+        mIntentFilter.addAction(BroadCastToUI.ACTION_RESUME);
+        mIntentFilter.addAction(BroadCastToUI.ACTION_RECEIVE_CURRENT_STATE);
+        mIntentFilter.addAction(BroadCastToUI.ACTION_UPDATE_SONG);
+        mIntentFilter.addAction(BroadCastToUI.ACTION_UPDATE_CLOUD);
+        mMainView.getContext().registerReceiver(mBroadCastToUI, mIntentFilter);
+    }
+
+    public void unregisterBroadcast() {
+        mMainView.getContext().unregisterReceiver(mBroadCastToUI);
     }
 }

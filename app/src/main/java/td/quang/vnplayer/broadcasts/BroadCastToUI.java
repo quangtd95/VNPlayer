@@ -24,6 +24,7 @@ public class BroadCastToUI extends BroadcastReceiver {
     public static final String ACTION_RECEIVE_CURRENT_STATE = "TD.QUANG.VNPLAYER.MUSICSERVICERECEIVER.RECEIVE_CURRENT_STATE";
     public static final String ACTION_UPDATE_SONG = "TD.QUANG.VNPLAYER.MUSICSERVICERECEIVER.UPDATE_SONG";
     public static final String ACTION_UPDATE_PLAYLIST = "TD.QUANG.VNPLAYER.MUSICSERVICERECEIVER.UPDATE_PLAYLIST";
+    public static final String ACTION_UPDATE_CLOUD = "TD.QUANG.VNPLAYER.MUSICSERVICERECEIVER.UPDATE_CLOUD";
 
     @Setter private MainPresenter mMainPresenter;
     @Setter private MainView mMainView;
@@ -63,7 +64,14 @@ public class BroadCastToUI extends BroadcastReceiver {
         if (action.equalsIgnoreCase(ACTION_UPDATE_PLAYLIST)) {
             updatePlayListAction(intent);
         }
+        if (action.equalsIgnoreCase(ACTION_UPDATE_CLOUD)) {
+            updateCloudAction(intent);
+        }
 
+    }
+
+    private void updateCloudAction(Intent intent) {
+        mMainPresenter.getAllFromCloud();
     }
 
     private void updatePlayListAction(Intent intent) {

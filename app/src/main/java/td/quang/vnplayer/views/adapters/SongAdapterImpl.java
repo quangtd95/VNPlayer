@@ -78,25 +78,11 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
         return new SongHolder(view);
     }
 
-    @Override
-    public void onBindViewHolder(SongHolder holder, int position) {
-        Song song = songs.get(position);
-        holder.tvSongTitle.setText(song.getTitle());
-        holder.tvSongArtist.setText(song.getArtist());
-        holder.ivSongThumb.setBackgroundColor(RandomColor.getColor());
-        holder.ivSongThumb.setText(String.valueOf(song.getTitle().charAt(0)));
-        holder.btnSongOption.setOnClickListener(v -> showMenu(v, position));
-        holder.cardViewSong.setOnLongClickListener(v -> {
-            showMenu(holder.btnSongOption, position);
-            return false;
-        });
-        holder.cardViewSong.setOnClickListener(v -> playSongOnClick(position));
-    }
 
     private void showMenu(View view, int position) {
         Song song = songs.get(position);
         PopupMenu popupMenu = new PopupMenu(mContext, view);
-        popupMenu.getMenuInflater().inflate(R.menu.menu_song_option, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.menu_song_local, popupMenu.getMenu());
         popupMenu.show();
 
         popupMenu.setOnMenuItemClickListener(item -> {
@@ -114,6 +100,20 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
     }
 
 
+    @Override
+    public void onBindViewHolder(SongHolder holder, int position) {
+        Song song = songs.get(position);
+        holder.tvSongTitle.setText(song.getTitle());
+        holder.tvSongArtist.setText(song.getArtist());
+        holder.ivSongThumb.setBackgroundColor(RandomColor.getColor());
+        holder.ivSongThumb.setText(String.valueOf(song.getTitle().charAt(0)));
+        holder.btnSongOption.setOnClickListener(v -> showMenu(v, position));
+        holder.cardViewSong.setOnLongClickListener(v -> {
+            showMenu(holder.btnSongOption, position);
+            return false;
+        });
+        holder.cardViewSong.setOnClickListener(v -> playSongOnClick(position));
+    }
     static class SongHolder extends RecyclerView.ViewHolder {
         TextView ivSongThumb;
         TextView tvSongTitle;
