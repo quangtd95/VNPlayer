@@ -51,12 +51,13 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
     private OnlineFragment onlineFragment;
     private SweetAlertDialog dialogLoading;
     private PlayingFragment playingFragment;
+    private SearchView mSearchView;
 
     @Override public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem itemSearch = menu.findItem(R.id.action_searchc);
-        SearchView searchView = (SearchView) itemSearch.getActionView();
-        searchView.setOnQueryTextListener(this);
+        mSearchView = (SearchView) itemSearch.getActionView();
+        mSearchView.setOnQueryTextListener(this);
         return true;
     }
 
@@ -166,6 +167,7 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
             return true;
         }
         onlineFragment.search(query);
+        mSearchView.clearFocus();
         return true;
     }
 
