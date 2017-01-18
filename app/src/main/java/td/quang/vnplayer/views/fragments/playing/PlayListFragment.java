@@ -15,6 +15,7 @@ import td.quang.vnplayer.models.objects.Song;
 import td.quang.vnplayer.presenters.playoffline.PlayListPresenter;
 import td.quang.vnplayer.presenters.playoffline.PlayListPresenterImpl;
 import td.quang.vnplayer.views.BaseFragment;
+import td.quang.vnplayer.views.activities.MainView;
 import td.quang.vnplayer.views.adapters.PlayListAdapter;
 
 /**
@@ -34,7 +35,7 @@ public class PlayListFragment extends BaseFragment {
         mPlayListAdapter = new PlayListAdapter(getContext(), mPlaylist);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setAdapter(mPlayListAdapter);
-
+        ((MainView) getActivity()).setScrollableViewInsideSlidingPanel(mRecyclerView);
     }
 
     public void setPositionPlaylist(int position) {

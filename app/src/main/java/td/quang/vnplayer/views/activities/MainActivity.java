@@ -12,6 +12,7 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -147,6 +148,11 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
         slidingPanel.setPanelHeight(height);
         slidingPanel.addPanelSlideListener(new SlidingPanelListener(this, dragView));
 
+    }
+
+    @Override
+    public void setScrollableViewInsideSlidingPanel(View view) {
+        slidingPanel.setScrollableView(view);
     }
 
     @Override public void slidingDown() {

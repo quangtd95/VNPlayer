@@ -2,6 +2,7 @@ package td.quang.vnplayer.views.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.view.View;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ import td.quang.vnplayer.views.adapters.SongAdapter;
  */
 
 public interface MainView {
+    void setScrollableViewInsideSlidingPanel(View view);
 
     void setCurrentState(Intent intent);
 
