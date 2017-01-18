@@ -36,6 +36,7 @@ public class AlbumCoverFragment extends BaseFragment {
 
     public void startAnimation() {
         ivAlbumCover.startAnimation(mAnim);
+
     }
 
     public void stopAnimation() {

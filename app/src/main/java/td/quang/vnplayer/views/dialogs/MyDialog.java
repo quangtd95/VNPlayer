@@ -2,8 +2,16 @@ package td.quang.vnplayer.views.dialogs;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.SeekBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import td.quang.vnplayer.R;
+import td.quang.vnplayer.presenters.playoffline.MainPresenter;
 
 /**
  * Created by Quang_TD on 1/7/2017.
@@ -76,5 +84,45 @@ public class MyDialog {
         new SweetAlertDialog(mContext)
                 .setTitleText(message)
                 .show();
+    }
+
+    public static void showSchedule(Context mContext, MainPresenter mainPresenter) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        View dialogView = LayoutInflater.from(mContext).inflate(R.layout.layout_schedule, null);
+        AlertDialog alertDialog = builder
+                .setView(dialogView)
+                .setCancelable(true)
+                .create();
+
+        SeekBar seekBarSchedule = (SeekBar) dialogView.findViewById(R.id.seekBarSchedule);
+        TextView tvTimeSchedule = (TextView) dialogView.findViewById(R.id.tvTimeSchedule);
+
+        seekBarSchedule.setMax(30);
+
+        seekBarSchedule.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                tvTimeSchedule.setText(String.format("%d minutes", seekBar.getProgress()));
+            }
+
+            @Override public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        alertDialog.setOnDismissListener(dialog -> {
+            int minutes = seekBarSchedule.getProgress();
+            mainPresenter.setSchedule(minutes);
+            if (minutes == 0) {
+                Toast.makeText(mContext, "clear!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(mContext, String.format("%dminutes", minutes), Toast.LENGTH_SHORT).show();
+            }
+
+        });
+        alertDialog.show();
     }
 }

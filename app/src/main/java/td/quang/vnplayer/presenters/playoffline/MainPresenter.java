@@ -52,4 +52,6 @@ public interface MainPresenter {
     void getAllFromCloud();
 
     void downloadFileFromCloud(Context mContext, Song song);
+
+    void setSchedule(int minutes);
 }

@@ -19,5 +19,6 @@
     <string name="remove_this_song">Remove this song</string>
     <string name="upload_to_cloud">Upload to Cloud</string>
     <string name="download_this_song">Download this song</string>
+    <string name="action_enable_visualization">Enable Visualization</string>
 
 </resources>

@@ -10,6 +10,12 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.cleveroad.audiovisualization.AudioVisualization;
+import com.cleveroad.audiovisualization.DbmHandler;
+import com.cleveroad.audiovisualization.GLAudioVisualizationView;
+import com.cleveroad.audiovisualization.SpeechRecognizerDbmHandler;
+import com.cleveroad.audiovisualization.VisualizerDbmHandler;
+
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
@@ -56,6 +62,10 @@ public class PlayingFragment extends BaseFragment {
     @ViewById(R.id.btnPrev) MyButton btnPrev;
     @ViewById(R.id.btnHome) MyButton btnHome;
     @ViewById(R.id.btnList) MyButton btnList;
+    @ViewById(R.id.control) LinearLayout llControl;
+    @ViewById(R.id.visualizer_view)
+    GLAudioVisualizationView mVisualizationView;
+    private AudioVisualization audioVisualization;
     private PlayListFragment playListFragment;
     private AlbumCoverFragment albumCoverFragment;
     private boolean mIsRepeat;
@@ -66,6 +76,10 @@ public class PlayingFragment extends BaseFragment {
 
     @Setter
     private EventFromFragmentListener listener;
+    private boolean enableVisualization;
+    private SpeechRecognizerDbmHandler speechRecHandler;
+    private VisualizerDbmHandler vizualizerHandler;
+
 
     @AfterViews
     protected void afterView() {
@@ -73,14 +87,26 @@ public class PlayingFragment extends BaseFragment {
         setUpPlayingViewPager();
         seekBarTime.setOnSeekBarChangeListener(new SeekBarChangeListener(mPresenter));
         listener.setUpSlidingPanel(dragView);
+
+        audioVisualization = (AudioVisualization) mVisualizationView;
+        // set speech recognizer handler
+        speechRecHandler = DbmHandler.Factory.newSpeechRecognizerHandler(getContext());
+        vizualizerHandler = DbmHandler.Factory.newVisualizerHandler(getContext(), 0);
+        audioVisualization.linkTo(speechRecHandler);
+        audioVisualization.linkTo(vizualizerHandler);
     }
 
     public void setUpPlayingViewPager() {
         List<BaseFragment> mPlayingFragments = new ArrayList<>();
+
+
         albumCoverFragment = new AlbumCoverFragment();
         playListFragment = new PlayListFragment_();
+
+
         mPlayingFragments.add(albumCoverFragment);
         mPlayingFragments.add(playListFragment);
+
         MyViewPagerAdapter mPlayingViewPagerAdapter = new MyViewPagerAdapter(getFragmentManager(), mPlayingFragments);
         mViewPagerPlaying.setAdapter(mPlayingViewPagerAdapter);
 
@@ -220,5 +246,37 @@ public class PlayingFragment extends BaseFragment {
         seekBarTime.setProgress(mCurrentTime);
     }
 
+    public void setEnableVisualization(boolean enableVisualization) {
+        this.enableVisualization = enableVisualization;
+        if (enableVisualization) {
+            audioVisualization.onResume();
+            llControl.setBackgroundColor(getContext().getResources().getColor(android.R.color.transparent));
+            seekBarTime.setBackgroundColor(getContext().getResources().getColor(android.R.color.transparent));
+        } else {
+            audioVisualization.onPause();
+            llControl.setBackgroundColor(getContext().getResources().getColor(R.color.colorPrimary));
+            seekBarTime.setBackgroundColor(getContext().getResources().getColor(R.color.colorPrimary));
+        }
+
+    }
+
+    @Override public void onResume() {
+        super.onResume();
+        if (enableVisualization) {
+            audioVisualization.onResume();
+        }
+
+
+    }
+
+    @Override public void onPause() {
+        super.onPause();
+        audioVisualization.onPause();
+    }
+
+    @Override public void onDestroyView() {
+        audioVisualization.release();
+        super.onDestroyView();
+    }
 
 }

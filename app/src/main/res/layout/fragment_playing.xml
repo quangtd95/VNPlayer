@@ -6,14 +6,140 @@
     android:background="@color/colorPrimaryDark"
     android:clickable="true">
 
+
+    <LinearLayout
+        android:id="@+id/heading"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingLeft="12dp"
+        android:paddingStart="12dp">
+
+        <TextView
+            android:id="@+id/tvHeadTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:text="-"
+            android:textColor="@android:color/white"
+            android:textStyle="normal|bold"/>
+
+        <TextView
+            android:id="@+id/tvHeadArtist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:text="-"
+            android:textColor="@android:color/white"/>
+    </LinearLayout>
     <!--<include
-        android:id="@+id/control"
-        layout="@layout/layout_control"
+    android:id="@+id/barPlaying"
+    layout="@layout/layout_bar_playing"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentTop="true"
+    android:background="@color/colorPrimary"/>-->
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/barPlaying"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary">
+
+        <ImageButton
+            android:id="@+id/btnBarPlay"
+            style="@style/SelectableItemBackgroundLight"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="12dp"
+            android:layout_marginRight="12dp"
+            android:contentDescription="@string/no_image_loaded"
+            app:srcCompat="@drawable/ic_play_circle_outline_white_24dp"/>
+
+        <ImageView
+            android:id="@+id/ivBarThumb"
+            android:layout_width="?attr/actionBarSize"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="false"
+            android:contentDescription="@string/no_image_loaded"
+            android:padding="2dp"
+            app:srcCompat="@drawable/icon_thumbnail"/>
+
+        <LinearLayout
+            android:id="@+id/llLayoutBarDetail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+
+            android:layout_marginLeft="12dp"
+            android:layout_marginStart="12dp"
+            android:layout_toEndOf="@+id/ivBarThumb"
+            android:layout_toLeftOf="@id/btnBarPlay"
+            android:layout_toRightOf="@+id/ivBarThumb"
+            android:layout_toStartOf="@id/btnBarPlay"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvBarTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textColor="@android:color/white"
+                android:textStyle="normal|bold"/>
+
+            <TextView
+                android:id="@+id/tvBarArtist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textColor="@android:color/white"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPagerPlaying"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/seekBarTime"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentStart="true"/>-->
+        android:layout_below="@+id/heading">
+    </android.support.v4.view.ViewPager>
+
+    <com.cleveroad.audiovisualization.GLAudioVisualizationView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/visualizer_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/viewPagerPlaying"
+        app:av_backgroundColor="@color/colorPrimary"
+        app:av_bubblesPerLayer="30"
+        app:av_bubblesRandomizeSizes="true"
+        app:av_bubblesSize="40dp"
+        app:av_layersCount="1"
+        app:av_wavesCount="9"
+        app:av_wavesFooterHeight="40dp"
+        app:av_wavesHeight="100dp"
+        />
+
     <LinearLayout
         xmlns:app="http://schemas.android.com/tools"
         android:id="@+id/control"
@@ -176,135 +302,14 @@
 
 
     </LinearLayout>
-    <!-- <include
-         android:id="@+id/heading"
-         layout="@layout/layout_heading"
-         android:layout_width="match_parent"
-         android:layout_height="?attr/actionBarSize"
-         android:layout_alignParentEnd="true"
-         android:layout_alignParentStart="true"
-         android:layout_alignParentTop="true"/>-->
-    <LinearLayout
-        android:id="@+id/heading"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary"
-        android:clickable="true"
-        android:gravity="center_vertical"
-        android:orientation="vertical"
-        android:paddingLeft="12dp"
-        android:paddingStart="12dp">
-
-        <TextView
-            android:id="@+id/tvHeadTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:text="-"
-            android:textColor="@android:color/white"
-            android:textStyle="normal|bold"/>
-
-        <TextView
-            android:id="@+id/tvHeadArtist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:text="-"
-            android:textColor="@android:color/white"/>
-    </LinearLayout>
-    <!--<include
-    android:id="@+id/barPlaying"
-    layout="@layout/layout_bar_playing"
-    android:layout_width="match_parent"
-    android:layout_height="?attr/actionBarSize"
-    android:layout_alignParentStart="true"
-    android:layout_alignParentStart="true"
-    android:layout_alignParentTop="true"
-    android:background="@color/colorPrimary"/>-->
-    <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/barPlaying"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary">
-
-        <ImageButton
-            android:id="@+id/btnBarPlay"
-            style="@style/SelectableItemBackgroundLight"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginEnd="12dp"
-            android:layout_marginRight="12dp"
-            android:contentDescription="@string/no_image_loaded"
-            app:srcCompat="@drawable/ic_play_circle_outline_white_24dp"/>
-
-        <ImageView
-            android:id="@+id/ivBarThumb"
-            android:layout_width="?attr/actionBarSize"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="false"
-            android:contentDescription="@string/no_image_loaded"
-            android:padding="2dp"
-            app:srcCompat="@drawable/icon_thumbnail"/>
-
-        <LinearLayout
-            android:id="@+id/llLayoutBarDetail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_gravity="center_vertical"
-
-            android:layout_marginLeft="12dp"
-            android:layout_marginStart="12dp"
-            android:layout_toEndOf="@+id/ivBarThumb"
-            android:layout_toLeftOf="@id/btnBarPlay"
-            android:layout_toRightOf="@+id/ivBarThumb"
-            android:layout_toStartOf="@id/btnBarPlay"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tvBarTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:textColor="@android:color/white"
-                android:textStyle="normal|bold"/>
-
-            <TextView
-                android:id="@+id/tvBarArtist"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:textColor="@android:color/white"/>
-        </LinearLayout>
-
-    </RelativeLayout>
 
     <SeekBar
         android:id="@+id/seekBarTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/control"
-
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:background="@color/colorPrimary"/>
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/viewPagerPlaying"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/seekBarTime"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/heading">
-    </android.support.v4.view.ViewPager>
-
 
 </RelativeLayout>

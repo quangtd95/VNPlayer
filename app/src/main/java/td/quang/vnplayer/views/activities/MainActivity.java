@@ -81,6 +81,19 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
         return true;
     }
 
+    @Override public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_enable_visualization:
+                boolean b = item.isChecked();
+                item.setChecked(!b);
+                playingFragment.setEnableVisualization(!b);
+                return true;
+            case R.id.action_schedule:
+                MyDialog.showSchedule(this, mMainPresenter);
+        }
+        return false;
+    }
+
     @Override protected void afterView() {
         setSupportActionBar(toolbar);
         addPlayingFragment();

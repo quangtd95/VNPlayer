@@ -67,6 +67,15 @@ public class MainMainPresenterImpl implements MainPresenter, OnPreparePlaylistLi
         MyFirebase.getInstance().downloadFromCloud(song);
     }
 
+    @Override public void setSchedule(int minutes) {
+        Intent intent = new Intent();
+        intent.setAction(BroadcastToService.ACTION_SCHEDULE);
+        Bundle bundle = new Bundle();
+        bundle.putInt("minute", minutes);
+        intent.putExtras(bundle);
+        mMainView.getContext().sendBroadcast(intent);
+    }
+
 
     @Override public void setMainView(MainView mainView) {
         mMainView = mainView;

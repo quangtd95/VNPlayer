@@ -6,6 +6,7 @@ import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
@@ -37,6 +38,7 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
     private LinkedList<Song> mPlayList;
     private LinkedList<Integer> mRandomPosition;
     private int mCurrentPosition;
+    private Handler mHandler;
 
     private boolean b;
 
@@ -58,12 +60,14 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
         filter.addAction(BroadcastToService.ACTION_NEXT);
         filter.addAction(BroadcastToService.ACTION_REMOVE_IN_PLAYLIST);
         filter.addAction(BroadcastToService.ACTION_PREV);
+        filter.addAction(BroadcastToService.ACTION_SCHEDULE);
         registerReceiver(mBroadcastToService, filter);
 
         mSongNotification = SongNotification.getInstance();
         mPlayListManager = PlayListManagerImpl.getInstance();
         mPlayList = new LinkedList<>();
         mRandomPosition = new LinkedList<>();
+
     }
 
     @Nullable @Override
@@ -124,9 +128,9 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
         if (mIsPlaying) {
             mMediaPlayer.pause();
             mSongNotification.updateNotification(this, true);
+            mIsPlaying = false;
+            updateUI(mCurrentSong, mCurrentPosition, true);
         }
-        mIsPlaying = false;
-        updateUI(mCurrentSong, mCurrentPosition, true);
     }
 
     @Override
@@ -222,6 +226,19 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
             }
         }
         updateUI(mCurrentSong, mCurrentPosition, !mIsPlaying);
+    }
+
+    @Override public void setSchedule(int minutes) {
+        if (mHandler == null) {
+            mHandler = new Handler();
+        } else {
+            mHandler.removeCallbacksAndMessages(null);
+        }
+        if (minutes != 0) {
+            mHandler.postDelayed(() -> pause(), minutes * 60 * 1000);
+        } else {
+            mHandler.removeCallbacksAndMessages(null);
+        }
     }
 
     @Override

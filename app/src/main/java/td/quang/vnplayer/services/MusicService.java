@@ -29,4 +29,6 @@ public interface MusicService {
     void getPlaylist(int position);
 
     void removeInPlayList(int position);
+
+    void setSchedule(int minutes);
 }

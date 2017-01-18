@@ -23,6 +23,7 @@ public class BroadcastToService extends BroadcastReceiver {
     public static final String ACTION_NEXT = "TD.QUANG.VNPLAYER.CONTROLMUSICBROADCAST.NEXT";
     public static final String ACTION_PREV = "TD.QUANG.VNPLAYER.CONTROLMUSICBROADCAST.PREV";
     public static final String ACTION_REMOVE_IN_PLAYLIST = "TD.QUANG.VNPLAYER.CONTROLMUSICBROADCAST.REMOVE_IN_PLAYLIST";
+    public static final String ACTION_SCHEDULE = "TD.QUANG.VNPLAYER.CONTROLMUSICBROADCAST.SCHEDULE";
 
     private MusicService musicService;
 
@@ -71,7 +72,16 @@ public class BroadcastToService extends BroadcastReceiver {
         if (action.equalsIgnoreCase(ACTION_REMOVE_IN_PLAYLIST)) {
             onRemoveInPlayListAction(intent);
         }
+        if (action.equalsIgnoreCase(ACTION_SCHEDULE)) {
+            onScheduleAction(intent);
+        }
 
+    }
+
+    private void onScheduleAction(Intent intent) {
+        Bundle bundle = intent.getExtras();
+        int minutes = bundle.getInt("minute");
+        musicService.setSchedule(minutes);
     }
 
     private void onRemoveInPlayListAction(Intent intent) {
