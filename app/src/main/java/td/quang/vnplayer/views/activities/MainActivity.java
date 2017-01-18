@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
@@ -63,9 +64,14 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem itemSearch = menu.findItem(R.id.action_searchc);
         mSearchView = (SearchView) itemSearch.getActionView();
-        EditText searchEditText = (EditText) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
-        searchEditText.setTextColor(getResources().getColor(R.color.colorAccent));
-        searchEditText.setHintTextColor(getResources().getColor(R.color.colorAccentDark));
+        //change color searchView
+        EditText mSearchText = (EditText) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        mSearchText.setTextColor(getResources().getColor(R.color.colorAccent));
+        mSearchText.setHintTextColor(getResources().getColor(R.color.colorAccentDark));
+
+        ImageView mSearchIcon = (ImageView) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_button);
+        mSearchIcon.setImageResource(R.drawable.ic_search_white_24dp);
+
         mSearchView.setOnQueryTextListener(this);
         return true;
     }
@@ -173,12 +179,12 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
     }
 
     @Override public boolean onQueryTextSubmit(String query) {
+        mSearchView.clearFocus();
         if (mViewPagerHome.getCurrentItem() != 3) {
             MyDialog.showError(this, "just only use to search online!");
             return true;
         }
         onlineFragment.search(query);
-        mSearchView.clearFocus();
         return true;
     }
 
