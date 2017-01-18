@@ -37,8 +37,14 @@ public class CloudFragment extends BaseFragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         songs = new LinkedList<>();
         nameUploader = new LinkedList<>();
+        getCloudSongs();
         cloudAdapter = new CloudAdapter(songs, nameUploader);
+        cloudAdapter.fetch();
         mRecyclerView.setAdapter(cloudAdapter);
+    }
+
+    private void getCloudSongs() {
+
     }
 
     public void updateCloud(List<SongMetadata> mCloudSongs) {

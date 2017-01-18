@@ -1,9 +1,9 @@
 package td.quang.vnplayer.models.cloud;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -16,7 +16,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,7 +25,8 @@ import td.quang.vnplayer.broadcasts.BroadCastToUI;
 import td.quang.vnplayer.models.objects.Song;
 import td.quang.vnplayer.models.objects.SongMetadata;
 import td.quang.vnplayer.utils.AudioUtils;
-import td.quang.vnplayer.views.notifications.FirebaseTaskNotification;
+import td.quang.vnplayer.views.notifications.FirebaseDownloadNotification;
+import td.quang.vnplayer.views.notifications.FirebaseUploadNotification;
 
 /**
  * Created by Quang_TD on 1/18/2017.
@@ -45,7 +45,7 @@ public class MyFirebase {
     //name music
     private DatabaseReference songNameRef;
 
-    @Setter private UpLoadFinishedListener upLoadFinishedListener;
+    @Setter private FirebaseTaskListener firebaseTaskListener;
 
     @Getter private List<SongMetadata> mCloudSongs;
 
@@ -80,11 +80,11 @@ public class MyFirebase {
         return instance;
     }
 
-    public void upload(Context mContext, Song song) {
-        FirebaseTaskNotification firebaseTaskNotification = FirebaseTaskNotification.getInstance();
-        boolean b = firebaseTaskNotification.showUpLoadNotification(mContext, song);
+    public void upload(Song song) {
+        FirebaseUploadNotification firebaseUploadNotification = FirebaseUploadNotification.getInstance();
+        boolean b = firebaseUploadNotification.showUpLoadNotification(storage.getApp().getApplicationContext(), song);
         if (!b) {
-            upLoadFinishedListener.onUploadFail("Only 1 song/time");
+            firebaseTaskListener.onFail("Only 1 song/time");
             return;
         }
         Uri file = Uri.fromFile(new File(song.getFilePath()));
@@ -92,15 +92,15 @@ public class MyFirebase {
         UploadTask uploadTask = fileRef.putFile(file);
         uploadTask.
                 addOnFailureListener(e -> {
-                    firebaseTaskNotification.setFinished(false);
-                    upLoadFinishedListener.onUploadFail("upload is interrupted");
+                    firebaseUploadNotification.setFinished(false);
+                    firebaseTaskListener.onFail("upload is interrupted");
                 })
                 .addOnSuccessListener(taskSnapshot -> {
-                    firebaseTaskNotification.setFinished(true);
-                    upLoadFinishedListener.onUploadSuccess("upload is completed");
+                    firebaseUploadNotification.setFinished(true);
+                    firebaseTaskListener.onSuccess("upload is completed");
                     SongMetadata songMetadata = new SongMetadata();
 
-                    songMetadata.setDuration(AudioUtils.getDuration(mContext, song));
+                    songMetadata.setDuration(AudioUtils.getDuration(storage.getApp().getApplicationContext(), song));
                     songMetadata.setId(song.hashId());
                     songMetadata.setTitle(song.getTitle());
                     songMetadata.setArtist(song.getArtist());
@@ -111,20 +111,33 @@ public class MyFirebase {
                 })
                 .addOnProgressListener(taskSnapshot -> {
                     int progress = (int) (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
-                    firebaseTaskNotification.setProgress(progress);
+                    firebaseUploadNotification.setProgress(progress);
                 });
     }
 
-    public void downloadFromCloud(String filePath) {
-        StorageReference httpsReference = storage.getReferenceFromUrl(filePath);
-        try {
-            File localFile = File.createTempFile("mysong", "mp3");
-            FileDownloadTask downloadTask = httpsReference.getFile(localFile);
-            downloadTask.addOnProgressListener()
-                    .addOnSuccessListener()
-                    .addOnFailureListener()
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void downloadFromCloud(Song song) {
+        FirebaseDownloadNotification firebaseDownloadNotification = FirebaseDownloadNotification.getInstance();
+        boolean b = firebaseDownloadNotification.showDownLoadNotification(storage.getApp().getApplicationContext(), song);
+        if (!b) {
+            firebaseTaskListener.onFail("Only 1 song/time");
+            return;
         }
+        StorageReference httpsReference = storage.getReferenceFromUrl(song.getFilePath());
+        File SDCardRoot = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File file = new File(SDCardRoot, song.getTitle().concat(".mp3"));
+        FileDownloadTask downloadTask = httpsReference.getFile(file);
+        downloadTask
+                .addOnProgressListener(taskSnapshot -> {
+                    int progress = (int) (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
+                    int constant = 1000;
+                    if (taskSnapshot.getBytesTransferred() % constant == 0) {
+                        firebaseDownloadNotification.setProgress(progress);
+                    }
+                })
+                .addOnSuccessListener(taskSnapshot -> {
+                    firebaseTaskListener.onSuccess("downloaded successfully. check in \"download\" folder");
+                    firebaseDownloadNotification.setFinished(true);
+                })
+                .addOnFailureListener(e -> firebaseTaskListener.onSuccess("download is interrupted"));
     }
 }

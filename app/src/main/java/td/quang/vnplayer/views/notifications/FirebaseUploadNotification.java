@@ -11,18 +11,18 @@ import td.quang.vnplayer.models.objects.Song;
  * Created by Quang_TD on 1/18/2017.
  */
 
-public class FirebaseTaskNotification {
+public class FirebaseUploadNotification {
     private static final int NOTIFICATION_ID_UPLOAD = 1002;
-    private static FirebaseTaskNotification instance;
+    private static FirebaseUploadNotification instance;
     private NotificationManager mNotificationManager;
     private NotificationCompat.Builder mBuilderUpload;
     private boolean isOnGoing;
 
-    private FirebaseTaskNotification() {
+    private FirebaseUploadNotification() {
     }
 
-    public static synchronized FirebaseTaskNotification getInstance() {
-        if (instance == null) instance = new FirebaseTaskNotification();
+    public static synchronized FirebaseUploadNotification getInstance() {
+        if (instance == null) instance = new FirebaseUploadNotification();
         return instance;
     }
 
@@ -38,7 +38,7 @@ public class FirebaseTaskNotification {
 
         mBuilderUpload.setContentTitle("Uploading " + song.getTitle())
                 .setContentText("upload in progress")
-                .setSmallIcon(R.drawable.ic_cloud_upload_black_36dp);
+                .setSmallIcon(R.drawable.ic_cloud_upload_black_24dp);
 
         isOnGoing = true;
         mBuilderUpload.setOngoing(isOnGoing);

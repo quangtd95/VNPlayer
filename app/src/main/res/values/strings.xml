@@ -3,7 +3,7 @@
     <string name="action_settings">Settings</string>
     <string name="action_schedule">Set alarm</string>
     <string name="action_search">Search</string>
-    <integer name="splash_time">2000</integer>
+    <integer name="splash_time">1500</integer>
     <string name="ic_play">&#xf01d;</string>
     <string name="ic_pause">&#xf28c;</string>
     <string name="ic_prev">&#xf049;</string>

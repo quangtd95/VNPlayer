@@ -23,6 +23,7 @@
         <activity
             android:name=".views.activities.MainActivity_"
             android:label="@string/app_name"
+            android:launchMode="singleInstance"
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>

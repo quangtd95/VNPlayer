@@ -9,8 +9,8 @@ import java.util.List;
 
 import td.quang.vnplayer.broadcasts.BroadCastToUI;
 import td.quang.vnplayer.broadcasts.BroadcastToService;
+import td.quang.vnplayer.models.cloud.FirebaseTaskListener;
 import td.quang.vnplayer.models.cloud.MyFirebase;
-import td.quang.vnplayer.models.cloud.UpLoadFinishedListener;
 import td.quang.vnplayer.models.databases.PlayListManager;
 import td.quang.vnplayer.models.databases.PlayListManagerImpl;
 import td.quang.vnplayer.models.objects.Song;
@@ -22,7 +22,7 @@ import td.quang.vnplayer.views.activities.MainView;
  * Created by Quang_TD on 1/8/2017.
  */
 
-public class MainMainPresenterImpl implements MainPresenter, OnPreparePlaylistListener, UpLoadFinishedListener {
+public class MainMainPresenterImpl implements MainPresenter, OnPreparePlaylistListener, FirebaseTaskListener {
 
     private static MainMainPresenterImpl instance;
     private MainView mMainView;
@@ -32,7 +32,7 @@ public class MainMainPresenterImpl implements MainPresenter, OnPreparePlaylistLi
     private MainMainPresenterImpl() {
         mPlayListManager = PlayListManagerImpl.getInstance();
         mPlayListManager.setOnPreparePlaylistListener(this);
-        MyFirebase.getInstance().setUpLoadFinishedListener(this);
+        MyFirebase.getInstance().setFirebaseTaskListener(this);
 
     }
 
@@ -50,7 +50,7 @@ public class MainMainPresenterImpl implements MainPresenter, OnPreparePlaylistLi
             mMainView.showError("Turn on network to upload");
             return;
         }
-        MyFirebase.getInstance().upload(mContext, song);
+        MyFirebase.getInstance().upload(song);
     }
 
     @Override public void getAllFromCloud() {
@@ -58,8 +58,13 @@ public class MainMainPresenterImpl implements MainPresenter, OnPreparePlaylistLi
         mMainView.updateCloud(mCloudSongs);
     }
 
-    @Override public void downloadFileFromCloud(String filePath) {
-        MyFirebase.getInstance().downloadFromCloud(filePath);
+    @Override public void downloadFileFromCloud(Context mContext, Song song) {
+
+        if (!InternetUtils.checkInternet(mContext)) {
+            mMainView.showError("Turn on network to upload");
+            return;
+        }
+        MyFirebase.getInstance().downloadFromCloud(song);
     }
 
 
@@ -175,11 +180,11 @@ public class MainMainPresenterImpl implements MainPresenter, OnPreparePlaylistLi
 
     }
 
-    @Override public void onUploadSuccess(String message) {
+    @Override public void onSuccess(String message) {
         mMainView.showSuccess(message);
     }
 
-    @Override public void onUploadFail(String message) {
+    @Override public void onFail(String message) {
         mMainView.showError(message);
     }
 

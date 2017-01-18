@@ -32,6 +32,10 @@ public class CloudAdapter extends RecyclerView.Adapter<CloudAdapter.CloudHolder>
         mPresenter = MainMainPresenterImpl.getInstance();
     }
 
+    public void fetch() {
+        mPresenter.getAllFromCloud();
+    }
+
     public void playSongOnClick(int position) {
         mPresenter.createPlayList(songs, position);
     }
@@ -64,11 +68,7 @@ public class CloudAdapter extends RecyclerView.Adapter<CloudAdapter.CloudHolder>
         holder.ivSongThumb.setBackgroundColor(RandomColor.getColor());
         holder.ivSongThumb.setText(String.valueOf(song.getTitle().charAt(0)));
         holder.tvNameUploader.setText(String.format("Upload by: %s", nameUploader.get(position)));
-        holder.btnSongOption.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
-                showMenu(holder.btnSongOption, position);
-            }
-        });
+        holder.btnSongOption.setOnClickListener(v -> showMenu(holder.btnSongOption, position));
         holder.cardViewSong.setOnClickListener(v -> playSongOnClick(position));
 
     }
@@ -85,7 +85,7 @@ public class CloudAdapter extends RecyclerView.Adapter<CloudAdapter.CloudHolder>
                 playSongOnClick(position);
             }
             if (item.getItemId() == R.id.downloadCloudSong) {
-                mPresenter.downloadFileFromCloud(song.getFilePath());
+                mPresenter.downloadFileFromCloud(view.getContext(), song);
             }
             return false;
         });

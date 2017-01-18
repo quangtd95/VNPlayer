@@ -51,5 +51,5 @@ public interface MainPresenter {
 
     void getAllFromCloud();
 
-    void downloadFileFromCloud(String filePath);
+    void downloadFileFromCloud(Context mContext, Song song);
 }
