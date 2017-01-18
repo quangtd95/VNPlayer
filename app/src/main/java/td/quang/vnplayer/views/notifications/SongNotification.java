@@ -41,7 +41,7 @@ public class SongNotification {
     public void showNotification(Context mContext, Song song) {
         //intent
         Intent intent = new Intent(mContext, MainActivity_.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
 
         Intent intentNext = new Intent();

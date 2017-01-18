@@ -266,7 +266,7 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
             });
             mThreadUpdateSeekbar.start();
         }
-        if (mThreadUpdateSeekbar.isInterrupted()) {
+        if (mThreadUpdateSeekbar.getState() == Thread.State.TERMINATED) {
             mThreadUpdateSeekbar = null;
         }
 

@@ -12,6 +12,7 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
@@ -62,6 +63,9 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem itemSearch = menu.findItem(R.id.action_searchc);
         mSearchView = (SearchView) itemSearch.getActionView();
+        EditText searchEditText = (EditText) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchEditText.setTextColor(getResources().getColor(R.color.colorAccent));
+        searchEditText.setHintTextColor(getResources().getColor(R.color.colorAccentDark));
         mSearchView.setOnQueryTextListener(this);
         return true;
     }

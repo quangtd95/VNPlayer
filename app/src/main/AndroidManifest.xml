@@ -18,21 +18,19 @@
         android:icon="@drawable/icon_thumbnail"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:theme="@style/AppTheme.NoActionBar"
         android:windowSoftInputMode="stateHidden"
         tool:replace="android:icon">
         <activity
             android:name=".views.activities.MainActivity_"
             android:label="@string/app_name"
-            android:launchMode="singleInstance"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:launchMode="singleTask">
 
         </activity>
         <activity
-            android:name=".views.activities.SplashActivity_"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:name=".views.activities.SplashActivity_">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
