@@ -88,7 +88,7 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
             mMediaPlayer.setOnCompletionListener(this);
             mMediaPlayer.prepareAsync();
         } catch (IOException e) {
-            Log.e("TAGG", e.toString());
+            Log.e("TAGG", "Loi o  day" + e.getMessage() + e.getCause() + e.getStackTrace());
 
         }
         mIsPlaying = true;
@@ -266,7 +266,7 @@ public class MusicServiceImpl extends Service implements MusicService, MediaPlay
             });
             mThreadUpdateSeekbar.start();
         }
-        if (mThreadUpdateSeekbar.isInterrupted()) {
+        if (mThreadUpdateSeekbar.getState() == Thread.State.TERMINATED) {
             mThreadUpdateSeekbar = null;
         }
 

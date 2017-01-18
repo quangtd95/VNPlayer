@@ -12,6 +12,9 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
@@ -25,8 +28,9 @@ import java.util.List;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import td.quang.vnplayer.R;
 import td.quang.vnplayer.models.objects.Song;
-import td.quang.vnplayer.presenters.playoffline.PlayOfflinePresenter;
-import td.quang.vnplayer.presenters.playoffline.PlayOfflinePresenterImpl;
+import td.quang.vnplayer.models.objects.SongMetadata;
+import td.quang.vnplayer.presenters.playoffline.MainMainPresenterImpl;
+import td.quang.vnplayer.presenters.playoffline.MainPresenter;
 import td.quang.vnplayer.views.BaseActivity;
 import td.quang.vnplayer.views.BaseFragment;
 import td.quang.vnplayer.views.adapters.MyViewPagerAdapter;
@@ -34,10 +38,12 @@ import td.quang.vnplayer.views.adapters.SongAdapter;
 import td.quang.vnplayer.views.dialogs.MyDialog;
 import td.quang.vnplayer.views.fragments.home.AlbumsFragment;
 import td.quang.vnplayer.views.fragments.home.CloudFragment;
+import td.quang.vnplayer.views.fragments.home.CloudFragment_;
 import td.quang.vnplayer.views.fragments.home.OnlineFragment;
 import td.quang.vnplayer.views.fragments.home.SongsFragment;
 import td.quang.vnplayer.views.fragments.playing.PlayingFragment;
 import td.quang.vnplayer.views.fragments.playing.PlayingFragment_;
+
 
 @EActivity(R.layout.activity_main)
 public class MainActivity extends BaseActivity implements MainView, SearchView.OnQueryTextListener, EventFromFragmentListener {
@@ -47,16 +53,31 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
     @ViewById(R.id.toolbar) Toolbar toolbar;
 
     private SongAdapter mSongAdapter;
-    private PlayOfflinePresenter mPresenter;
-    private OnlineFragment onlineFragment;
+    private MainPresenter mMainPresenter;
+
     private SweetAlertDialog dialogLoading;
+
+    private SearchView mSearchView;
+    private SongsFragment songsFragment;
+    private AlbumsFragment albumFragment;
+    private OnlineFragment onlineFragment;
+    private CloudFragment cloudFragment;
     private PlayingFragment playingFragment;
+
 
     @Override public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem itemSearch = menu.findItem(R.id.action_searchc);
-        SearchView searchView = (SearchView) itemSearch.getActionView();
-        searchView.setOnQueryTextListener(this);
+        mSearchView = (SearchView) itemSearch.getActionView();
+        //change color searchView
+        EditText mSearchText = (EditText) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        mSearchText.setTextColor(getResources().getColor(R.color.colorAccent));
+        mSearchText.setHintTextColor(getResources().getColor(R.color.colorAccentDark));
+
+        ImageView mSearchIcon = (ImageView) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_button);
+        mSearchIcon.setImageResource(R.drawable.ic_search_white_24dp);
+
+        mSearchView.setOnQueryTextListener(this);
         return true;
     }
 
@@ -65,9 +86,9 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
         addPlayingFragment();
         setUpHomeViewPager();
 
-        mPresenter = PlayOfflinePresenterImpl.getInstance();
-        mPresenter.setMainView(this);
-        mPresenter.registerBroadcast();
+        mMainPresenter = MainMainPresenterImpl.getInstance();
+        mMainPresenter.setMainView(this);
+        mMainPresenter.registerBroadcast();
         getCurrentState();
 
     }
@@ -83,14 +104,16 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
 
     private void setUpHomeViewPager() {
         List<BaseFragment> mHomeFragments = new ArrayList<>();
-        SongsFragment songsFragment = new SongsFragment();
+        songsFragment = new SongsFragment();
         songsFragment.setMainView(this);
-        mHomeFragments.add(songsFragment);
-        mHomeFragments.add(new AlbumsFragment());
+        albumFragment = new AlbumsFragment();
         onlineFragment = new OnlineFragment();
         onlineFragment.setMainView(this);
+        cloudFragment = new CloudFragment_();
+        mHomeFragments.add(songsFragment);
+        mHomeFragments.add(albumFragment);
+        mHomeFragments.add(cloudFragment);
         mHomeFragments.add(onlineFragment);
-        mHomeFragments.add(new CloudFragment());
 
         MyViewPagerAdapter mHomeViewPagerAdapter = new MyViewPagerAdapter(getSupportFragmentManager(), mHomeFragments);
         mViewPagerHome.setAdapter(mHomeViewPagerAdapter);
@@ -100,7 +123,7 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
     }
 
     private void getCurrentState() {
-        mPresenter.getCurrentState();
+        mMainPresenter.getCurrentState();
     }
 
     @Override public void setCurrentState(Intent intent) {
@@ -115,6 +138,7 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
         if (song != null) {
             playView(song, currentPosition, !mIsPlayed);
             playingFragment.setCurrentTime(mCurrentTime);
+            playingFragment.updatePlayList();
             slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         }
         playingFragment.setRepeatView(mIsRepeat);
@@ -129,6 +153,11 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
         slidingPanel.setPanelHeight(height);
         slidingPanel.addPanelSlideListener(new SlidingPanelListener(this, dragView));
 
+    }
+
+    @Override
+    public void setScrollableViewInsideSlidingPanel(View view) {
+        slidingPanel.setScrollableView(view);
     }
 
     @Override public void slidingDown() {
@@ -161,7 +190,8 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
     }
 
     @Override public boolean onQueryTextSubmit(String query) {
-        if (mViewPagerHome.getCurrentItem() != 2) {
+        mSearchView.clearFocus();
+        if (mViewPagerHome.getCurrentItem() != 3) {
             MyDialog.showError(this, "just only use to search online!");
             return true;
         }
@@ -170,7 +200,7 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
     }
 
     @Override public boolean onQueryTextChange(String newText) {
-        if (mViewPagerHome.getCurrentItem() != 2) {
+        if (mViewPagerHome.getCurrentItem() != 3) {
             return true;
         }
         return true;
@@ -191,7 +221,7 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
     }
 
     @Override public void onResumeAction() {
-        mPresenter.resume();
+        mMainPresenter.resume();
     }
 
     @Override public void pauseView() {
@@ -203,23 +233,23 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
     }
 
     @Override public void onPauseAction() {
-        mPresenter.pause();
+        mMainPresenter.pause();
     }
 
     @Override public void onNextAction() {
-        mPresenter.next();
+        mMainPresenter.next();
     }
 
     @Override public void onPrevAction() {
-        mPresenter.prev();
+        mMainPresenter.prev();
     }
 
     @Override public void onShuffleAction(boolean mIsShuffle) {
-        mPresenter.setShuffle(mIsShuffle);
+        mMainPresenter.setShuffle(mIsShuffle);
     }
 
     @Override public void onRepeatAction(boolean mIsRepeat) {
-        mPresenter.setRepeat(mIsRepeat);
+        mMainPresenter.setRepeat(mIsRepeat);
     }
 
     @Override public void showLoading() {
@@ -235,12 +265,16 @@ public class MainActivity extends BaseActivity implements MainView, SearchView.O
     }
 
     @Override public void showError(String message) {
-        MyDialog.showError(getContext());
+        MyDialog.showError(getContext(), message);
+    }
+
+    @Override public void updateCloud(List<SongMetadata> mCloudSongs) {
+        cloudFragment.updateCloud(mCloudSongs);
     }
 
     @Override protected void onDestroy() {
         super.onDestroy();
-        mPresenter.unregisterBroadcast();
+        mMainPresenter.unregisterBroadcast();
     }
 
     @Override public void onBackPressed() {

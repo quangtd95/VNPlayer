@@ -12,7 +12,6 @@ import android.widget.RemoteViews;
 
 import lombok.Getter;
 import td.quang.vnplayer.R;
-import td.quang.vnplayer.broadcasts.BroadCastToUI;
 import td.quang.vnplayer.broadcasts.BroadcastToService;
 import td.quang.vnplayer.models.objects.Song;
 import td.quang.vnplayer.utils.AudioUtils;
@@ -24,39 +23,41 @@ import td.quang.vnplayer.views.activities.MainActivity_;
  */
 
 public class SongNotification {
-    private static final int NOTIFICATION_ID = 1000;
+    private static final int NOTIFICATION_ID_SONG_CONTROL = 1000;
     private static SongNotification instance;
     private RemoteViews mRemoteView;
-    private NotificationCompat.Builder mBuilder;
+
+    private NotificationCompat.Builder mBuilderSongControl;
+
     private NotificationManager mNotificationManager;
     @Getter private boolean isShow;
+
 
     public static synchronized SongNotification getInstance() {
         if (instance == null) instance = new SongNotification();
         return instance;
     }
 
-
     public void showNotification(Context mContext, Song song) {
         //intent
         Intent intent = new Intent(mContext, MainActivity_.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
 
         Intent intentNext = new Intent();
-        intentNext.setAction(BroadCastToUI.ACTION_NEXT);
+        intentNext.setAction(BroadcastToService.ACTION_NEXT);
         PendingIntent pendingIntentNext = PendingIntent.getBroadcast(mContext, 0, intentNext, 0);
 
         Intent intentPrev = new Intent();
-        intentPrev.setAction(BroadCastToUI.ACTION_PREV);
+        intentPrev.setAction(BroadcastToService.ACTION_PREV);
         PendingIntent pendingIntentPrev = PendingIntent.getBroadcast(mContext, 0, intentPrev, 0);
 
-
         mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        mBuilder = new NotificationCompat.Builder(mContext);
+        mBuilderSongControl = new NotificationCompat.Builder(mContext);
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-            mBuilder.setSmallIcon(R.mipmap.ic_launcher);
-            mBuilder.setContentTitle(song.getTitle())
+            mBuilderSongControl.setSmallIcon(R.mipmap.ic_launcher);
+            mBuilderSongControl.setContentTitle(song.getTitle())
                     .setStyle(
                             new NotificationCompat.BigTextStyle()
                                     .bigText(song.getTitle()))
@@ -78,12 +79,12 @@ public class SongNotification {
             mRemoteView.setOnClickPendingIntent(R.id.btnNotiPrev, pendingIntentPrev);
             mRemoteView.setOnClickPendingIntent(R.id.btnNotiNext, pendingIntentNext);
 
-            mBuilder.setContent(mRemoteView);
-            mBuilder.setSmallIcon(R.drawable.icon_thumbnail);
-            mBuilder.setAutoCancel(false);
-            mBuilder.setOngoing(true);
-            mBuilder.setContentIntent(pendingIntent);
-            mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+            mBuilderSongControl.setContent(mRemoteView);
+            mBuilderSongControl.setSmallIcon(R.drawable.icon_thumbnail);
+            mBuilderSongControl.setAutoCancel(false);
+            mBuilderSongControl.setOngoing(true);
+            mBuilderSongControl.setContentIntent(pendingIntent);
+            mNotificationManager.notify(NOTIFICATION_ID_SONG_CONTROL, mBuilderSongControl.build());
             isShow = true;
 
         }
@@ -107,9 +108,8 @@ public class SongNotification {
         }
         setCancelable(!isPause);
 
-        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+        mNotificationManager.notify(NOTIFICATION_ID_SONG_CONTROL, mBuilderSongControl.build());
     }
-
 
     public void updateNotification(Context mContext, Song song) {
         mRemoteView.setTextViewText(R.id.tvNotiTitle, song.getTitle());
@@ -120,11 +120,11 @@ public class SongNotification {
         } else {
             mRemoteView.setImageViewResource(R.id.ivNotiThumb, R.drawable.icon_thumbnail);
         }
-        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+        mNotificationManager.notify(NOTIFICATION_ID_SONG_CONTROL, mBuilderSongControl.build());
     }
 
     public void setCancelable(boolean b) {
-        mBuilder.setOngoing(b);
+        mBuilderSongControl.setOngoing(b);
         if (b) isShow = false;
     }
 

@@ -72,7 +72,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.PlayLi
 
     private void showMenu(View view, int position) {
         PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
-        popupMenu.getMenuInflater().inflate(R.menu.menu_playlist, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.menu_song_playlist, popupMenu.getMenu());
         popupMenu.show();
 
         popupMenu.setOnMenuItemClickListener(item -> {

@@ -14,8 +14,8 @@ import java.util.ArrayList;
 
 import td.quang.vnplayer.R;
 import td.quang.vnplayer.models.objects.Song;
-import td.quang.vnplayer.presenters.playoffline.PlayOfflinePresenter;
-import td.quang.vnplayer.presenters.playoffline.PlayOfflinePresenterImpl;
+import td.quang.vnplayer.presenters.playoffline.MainMainPresenterImpl;
+import td.quang.vnplayer.presenters.playoffline.MainPresenter;
 import td.quang.vnplayer.utils.RandomColor;
 import td.quang.vnplayer.views.activities.MainView;
 import td.quang.vnplayer.views.fragments.home.SongsFragment;
@@ -28,18 +28,17 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
     private ArrayList<Song> songs;
     private Context mContext;
     private SongsFragment mFragment;
-    private PlayOfflinePresenter mPresenter;
+    private MainPresenter mMainPresenter;
 
     public SongAdapterImpl(SongsFragment songsFragment) {
         mFragment = songsFragment;
         mContext = mFragment.getContext();
-        mPresenter = PlayOfflinePresenterImpl.getInstance();
+        mMainPresenter = MainMainPresenterImpl.getInstance();
 
     }
 
     @Override
     public void setPlayingView(MainView MainView) {
-        td.quang.vnplayer.views.activities.MainView mMainView = MainView;
     }
 
     @Override
@@ -59,7 +58,7 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
     }
 
     @Override public void playSongOnClick(int position) {
-        mPresenter.createPlayList(songs, position);
+        mMainPresenter.createPlayList(songs, position);
 
     }
 
@@ -78,6 +77,28 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
         return new SongHolder(view);
     }
 
+
+    private void showMenu(View view, int position) {
+        Song song = songs.get(position);
+        PopupMenu popupMenu = new PopupMenu(mContext, view);
+        popupMenu.getMenuInflater().inflate(R.menu.menu_song_local, popupMenu.getMenu());
+        popupMenu.show();
+
+        popupMenu.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.delete) {
+                deleteSong(song, position);
+            }
+            if (item.getItemId() == R.id.play) {
+                playSongOnClick(position);
+            }
+            if (item.getItemId() == R.id.uploadToCloud) {
+                mMainPresenter.uploadToCloud(mContext, song);
+            }
+            return false;
+        });
+    }
+
+
     @Override
     public void onBindViewHolder(SongHolder holder, int position) {
         Song song = songs.get(position);
@@ -92,24 +113,6 @@ public class SongAdapterImpl extends RecyclerView.Adapter<SongAdapterImpl.SongHo
         });
         holder.cardViewSong.setOnClickListener(v -> playSongOnClick(position));
     }
-
-    private void showMenu(View view, int position) {
-        Song song = songs.get(position);
-        PopupMenu popupMenu = new PopupMenu(mContext, view);
-        popupMenu.getMenuInflater().inflate(R.menu.menu_song_option, popupMenu.getMenu());
-        popupMenu.show();
-
-        popupMenu.setOnMenuItemClickListener(item -> {
-            if (item.getItemId() == R.id.delete) {
-                deleteSong(song, position);
-            }
-            if (item.getItemId() == R.id.play) {
-                playSongOnClick(position);
-            }
-            return false;
-        });
-    }
-
 
     static class SongHolder extends RecyclerView.ViewHolder {
         TextView ivSongThumb;

@@ -7,7 +7,7 @@ import android.widget.RelativeLayout;
  */
 
 public interface EventFromFragmentListener {
-    void slidingUp();
+
 
     void onPlayNewAction();
 
@@ -24,6 +24,8 @@ public interface EventFromFragmentListener {
     void onRepeatAction(boolean mIsRepeat);
 
     void setUpSlidingPanel(RelativeLayout dragView);
+
+    void slidingUp();
 
     void slidingDown();
 }

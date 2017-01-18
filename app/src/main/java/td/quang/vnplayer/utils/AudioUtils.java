@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import td.quang.vnplayer.models.objects.Song;
+import td.quang.vnplayer.models.objects.SongMetadata;
 
 /**
  * Created by Quang_TD on 1/7/2017.
@@ -63,5 +64,14 @@ public class AudioUtils {
         result.append((s < 10) ? "0" : "");
         result.append(s);
         return result.toString();
+    }
+
+    public static Song convertToSong(SongMetadata songMetadata) {
+        return new Song.Builder()
+                .setDuration(songMetadata.getDuration())
+                .setTitle(songMetadata.getTitle())
+                .setArtist(songMetadata.getArtist())
+                .setFilePath(songMetadata.getFilePath())
+                .build();
     }
 }

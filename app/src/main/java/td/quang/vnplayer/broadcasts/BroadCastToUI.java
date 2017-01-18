@@ -7,7 +7,7 @@ import android.os.Bundle;
 
 import lombok.Setter;
 import td.quang.vnplayer.models.objects.Song;
-import td.quang.vnplayer.presenters.playoffline.PlayOfflinePresenter;
+import td.quang.vnplayer.presenters.playoffline.MainPresenter;
 import td.quang.vnplayer.views.activities.MainView;
 
 /**
@@ -24,12 +24,13 @@ public class BroadCastToUI extends BroadcastReceiver {
     public static final String ACTION_RECEIVE_CURRENT_STATE = "TD.QUANG.VNPLAYER.MUSICSERVICERECEIVER.RECEIVE_CURRENT_STATE";
     public static final String ACTION_UPDATE_SONG = "TD.QUANG.VNPLAYER.MUSICSERVICERECEIVER.UPDATE_SONG";
     public static final String ACTION_UPDATE_PLAYLIST = "TD.QUANG.VNPLAYER.MUSICSERVICERECEIVER.UPDATE_PLAYLIST";
+    public static final String ACTION_UPDATE_CLOUD = "TD.QUANG.VNPLAYER.MUSICSERVICERECEIVER.UPDATE_CLOUD";
 
-    @Setter private PlayOfflinePresenter mPresenter;
+    @Setter private MainPresenter mMainPresenter;
     @Setter private MainView mMainView;
 
-    public BroadCastToUI(PlayOfflinePresenter mPresenter, MainView mainView) {
-        setMPresenter(mPresenter);
+    public BroadCastToUI(MainPresenter mMainPresenter, MainView mainView) {
+        setMMainPresenter(mMainPresenter);
         setMMainView(mainView);
     }
 
@@ -63,13 +64,20 @@ public class BroadCastToUI extends BroadcastReceiver {
         if (action.equalsIgnoreCase(ACTION_UPDATE_PLAYLIST)) {
             updatePlayListAction(intent);
         }
+        if (action.equalsIgnoreCase(ACTION_UPDATE_CLOUD)) {
+            updateCloudAction(intent);
+        }
 
+    }
+
+    private void updateCloudAction(Intent intent) {
+        mMainPresenter.getAllFromCloud();
     }
 
     private void updatePlayListAction(Intent intent) {
         Bundle bundle = intent.getExtras();
         int position = bundle.getInt("position");
-        mPresenter.updatePositionPlayList(position);
+        mMainPresenter.updatePositionPlayList(position);
 
     }
 
@@ -78,43 +86,43 @@ public class BroadCastToUI extends BroadcastReceiver {
         Song song = bundle.getParcelable("song");
         int position = bundle.getInt("position");
         boolean isPause = bundle.getBoolean("pause");
-        mPresenter.updateView(song, position, isPause);
+        mMainPresenter.updateView(song, position, isPause);
     }
 
     private void receiveCurrentState(Intent intent) {
-        mPresenter.setCurrentState(intent);
+        mMainPresenter.setCurrentState(intent);
     }
 
     private void resumeAction(Intent intent) {
-        mPresenter.resume();
+        mMainPresenter.resume();
     }
 
     private void pauseAction(Intent intent) {
-        mPresenter.pause();
+        mMainPresenter.pause();
     }
 
     private void prevAction(Intent intent) {
-        mPresenter.prev();
+        mMainPresenter.prev();
 
     }
 
     private void nextAction(Intent intent) {
-        mPresenter.next();
+        mMainPresenter.next();
     }
 
     private void completeAction(Intent intent) {
 //        boolean mIsSuffer = intent.getBooleanExtra("suffer", false);
 //        if (!mIsSuffer) {
-        mPresenter.next();
+        mMainPresenter.next();
 //        } else {
-//            mPresenter.nextRandom();
+//            mMainPresenter.nextRandom();
 //        }
     }
 
     private void updateTimeAction(Intent intent) {
         int mCurrentTime = intent.getIntExtra("currentTime", 0);
         int visible = intent.getIntExtra("visible", -1);
-        mPresenter.onReceiveTimeValue(mCurrentTime, visible);
+        mMainPresenter.onReceiveTimeValue(mCurrentTime, visible);
     }
 
 

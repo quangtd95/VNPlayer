@@ -1,5 +1,6 @@
 package td.quang.vnplayer.presenters.playoffline;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -8,29 +9,35 @@ import java.util.List;
 
 import td.quang.vnplayer.broadcasts.BroadCastToUI;
 import td.quang.vnplayer.broadcasts.BroadcastToService;
+import td.quang.vnplayer.models.cloud.FirebaseTaskListener;
+import td.quang.vnplayer.models.cloud.MyFirebase;
 import td.quang.vnplayer.models.databases.PlayListManager;
 import td.quang.vnplayer.models.databases.PlayListManagerImpl;
 import td.quang.vnplayer.models.objects.Song;
+import td.quang.vnplayer.models.objects.SongMetadata;
+import td.quang.vnplayer.utils.InternetUtils;
 import td.quang.vnplayer.views.activities.MainView;
 
 /**
  * Created by Quang_TD on 1/8/2017.
  */
 
-public class PlayOfflinePresenterImpl implements PlayOfflinePresenter, OnPreparePlaylistListener {
+public class MainMainPresenterImpl implements MainPresenter, OnPreparePlaylistListener, FirebaseTaskListener {
 
-    private static PlayOfflinePresenterImpl instance;
+    private static MainMainPresenterImpl instance;
     private MainView mMainView;
     private BroadCastToUI mBroadCastToUI;
     private PlayListManager mPlayListManager;
 
-    private PlayOfflinePresenterImpl() {
+    private MainMainPresenterImpl() {
         mPlayListManager = PlayListManagerImpl.getInstance();
         mPlayListManager.setOnPreparePlaylistListener(this);
+        MyFirebase.getInstance().setFirebaseTaskListener(this);
+
     }
 
-    public static PlayOfflinePresenterImpl getInstance() {
-        if (instance == null) instance = new PlayOfflinePresenterImpl();
+    public static MainMainPresenterImpl getInstance() {
+        if (instance == null) instance = new MainMainPresenterImpl();
         return instance;
     }
 
@@ -38,23 +45,28 @@ public class PlayOfflinePresenterImpl implements PlayOfflinePresenter, OnPrepare
         mMainView.setCurrentPosition(position);
     }
 
-    public void registerBroadcast() {
-        mBroadCastToUI = new BroadCastToUI(this, mMainView);
-        IntentFilter mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(BroadCastToUI.ACTION_UPDATE_TIME);
-        mIntentFilter.addAction(BroadCastToUI.ACTION_COMPLETE);
-        mIntentFilter.addAction(BroadCastToUI.ACTION_NEXT);
-        mIntentFilter.addAction(BroadCastToUI.ACTION_PREV);
-        mIntentFilter.addAction(BroadCastToUI.ACTION_PAUSE);
-        mIntentFilter.addAction(BroadCastToUI.ACTION_RESUME);
-        mIntentFilter.addAction(BroadCastToUI.ACTION_RECEIVE_CURRENT_STATE);
-        mIntentFilter.addAction(BroadCastToUI.ACTION_UPDATE_SONG);
-        mMainView.getContext().registerReceiver(mBroadCastToUI, mIntentFilter);
+    @Override public void uploadToCloud(Context mContext, Song song) {
+        if (!InternetUtils.checkInternet(mContext)) {
+            mMainView.showError("Turn on network to upload");
+            return;
+        }
+        MyFirebase.getInstance().upload(song);
     }
 
-    public void unregisterBroadcast() {
-        mMainView.getContext().unregisterReceiver(mBroadCastToUI);
+    @Override public void getAllFromCloud() {
+        List<SongMetadata> mCloudSongs = MyFirebase.getInstance().getMCloudSongs();
+        mMainView.updateCloud(mCloudSongs);
     }
+
+    @Override public void downloadFileFromCloud(Context mContext, Song song) {
+
+        if (!InternetUtils.checkInternet(mContext)) {
+            mMainView.showError("Turn on network to upload");
+            return;
+        }
+        MyFirebase.getInstance().downloadFromCloud(song);
+    }
+
 
     @Override public void setMainView(MainView mainView) {
         mMainView = mainView;
@@ -168,5 +180,30 @@ public class PlayOfflinePresenterImpl implements PlayOfflinePresenter, OnPrepare
 
     }
 
+    @Override public void onSuccess(String message) {
+        mMainView.showSuccess(message);
+    }
 
+    @Override public void onFail(String message) {
+        mMainView.showError(message);
+    }
+
+    public void registerBroadcast() {
+        mBroadCastToUI = new BroadCastToUI(this, mMainView);
+        IntentFilter mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(BroadCastToUI.ACTION_UPDATE_TIME);
+        mIntentFilter.addAction(BroadCastToUI.ACTION_COMPLETE);
+        mIntentFilter.addAction(BroadCastToUI.ACTION_NEXT);
+        mIntentFilter.addAction(BroadCastToUI.ACTION_PREV);
+        mIntentFilter.addAction(BroadCastToUI.ACTION_PAUSE);
+        mIntentFilter.addAction(BroadCastToUI.ACTION_RESUME);
+        mIntentFilter.addAction(BroadCastToUI.ACTION_RECEIVE_CURRENT_STATE);
+        mIntentFilter.addAction(BroadCastToUI.ACTION_UPDATE_SONG);
+        mIntentFilter.addAction(BroadCastToUI.ACTION_UPDATE_CLOUD);
+        mMainView.getContext().registerReceiver(mBroadCastToUI, mIntentFilter);
+    }
+
+    public void unregisterBroadcast() {
+        mMainView.getContext().unregisterReceiver(mBroadCastToUI);
+    }
 }

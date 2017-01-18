@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-import cn.pedant.SweetAlert.SweetAlertDialog;
 import td.quang.vnplayer.R;
 import td.quang.vnplayer.models.objects.OnlineSong;
 import td.quang.vnplayer.presenters.playonline.PlayOnlinePresenter;
@@ -25,7 +24,6 @@ import td.quang.vnplayer.views.adapters.OnlineAdapterImpl;
  */
 
 public class OnlineFragment extends BaseFragment implements LoadSongView {
-    private SweetAlertDialog dialogLoading;
     private OnlineAdapterImpl onlineAdapter;
     private PlayOnlinePresenter playOnlinePresenter;
     private MainView mMainView;
